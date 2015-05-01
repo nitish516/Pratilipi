@@ -1,0 +1,195 @@
+package com.pratilipi.pratilipi.helper;
+
+/**
+ * Created by Nitish on 01-04-2015.
+ */
+
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.UriMatcher;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.net.Uri;
+
+import java.util.HashMap;
+
+public class PratilipiProvider extends ContentProvider {
+    // fields for pratilipi content provider
+    public static final String PROVIDER_NAME = "com.pratilipi.pratilipi.helper.PratilipiData";
+    public static final String CONTENT_URL = "content://" + PROVIDER_NAME + "/content";
+    public static final String METADATA_URL = "content://" + PROVIDER_NAME + "/metadata";
+    public static final Uri CONTENT_URI = Uri.parse(CONTENT_URL);
+    public static final Uri METADATA_URI = Uri.parse(METADATA_URL);
+
+    // fields for the database
+    static final String ID = "id";
+    public static final String PID = "_pid";
+    public static final String CH_NO = "_ch_no";
+    public static final String CONTENT = "_content";
+    public static final String TITLE = "_title";
+    public static final String CONTENT_TYPE = "_contentType";
+    public static final String AUTHOR_ID = "_authorId";
+    public static final String AUTHOR_NAME = "_authorFullName";
+    public static final String CH_COUNT = "_ch_count";
+    public static final String INDEX = "_index";
+    public static final String IMG_URL = "_coverImageUrl";
+    public static final String PG_URL = "_pageUrl";
+
+    // integer values used in content URI
+    static final int uriContent = 1;
+    static final int uriMetadata = 2;
+    static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    // projection map for a query
+    private static HashMap<String, String> values;
+
+    // maps content URI "patterns" to the integer values that were set above
+    static {
+        uriMatcher.addURI(PROVIDER_NAME, "content", uriContent);
+        uriMatcher.addURI(PROVIDER_NAME, "metadata", uriMetadata);
+    }
+
+    // database declarations
+    private SQLiteDatabase db;
+    public static final String DATABASE_NAME = "PratilipiDb";
+    public static final String TABLE_CONTENT = "contentTable";
+    public static final String TABLE_METADATA = "metadaTable";
+    static final int DATABASE_VERSION = 1;
+    static final String CREATE_CONTENT_TABLE =
+            " CREATE TABLE IF NOT EXISTS " + TABLE_CONTENT +
+                    " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    " _pid TEXT NOT NULL, " +
+                    " _content TEXT , " +
+                    " _ch_no TEXT );";
+
+    static final String CREATE_METADATA_TABLE = " CREATE TABLE IF NOT EXISTS " + TABLE_METADATA
+            +" (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "_pid TEXT , "
+            + " _title TEXT , "
+            + " _content_type TEXT , "
+            + " _author_id TEXT , "
+            + " _author_name TEXT , "
+            + " _ch_count TEXT , "
+            + " _index TEXT , "
+            + " _img_url TEXT , "
+            + " _pg_url TEXT );";
+
+    // class that creates and manages the provider's database
+    private static class DatabaseHelper extends SQLiteOpenHelper {
+        DatabaseHelper(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+
+            db.execSQL(CREATE_CONTENT_TABLE);
+            db.execSQL(CREATE_METADATA_TABLE);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTENT);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_METADATA);
+            onCreate(db);
+        }
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        int count;
+        switch (uriMatcher.match(uri)) {
+            case uriContent:
+                count = db.delete(TABLE_CONTENT, selection, selectionArgs);
+                break;
+            case uriMetadata:
+                count = db.delete(TABLE_METADATA, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
+    }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        long rowID;
+        switch (uriMatcher.match(uri)) {
+            case uriContent:
+                 rowID = db.insert(TABLE_CONTENT, "", values);
+                break;
+            case uriMetadata:
+                rowID = db.insert(TABLE_METADATA, "", values);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        if (rowID > 0) {
+              Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
+              getContext().getContentResolver().notifyChange(_uri, null);
+              return _uri;
+        }
+        throw new SQLException("Failed to add a record into " + uri);
+    }
+
+    @Override
+    public boolean onCreate() {
+        Context context = getContext();
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        db = dbHelper.getWritableDatabase();
+        return db != null;
+    }
+
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection,
+                        String[] selectionArgs, String sortOrder) {
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+
+        switch (uriMatcher.match(uri)) {
+           case uriContent:
+                qb.setTables(TABLE_CONTENT);
+                qb.setProjectionMap(values);
+                break;
+           case uriMetadata:
+                qb.setTables(TABLE_METADATA);
+                qb.setProjectionMap(values);
+                break;
+           default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        if (sortOrder == null || sortOrder.equals("")) sortOrder = PID;
+        Cursor c = qb.query(db, projection, selection, selectionArgs, null,
+                null, sortOrder);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        return null;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection,
+                      String[] selectionArgs) {
+        int count;
+        switch (uriMatcher.match(uri)) {
+            case uriContent:
+                count = db.update(TABLE_CONTENT, values, selection, selectionArgs);
+                break;
+            case uriMetadata:
+                count = db.update(TABLE_METADATA, values, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return count;
+    }
+}

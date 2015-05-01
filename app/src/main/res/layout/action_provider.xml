@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:id="@+id/font_menu"
+android:layout_width="240dp"
+android:layout_height="wrap_content">
+<ListView
+    android:layout_width="240dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="fill_horizontal">
+    <ImageButton
+        android:src="@drawable/dec"
+        android:id="@+id/buttonDec"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        />
+    <Button
+        android:src="@drawable/inc"
+        android:id="@+id/buttonInc"
+        android:layout_width="120dp"
+        android:layout_height="120dp" />
+</ListView>
+<ListView
+    android:layout_width="240dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="fill_horizontal">
+    <Button
+        android:id="@+id/buttonWhite"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="White"/>
+    <Button
+        android:id="@+id/buttonNite"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="White" />
+    <Button
+        android:id="@+id/buttonSepia"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="White" />
+</ListView>
+    </LinearLayout>

@@ -1,0 +1,158 @@
+package com.pratilipi.pratilipi;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.lang.reflect.Field;
+import java.util.Locale;
+
+
+
+public class LanguageSelectionActivity extends Activity {
+
+    private String selectedLanguage ;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_language_selection);
+        TextView myTextView=(TextView)findViewById(R.id.radio_gujrati);
+        Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
+        myTextView.setTypeface(typeFace);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_language_selection, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void goSelected(View view) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("selected_language", selectedLanguage);
+        editor.commit();
+        finish();
+    }
+
+    public void onRadioButtonClicked(View view) {
+       boolean checked = ((RadioButton) view).isChecked();
+        Button goButton = (Button)findViewById(R.id.goButton);
+        goButton.setVisibility(View.VISIBLE);
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radio_tamil:
+                if (checked)
+                    Locale.setDefault(new Locale("ta"));
+                    updateLanguage(this,"ta");
+                    getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
+                        .putString("selectedLanguage", "ta").commit();
+                break;
+            case R.id.radio_hindi:
+                if (checked)
+                    Locale.setDefault(new Locale("hi"));
+                    updateLanguage(this, "hi");
+                    getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
+                      .putString("selectedLanguage", "hi").commit();
+                break;
+            case R.id.radio_gujrati:
+                if (checked)
+                    Locale.setDefault(new Locale("gu"));
+                    updateLanguage(this, "gu");
+                    getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
+                        .putString("selectedLanguage", "gu").commit();
+                break;
+        }
+    }
+    public void updateLanguage(Context context, String idioma) {
+        selectedLanguage = idioma;
+        if (!"".equals(idioma)) {
+            Locale locale = new Locale(idioma);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.locale = locale;
+            context.getResources().updateConfiguration(config, null);
+
+            setDefaultFont(this,"DEFAULT","fonts/gujarati.ttf");
+
+        }
+    }
+    // Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf")
+    public static void setDefaultFont(Context context,
+                                      String staticTypefaceFieldName, String fontAssetName) {
+        final Typeface regular = Typeface.createFromAsset(context.getAssets(),
+                fontAssetName);
+        replaceFont(staticTypefaceFieldName, regular);
+    }
+
+    protected static void replaceFont(String staticTypefaceFieldName,
+                                      final Typeface newTypeface) {
+        try {
+             Field staticField = Typeface.class
+                    .getDeclaredField(staticTypefaceFieldName);
+            staticField.setAccessible(true);
+            staticField.set(null, newTypeface);
+
+            staticField = Typeface.class
+                    .getDeclaredField("DEFAULT_BOLD");
+            staticField.setAccessible(true);
+            staticField.set(null, newTypeface);
+
+            staticField = Typeface.class
+                    .getDeclaredField("DEFAULT_BOLD");
+            staticField.setAccessible(true);
+
+            staticField.set(null, newTypeface);
+            staticField = Typeface.class
+                    .getDeclaredField("MONOSPACE");
+            staticField.setAccessible(true);
+            staticField.set(null, newTypeface);
+
+            staticField = Typeface.class
+                    .getDeclaredField("SANS_SERIF");
+            staticField.setAccessible(true);
+            staticField.set(null, newTypeface);
+
+            staticField = Typeface.class
+                    .getDeclaredField("SERIF");
+            staticField.setAccessible(true);
+            staticField.set(null, newTypeface);
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+}

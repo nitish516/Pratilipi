@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:layout_gravity="center_horizontal"
+android:layout_marginTop="30dp"
+android:layout_marginLeft="10dp"
+android:layout_marginRight="10dp">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="fill_horizontal"
+    >
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/splash"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Title"
+            android:layout_margin="5dp"/>
+        <TextView
+            android:id="@+id/authorTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Author Name"
+            android:layout_margin="5dp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RatingBar
+                android:id="@+id/averageRatingRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/ratingBarStyleSmall"
+                android:numStars="5"
+                android:stepSize="0.1"
+                android:isIndicator="true"
+                android:layout_margin="5dp"/>
+            <TextView
+                android:id="@+id/averageRatingTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Average rating: -/5"
+                android:layout_margin="5dp"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Thriller"
+                android:layout_margin="5dp"/>
+       <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <Button
+                android:id="@+id/readButton"
+                android:layout_height="40sp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="READ FOR FREE"
+                android:onClick="launchReader"/>
+            <!--<Button-->
+                <!--android:id="@+id/reviewButton"-->
+                <!--android:layout_height="40sp"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="REVIEW"/>-->
+        </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+<RatingBar
+    android:id="@+id/yourRatingRatingBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    style="?android:attr/ratingBarStyleSmall"
+    android:numStars="5"
+    android:stepSize="0.1"
+    android:isIndicator="true"
+    android:layout_marginTop="15dp"
+    android:layout_marginLeft="15dp"/>
+<TextView
+    android:id="@+id/yourRatingTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="Your rating: -/5"
+    android:layout_marginLeft="10dp"/>
+<TextView
+    android:id="@+id/summaryTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:text="This thriller is third book of blockbuster series.This is a dummy summary."
+   android:layout_marginTop="15dp"/>
+</LinearLayout>
