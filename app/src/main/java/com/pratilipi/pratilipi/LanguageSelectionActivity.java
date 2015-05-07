@@ -4,18 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.Locale;
@@ -62,6 +59,7 @@ public class LanguageSelectionActivity extends Activity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("selected_language", selectedLanguage);
         editor.commit();
+        startActivity(new Intent(this, MainActivity.class));
         finish();
     }
 
@@ -149,9 +147,9 @@ public class LanguageSelectionActivity extends Activity {
             staticField.setAccessible(true);
             staticField.set(null, newTypeface);
 
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
     }

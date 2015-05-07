@@ -5,6 +5,7 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -49,14 +50,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     protected void onResume() {
         super.onResume();
 
-        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-                .getBoolean("isFirstRun", true);
+        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
 
-        if (isFirstRun)
-            startActivity(new Intent(this, LanguageSelectionActivity.class));
-
-        getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
-                .putBoolean("isFirstRun", false).commit();
+            if (lan.length() < 1) {
+                startActivity(new Intent(this, LanguageSelectionActivity.class));
+                finish();
+            }
     }
 
     public void onCreate(Bundle savedInstanceState) {
