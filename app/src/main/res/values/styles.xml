@@ -28,4 +28,24 @@
     <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
     <style name="ButtonBarButton" />
 
+    <style name="actionBar" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/myactiontheme</item>
+    </style>
+
+    <style name="myactiontheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
+        <item name="android:background">@color/red</item>
+        <item name="android:windowActionBar">true</item>
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:actionBarTabStyle">@style/mycustomactiontab</item>
+    </style>
+
+    <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="mycustomactiontab" parent="@android:style/Widget.Holo.Light.Tab">
+        <item name="android:background">@color/red</item>
+    </style>
+
 </resources>
