@@ -20,8 +20,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
@@ -29,6 +31,8 @@ import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -131,15 +135,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
+                    return new HomeFragment();
+                case 1:
+                    return new CategoriesFragment();
+                case 2:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    return new HomeFragment();
+                    return new ShelfFragment();
 
                 default:
                     // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
+                    Fragment fragment = new CategoriesFragment();
                     Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
+                    args.putInt(CategoriesFragment.ARG_SECTION_NUMBER, i + 1);
                     fragment.setArguments(args);
                     return fragment;
             }
@@ -160,17 +168,29 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 1:
                     return getResources().getString(R.string.title_categories);
                 case 2:
-                    return getResources().getString(R.string.title_profile);
+                    return getResources().getString(R.string.title_shelf);
             }
 
             return "Section " + (position + 1);
         }
     }
 
-    /**
-     * A fragment that launches other parts of the demo application.
-     */
     public static class HomeFragment extends Fragment {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+            RadioButton rb = (RadioButton) rootView.findViewById(R.id.radio_top);
+            rb.setChecked(true);
+            return rootView;
+        }
+    }
+
+    /**
+     * A fragment that launches shelf part of application.
+     */
+    public static class ShelfFragment extends Fragment {
 
         private com.pratilipi.pratilipi.util.Utils utils;
         private ArrayList<String> imagePaths = new ArrayList<String>();
@@ -182,7 +202,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
 
-            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_shelf, container, false);
             gridView = (GridView) rootView.findViewById(R.id.grid_view);
             utils = new com.pratilipi.pratilipi.util.Utils(getActivity());
 
@@ -222,20 +242,33 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
-    public static class DummySectionFragment extends Fragment {
+    public static class CategoriesFragment extends Fragment {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+            String[] categoriesArray = {
+                    "Classic","Horror","Poems","Romance","Stories","Gazals"
+            };
+            List<String> listCategories = new ArrayList<String>(
+                    Arrays.asList(categoriesArray));
+
+            ArrayAdapter<String> mCategoriesAdapter = new ArrayAdapter<String>(
+                    getActivity(),
+                    R.layout.listitem_categories_textview,
+                    R.id.textview_categories,
+                    listCategories
+            );
+
             View rootView = inflater.inflate(R.layout.fragment_categories, container, false);
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+            ListView linearLayout = (ListView) rootView.findViewById(R.id.listview_categories);
+            linearLayout.setAdapter(mCategoriesAdapter);
             return rootView;
         }
     }
+
     public void addData(View view) {
         ContentValues values = new ContentValues();
         values.put(PratilipiProvider.PID , "6288435027378176");

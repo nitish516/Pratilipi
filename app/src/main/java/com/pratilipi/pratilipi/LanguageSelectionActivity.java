@@ -13,11 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
 import java.lang.reflect.Field;
 import java.util.Locale;
-
-
 
 public class LanguageSelectionActivity extends Activity {
 
@@ -30,7 +27,6 @@ public class LanguageSelectionActivity extends Activity {
         Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
         myTextView.setTypeface(typeFace);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,6 +89,7 @@ public class LanguageSelectionActivity extends Activity {
                 break;
         }
     }
+
     public void updateLanguage(Context context, String idioma) {
         selectedLanguage = idioma;
         if (!"".equals(idioma)) {
@@ -106,6 +103,7 @@ public class LanguageSelectionActivity extends Activity {
 
         }
     }
+
     // Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf")
     public static void setDefaultFont(Context context,
                                       String staticTypefaceFieldName, String fontAssetName) {

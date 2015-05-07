@@ -1,15 +1,91 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/relative_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <GridView
-        android:id="@+id/grid_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:numColumns="auto_fit"
-        android:gravity="center"
-        android:stretchMode="none"
-        android:background="#ffffff"
-        android:configChanges="locale">
-    </GridView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5">
+            <TextView
+                android:id="@+id/fetures_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_featured_books"
+                android:textColor="#FF0000"
+                android:textSize="16dp"
+                android:padding="20dp"/>
+            <TextView
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textSize="16dp"
+                android:padding="20dp"/>
 
-</FrameLayout>
+            <ListView
+                android:layout_below="@id/fetures_tv"
+                android:id="@+id/listview_featured"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5">
+            <TextView
+                android:id="@+id/release_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_new_releases"
+                android:textColor="#FF0000"
+                android:textSize="16dp"
+                android:padding="20dp"
+                />
+            <TextView
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textSize="16dp"
+                android:padding="20dp"/>
+
+            <ListView
+                android:layout_below="@id/release_tv"
+                android:id="@+id/listview_new_releases"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_marginTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/radio_top"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="50dp"
+            android:background="@drawable/radio_button_home"
+            android:button="@android:color/transparent"
+            android:text="@string/top_books"
+            android:textColor="#fff"
+            android:textAlignment="center"
+            android:gravity="center"/>
+        <RadioButton android:id="@+id/radio_free"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="50dp"
+            android:background="@drawable/radio_button_home"
+            android:button="@android:color/transparent"
+            android:text="@string/free"
+            android:textColor="#fff"
+            android:gravity="center"/>
+    </RadioGroup>
+</LinearLayout>

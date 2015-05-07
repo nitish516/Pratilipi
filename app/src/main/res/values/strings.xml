@@ -8,11 +8,14 @@
 
     <string name="title_home">HOME</string>
     <string name="title_categories">CATEGORIES</string>
+    <string name="title_shelf">SHELF</string>
     <string name="title_profile">PROFILE</string>
     <string name="title_featured_books">Featured Books</string>
     <string name="title_new_releases">New Releases</string>
-    <string name="title_section1">Section 1</string>
     <string name="view_all">View All>></string>
+    <string name="top_books">TOP BOOKS</string>
+    <string name="free">FREE</string>
+    <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
 
