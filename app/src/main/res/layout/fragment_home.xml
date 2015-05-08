@@ -2,7 +2,8 @@
     android:orientation="vertical"
     android:id="@+id/relative_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:widget="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -27,12 +28,15 @@
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:padding="20dp"/>
-
-            <ListView
+            <com.pratilipi.pratilipi.HorizontalListView
                 android:layout_below="@id/fetures_tv"
                 android:id="@+id/listview_featured"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"/>
+                android:layout_height="fill_parent"
+                android:divider="#fff"
+                android:fadingEdgeLength="5dp"
+                android:requiresFadingEdge="horizontal"
+                widget:dividerWidth="3dp" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -54,13 +58,15 @@
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:padding="20dp"/>
-
-            <ListView
+            <com.pratilipi.pratilipi.HorizontalListView
                 android:layout_below="@id/release_tv"
                 android:id="@+id/listview_new_releases"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                />
+                android:divider="#fff"
+                android:fadingEdgeLength="5dp"
+                android:requiresFadingEdge="horizontal"
+                widget:dividerWidth="3dp" />
         </RelativeLayout>
     </LinearLayout>
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"

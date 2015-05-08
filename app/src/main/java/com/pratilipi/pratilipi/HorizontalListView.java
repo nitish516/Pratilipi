@@ -56,30 +56,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-// @formatter:off
-/**
- * A view that shows items in a horizontally scrolling list. The items
- * come from the {@link android.widget.ListAdapter} associated with this view. <br>
- * <br>
- * <b>Limitations:</b>
- * <ul>
- * <li>Does not support keyboard navigation</li>
- * <li>Does not support scroll bars<li>
- * <li>Does not support header or footer views<li>
- * <li>Does not support disabled items<li>
- * </ul>
- * <br>
- * <b>Custom XML Parameters Supported:</b><br>
- * <br>
- * <ul>
- * <li><b>divider</b> - The divider to use between items. This can be a color or a drawable. If a drawable is used
- * dividerWidth will automatically be set to the intrinsic width of the provided drawable, this can be overriden by providing a dividerWidth.</li>
- * <li><b>dividerWidth</b> - The width of the divider to be drawn.</li>
- * <li><b>android:requiresFadingEdge</b> - If horizontal fading edges are enabled this view will render them</li>
- * <li><b>android:fadingEdgeLength</b> - The length of the horizontal fading edges</li>
- * </ul>
- */
-// @formatter:on
 public class HorizontalListView extends AdapterView<ListAdapter> {
     /** Defines where to insert items into the ViewGroup, as defined in {@code ViewGroup #addViewInLayout(View, int, LayoutParams, boolean)} */
     private static final int INSERT_AT_END_OF_LIST = -1;
