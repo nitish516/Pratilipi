@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
+import com.pratilipi.pratilipi.adapter.CustomArrayAdapter;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
@@ -194,7 +196,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
         //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
-        private List<Metadata> mMetaData ;
+        private ArrayList<Metadata> mMetaData ;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -209,6 +211,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             pDialog.setCancelable(false);
             mMetaData = new ArrayList<Metadata>();
             makeJsonArryReq();
+            CustomArrayAdapter adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
+            HorizontalListView lv = (HorizontalListView) rootView.findViewById(R.id.listview_new_releases);
+            lv.setAdapter(adapter);
             return rootView;
         }
         private ProgressDialog pDialog;
