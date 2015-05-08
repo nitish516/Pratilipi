@@ -3,6 +3,7 @@ package com.pratilipi.pratilipi;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +26,22 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +62,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * time.
      */
     ViewPager mViewPager;
+    private static String TAG = MainActivity.class.getSimpleName();
+
 
     @Override
     protected void onResume() {
@@ -176,6 +191,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     public static class HomeFragment extends Fragment {
+
+
+        //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
+        private List<Metadata> mMetaData ;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -183,7 +203,80 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             View rootView = inflater.inflate(R.layout.fragment_home, container, false);
             RadioButton rb = (RadioButton) rootView.findViewById(R.id.radio_top);
             rb.setChecked(true);
+
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Loading...");
+            pDialog.setCancelable(false);
+            mMetaData = new ArrayList<Metadata>();
+            makeJsonArryReq();
             return rootView;
+        }
+        private ProgressDialog pDialog;
+
+        private void showProgressDialog() {
+            if (!pDialog.isShowing())
+                pDialog.show();
+        }
+
+        private void hideProgressDialog() {
+            if (pDialog.isShowing())
+                pDialog.hide();
+        }
+        /**
+         * Making json array request
+         * */
+        private void makeJsonArryReq() {
+           showProgressDialog();
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                    "http://www.pratilipi.com/api.pratilipi/mobileinit", null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d(TAG, response.toString());
+                            parseJson(response);
+                            hideProgressDialog();
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d(TAG, "Error: " + error.getMessage());
+                    hideProgressDialog();
+                }
+            });
+
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(jsonObjReq,
+                    "jobj_req");
+
+            // Cancelling request
+            // ApplicationController.getInstance().getRequestQueue().cancelAll(tag_json_arry);
+        }
+
+        void parseJson(JSONObject response)
+        {
+            try {
+                JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
+               for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
+                    JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+                    //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
+                    Metadata metaData = new Metadata(
+                            obj.getString("id"),
+                            obj.getString("title"),
+                            obj.getString("type"),
+                            obj.getString("authorId"),
+                            obj.getJSONObject("author").getString("name"),
+                            "",
+                            "",
+                            obj.getString("coverImageUrl"),
+                            obj.getString("pageUrl")
+                            );
+                    mMetaData.add(metaData);
+                }
+                } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
