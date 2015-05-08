@@ -3,7 +3,7 @@
     <item android:top="-5dp" android:left="-5dp" android:right="-5dp">
         <shape android:shape="rectangle">
             <stroke android:color="@color/Gray500" android:width="5dp"/>
-            <solid android:color="@color/Gray500"/>
+            <solid android:color="@color/Gray300"/>
         </shape>
     </item>
     <!--git push-->

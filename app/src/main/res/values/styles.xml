@@ -52,11 +52,12 @@
     </style>
 
     <style name="mycustomactiontabbar" parent="@android:style/Widget.Holo.Light.ActionBar.TabBar">
-        <item name="android:background">@color/Red</item>
+        <item name="android:background">@color/Gray300</item>
+        <item name="android:textColorHint">@color/Red</item>
     </style>
 
     <style name="mytabtext" parent="Base.Widget.AppCompat.Light.ActionBar.TabText">
-        <item name="android:textColor">@color/White</item>
+        <item name="android:textColor">@color/Gray800</item>
     </style>
 
 </resources>
