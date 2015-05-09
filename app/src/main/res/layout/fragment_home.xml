@@ -28,15 +28,43 @@
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:padding="20dp"/>
-            <com.pratilipi.pratilipi.HorizontalListView
+            <HorizontalScrollView
                 android:layout_below="@id/fetures_tv"
-                android:id="@+id/listview_featured"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:divider="#fff"
                 android:fadingEdgeLength="5dp"
-                android:requiresFadingEdge="horizontal"
-                widget:dividerWidth="3dp" />
+                android:requiresFadingEdge="horizontal">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/hindi1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/hindi2"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/g1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/g2"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/t1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/t2"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -58,15 +86,52 @@
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:padding="20dp"/>
-            <com.pratilipi.pratilipi.HorizontalListView
+            <HorizontalScrollView
                 android:layout_below="@id/release_tv"
-                android:id="@+id/listview_new_releases"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:divider="#fff"
                 android:fadingEdgeLength="5dp"
-                android:requiresFadingEdge="horizontal"
-                widget:dividerWidth="3dp" />
+                android:requiresFadingEdge="horizontal">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/hindi1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/hindi2"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/g1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/g2"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/t1"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/t2"/>
+                </LinearLayout>
+            </HorizontalScrollView>
+            <!--<com.pratilipi.pratilipi.HorizontalListView-->
+                <!--android:layout_below="@id/release_tv"-->
+                <!--android:id="@+id/listview_new_releases"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="fill_parent"-->
+                <!--android:divider="#fff"-->
+                <!--android:fadingEdgeLength="5dp"-->
+                <!--android:requiresFadingEdge="horizontal"-->
+                <!--widget:dividerWidth="3dp" />-->
         </RelativeLayout>
     </LinearLayout>
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"

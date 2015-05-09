@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -197,6 +198,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
         private ArrayList<Metadata> mMetaData ;
+        CustomArrayAdapter adapter;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -207,13 +209,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             rb.setChecked(true);
 
             pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Loading...");
+//            pDialog.setMessage("Loading...");
             pDialog.setCancelable(false);
             mMetaData = new ArrayList<Metadata>();
-            makeJsonArryReq();
-            CustomArrayAdapter adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
-            HorizontalListView lv = (HorizontalListView) rootView.findViewById(R.id.listview_new_releases);
-            lv.setAdapter(adapter);
+            for(int i=0;i<6;i++)
+                mMetaData.add(new Metadata());
+//            makeJsonArryReq();
+            adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
+//            ListView lv = (ListView) rootView.findViewById(R.id.listview_new_releases);
+//            lv.setAdapter(adapter);
+//            ListView lv2 = (ListView) rootView.findViewById(R.id.listview_featured);
+//            lv2.setAdapter(adapter);
             return rootView;
         }
         private ProgressDialog pDialog;
@@ -281,7 +287,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            adapter.notifyDataSetChanged();
         }
     }
 

@@ -13,6 +13,10 @@ public class Metadata {
 	String _pageUrl;
     String _index;
 
+    public Metadata()
+    {
+
+    }
 	// constructor
 	public Metadata(String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl) {
 		this._pid = _pid;
