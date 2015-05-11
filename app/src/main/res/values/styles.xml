@@ -1,7 +1,8 @@
 <resources>
 
-    <style name="splashScreenTheme" parent="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+    <style name="splashScreenTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <!-- Base application theme. -->
@@ -9,7 +10,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
+    <style name="FullscreenTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@null</item>
         <item name="metaButtonBarStyle">@style/ButtonBar</item>
@@ -28,35 +29,35 @@
     <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
     <style name="ButtonBarButton" />
 
-    <style name="actionBar" parent="@android:style/Theme.Holo.Light">
+    <style name="actionBar" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/myactiontheme</item>
         <item name="android:actionBarTabStyle">@style/mycustomactiontab</item>
         <item name="android:actionBarTabBarStyle">@style/mycustomactiontabbar</item>
         <item name="android:actionBarTabTextStyle">@style/mytabtext</item>
     </style>
 
-    <style name="myactiontheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+    <style name="myactiontheme" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
         <item name="android:background">@color/Red</item>
         <item name="android:windowActionBar">true</item>
         <item name="android:windowNoTitle">false</item>
     </style>
 
-    <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    <style name="MyTheme.ActionBar.TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="mycustomactiontab" parent="@android:style/Widget.Holo.Light.ActionBar.TabBar">
+    <style name="mycustomactiontab" parent="@style/Widget.AppCompat.ActionBar.TabBar">
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/custom_action_bar_tab</item>
     </style>
 
-    <style name="mycustomactiontabbar" parent="@android:style/Widget.Holo.Light.ActionBar.TabBar">
+    <style name="mycustomactiontabbar" parent="@style/Widget.AppCompat.ActionBar.TabBar">
         <item name="android:background">@color/Gray300</item>
         <item name="android:textColorHint">@color/Red</item>
     </style>
 
-    <style name="mytabtext" parent="Base.Widget.AppCompat.Light.ActionBar.TabText">
+    <style name="mytabtext" parent="@style/Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">@color/Gray800</item>
     </style>
 
