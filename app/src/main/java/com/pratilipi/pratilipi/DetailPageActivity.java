@@ -10,10 +10,12 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 
 public class DetailPageActivity extends Activity {
@@ -27,30 +29,14 @@ public class DetailPageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_page);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(String name, Context context, AttributeSet attrs) {
         try{
             JSONObject obj = new JSONObject(getIntent().getStringExtra(JSON));
-            final Metadata metaData = new Metadata(
-                    obj.getString("id"),
-                    obj.getString("title"),
-                    obj.getString("type"),
-                    obj.getString("authorId"),
-                    obj.getJSONObject("author").getString("name"),
-                    "",
-                    "",
-                    obj.getString("coverImageUrl"),
-                    obj.getString("pageUrl")
-            );
-//                              mMetaData.add(metaData);
+            TextView title = (TextView) findViewById(R.id.titleTextView);
+            title.setText(obj.getString("title"));
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return super.onCreateView(name, context, attrs);
     }
 
     @Override
