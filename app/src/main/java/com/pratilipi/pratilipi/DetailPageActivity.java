@@ -27,17 +27,19 @@ public class DetailPageActivity extends Activity {
     public static final String PID = "PId";
     public static final String POSITION = "Position";
     public static final String JSON = "JSON";
-    private String _pId;
+    private JSONObject obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_page);
         try{
-            JSONObject obj = new JSONObject(getIntent().getStringExtra(JSON));
+            obj = new JSONObject(getIntent().getStringExtra(JSON));
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
-            title.setText(obj.getString("title"));
+            String s = obj.getString("title");
+            String temp = new String(s.getBytes(), "UTF16");
+            title.setText(temp);
             Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
             title.setTypeface(typeFace);
 
@@ -52,44 +54,21 @@ public class DetailPageActivity extends Activity {
                 ratingBar.setRating(val);
                 averageRatingTextView.setText("Average rating: " + val +"/5");
             }
+
             TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
             TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);
             authorTextView.setText(obj.getJSONObject("author").getString("name"));
-
             summaryTextView.setText(obj.getString("summary"));
-
 
         }catch (Exception e){
             e.printStackTrace();
         }
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_detail_page, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void launchReader(View view)
     {
         Intent i = new Intent(this, ReadActivity.class);
+        i.putExtra(DetailPageActivity.JSON,  obj.toString());
         startActivity(i);
     }
 }

@@ -334,7 +334,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                                              public void onClick(View v) {
                                                                  Intent i = new Intent(getActivity(), DetailPageActivity.class);
                                                                  i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                                                                         getActivity().startActivity(i);
+                                                                 getActivity().startActivity(i);
                                                              }
                                                          }
                        );

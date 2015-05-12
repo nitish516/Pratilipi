@@ -37,14 +37,5 @@
     <string name="title_activity_read">pratilipi</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string-array name="planets_array">
-        <item>Chapter 1</item>
-        <item>Chapter 2</item>
-        <item>Chapter 3</item>
-        <item>Chapter 4</item>
-        <item>Chapter 5</item>
-        <item>Chapter 6</item>
-        <item>Chapter 7</item>
-    </string-array>
 
 </resources>

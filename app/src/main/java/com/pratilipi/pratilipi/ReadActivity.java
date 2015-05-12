@@ -7,6 +7,7 @@ import android.os.Message;
 import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -17,9 +18,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.helper.FontProvider;
 import com.pratilipi.pratilipi.util.CustomViewPager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReadActivity extends ActionBarActivity implements ReaderFragment.OnSwipeListener{
 
@@ -34,21 +45,40 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private String[] mPlanetTitles;
+    private ArrayList<String> mTitles;
     private static final String ARG_SECTION_NUMBER = "section_number";
     private CustomViewPager pagesView;
+    public static final String JSON = "JSON";
+    private JSONObject obj;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_read);
+        mTitles = new ArrayList<>();
+        try {
+            obj = new JSONObject(getIntent().getStringExtra(JSON));
+            Gson gson = new GsonBuilder().create();
+            JsonArray indexArr = gson.fromJson( obj.getString("index"), JsonElement.class ).getAsJsonArray();
+            for (int i = 0; i < indexArr.size(); i++) {
+                JsonObject jsonObject = indexArr.get( i ).getAsJsonObject();
+                String title = jsonObject.get( "title" ).toString();
+                Log.d("TITLE",title);
+                mTitles.add(i,title.substring(1,title.length()-1));
+            }
+            }catch (JSONException e) {
+                e.getCause();
+                e.printStackTrace();
+            }catch (Exception e){
+        e.printStackTrace();
+    }
+
+            setContentView(R.layout.activity_read);
         controlsView = findViewById(R.id.main_layout);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_layout);
         mDrawerList = (ListView) findViewById(R.id.right_drawer);
 
-        mPlanetTitles = getResources().getStringArray(R.array.planets_array);
 
         mDecorView  = getWindow().getDecorView();
         mDecorView.setOnSystemUiVisibilityChangeListener(new
@@ -89,7 +119,7 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         });
 
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mPlanetTitles));
+                R.layout.drawer_list_item, mTitles));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         selectItem(0);
@@ -144,6 +174,9 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_read, menu);
+        if(mTitles.size()<1){
+            menu.findItem(R.id.action_index).setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -231,7 +264,7 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
 //                .commit();
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
-//        setTitle(mPlanetTitles[position]);
+//        setTitle(mTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 }

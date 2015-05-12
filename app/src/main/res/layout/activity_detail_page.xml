@@ -105,6 +105,5 @@ android:layout_marginRight="10dp">
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
-    android:text="This thriller is third book of blockbuster series.This is a dummy summary."
    android:layout_marginTop="15dp"/>
 </LinearLayout>
