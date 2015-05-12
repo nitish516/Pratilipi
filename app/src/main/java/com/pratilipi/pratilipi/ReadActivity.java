@@ -16,8 +16,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -31,6 +37,9 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ReadActivity extends ActionBarActivity implements ReaderFragment.OnSwipeListener{
 
@@ -50,6 +59,25 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
     private CustomViewPager pagesView;
     public static final String JSON = "JSON";
     private JSONObject obj;
+    private static String TAG = MainActivity.class.getSimpleName();
+    private String content;
+    private Matcher matcher;
+    private static final Gson gson = new GsonBuilder().create();
+
+
+    private static final String pageBreak = "<div style=\"page-break-after:always\"></div>";
+    private static final Pattern pageBreakPattern = Pattern.compile(
+            "<div style=\"page-break-after:always\"></div>" // Pratilipi
+                    + "|"
+                    + "<div\\s+style=\"page-break-(before|after).+?>(.+?)</div>" // CK Editor
+                    + "|"
+                    + "<hr\\s+style=\"page-break-(before|after).+?>" // MS Word
+    );
+//
+//    private static final Pattern titlePattern = Pattern.compile(
+//            "<h1.*?>(<.+?>)*(?<title>.+?)(</.+?>)*</h1>"
+//                    + "|"
+//                    + "<h2.*?>(<.+?>)*(?<subTitle>.+?)(</.+?>)*</h2>" );
 
 
     @Override
@@ -58,6 +86,31 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         mTitles = new ArrayList<>();
         try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
+            Long pId = obj.getLong("id");
+            String type = obj.getString("contentType");
+            String url = "";
+            if(type.equalsIgnoreCase("PRATILIPI"))
+                url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
+            else if(type.equalsIgnoreCase("IMAGE"))
+                url ="http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId=";
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url+pId, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d(TAG, response.toString());
+                            parseJson(response);
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d(TAG, "Error: " + error.getMessage());
+                }
+            });
+
+            // Adding request to request queue
+            AppController.getInstance().addToRequestQueue(jsonObjReq,
+                    "jobj_req");
             Gson gson = new GsonBuilder().create();
             JsonArray indexArr = gson.fromJson( obj.getString("index"), JsonElement.class ).getAsJsonArray();
             for (int i = 0; i < indexArr.size(); i++) {
@@ -73,7 +126,7 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         e.printStackTrace();
     }
 
-            setContentView(R.layout.activity_read);
+        setContentView(R.layout.activity_read);
         controlsView = findViewById(R.id.main_layout);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_layout);
@@ -123,6 +176,68 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         selectItem(0);
+    }
+
+    void parseJson(JSONObject response) {
+        try {
+            content = response.getString("pageContent");
+
+            matcher = pageBreakPattern.matcher( content );
+            Log.d(TAG,content);
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public String getContent( int pageNo ) {
+
+        matcher.reset();
+
+        int pageCount = 0;
+        int startIndex = 0;
+        int endIndex = 0;
+        String pageContent = null;
+
+        while( endIndex < content.length() ) {
+            pageCount++;
+            startIndex = endIndex;
+
+            if( matcher.find() ) {
+                endIndex = matcher.end();
+                pageContent = content.substring( startIndex, matcher.start() );
+            } else {
+                endIndex = content.length();
+                pageContent = content.substring( startIndex );
+            }
+
+            if( pageCount == pageNo )
+                break;
+        }
+
+        return pageContent;
+    }
+
+    public int getPageCount() {
+
+        matcher.reset();
+
+        int pageCount = 0;
+        int startIndex = 0;
+        int endIndex = 0;
+
+        while( endIndex < content.length() ) {
+            pageCount++;
+            startIndex = endIndex;
+
+            if( matcher.find() )
+                endIndex = matcher.end();
+            else
+                endIndex = content.length();
+        }
+
+        return pageCount;
     }
 
     private void hideSystemUI(){
