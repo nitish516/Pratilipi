@@ -11,11 +11,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.pratilipi.pratilipi.DataFiles.Metadata;
+
+import org.json.JSONObject;
+
 
 public class DetailPageActivity extends Activity {
 
     public static final String PID = "PId";
     public static final String POSITION = "Position";
+    public static final String JSON = "JSON";
     private String _pId;
 
     @Override
@@ -27,8 +32,23 @@ public class DetailPageActivity extends Activity {
     @Nullable
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {
-        Intent i = getIntent();
-        _pId = i.getStringExtra(PID);
+        try{
+            JSONObject obj = new JSONObject(getIntent().getStringExtra(JSON));
+            final Metadata metaData = new Metadata(
+                    obj.getString("id"),
+                    obj.getString("title"),
+                    obj.getString("type"),
+                    obj.getString("authorId"),
+                    obj.getJSONObject("author").getString("name"),
+                    "",
+                    "",
+                    obj.getString("coverImageUrl"),
+                    obj.getString("pageUrl")
+            );
+//                              mMetaData.add(metaData);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return super.onCreateView(name, context, attrs);
     }

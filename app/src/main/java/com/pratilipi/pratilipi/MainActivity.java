@@ -28,10 +28,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.SearchView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +41,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.NetworkImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.CustomArrayAdapter;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
@@ -232,6 +236,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
         private ArrayList<Metadata> mMetaData ;
         CustomArrayAdapter adapter;
+        private ProgressBar pBar;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -241,15 +246,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             RadioButton rb = (RadioButton) rootView.findViewById(R.id.radio_top);
             rb.setChecked(true);
 
-            pDialog = new ProgressDialog(getActivity());
-//            pDialog.setMessage("Loading...");
-            pDialog.setCancelable(false);
+            pBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
             mMetaData = new ArrayList<Metadata>();
             for(int i=0;i<6;i++)
                 mMetaData.add(new Metadata());
-//            makeJsonArryReq();
-            adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
-//            ListView lv = (ListView) rootView.findViewById(R.id.listview_new_releases);
+            makeJsonArryReq((LinearLayout) rootView.findViewById(R.id.linear_layout_featured) );
+//            adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
+//            LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.linear_layout);
 //            lv.setAdapter(adapter);
 //            ListView lv2 = (ListView) rootView.findViewById(R.id.listview_featured);
 //            lv2.setAdapter(adapter);
@@ -258,26 +261,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private ProgressDialog pDialog;
 
         private void showProgressDialog() {
-            if (!pDialog.isShowing())
-                pDialog.show();
+                pBar.setVisibility(View.VISIBLE);
         }
 
         private void hideProgressDialog() {
-            if (pDialog.isShowing())
-                pDialog.hide();
+                pBar.setVisibility(View.GONE);
         }
         /**
          * Making json array request
          * */
-        private void makeJsonArryReq() {
-           showProgressDialog();
+        private void makeJsonArryReq(final LinearLayout layout) {
+          showProgressDialog();
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    "http://www.pratilipi.com/api.pratilipi/mobileinit", null,
+                    "http://www.pratilipi.com/api.pratilipi/mobileinit?languageId=5130467284090880", null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d(TAG, response.toString());
-                            parseJson(response);
+                            parseJson(response,layout);
                             hideProgressDialog();
                         }
                     }, new Response.ErrorListener() {
@@ -297,30 +298,51 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // ApplicationController.getInstance().getRequestQueue().cancelAll(tag_json_arry);
         }
 
-        void parseJson(JSONObject response)
+        void parseJson(JSONObject response, LinearLayout layout)
         {
             try {
-                JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
-               for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
-                    JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
-                    //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
-                    Metadata metaData = new Metadata(
-                            obj.getString("id"),
-                            obj.getString("title"),
-                            obj.getString("type"),
-                            obj.getString("authorId"),
-                            obj.getJSONObject("author").getString("name"),
-                            "",
-                            "",
-                            obj.getString("coverImageUrl"),
-                            obj.getString("pageUrl")
-                            );
-                    mMetaData.add(metaData);
-                }
+                   JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
+                   for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
+                        final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+                        //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
+                        final Metadata metaData = new Metadata(
+                                obj.getString("id"),
+                                obj.getString("title"),
+                                obj.getString("type"),
+                                obj.getString("authorId"),
+                                obj.getJSONObject("author").getString("name"),
+                                "",
+                                "",
+                                obj.getString("coverImageUrl"),
+                                obj.getString("pageUrl")
+                                );
+//                              mMetaData.add(metaData);
+
+                         LinearLayout viewItemlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+                         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
+                         NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
+                         RatingBar ratingBar  = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
+                         if(obj.getLong("ratingCount")> 0) {
+                             ratingBar.setRating((float)obj.getLong("starCount")/obj.getLong("ratingCount"));
+                         }
+                         // Populate the image
+                         imageView.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader);
+                         layout.addView(viewItemlayout);
+                       viewItemlayout.setOnClickListener(new View.OnClickListener() {
+                                                             @Override
+                                                             public void onClick(View v) {
+                                                                 Intent i = new Intent(getActivity(), DetailPageActivity.class);
+                                                                 i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                                                                         getActivity().startActivity(i);
+                                                             }
+                                                         }
+                       );
+                    }
                 } catch (JSONException e) {
                 e.printStackTrace();
             }
-            adapter.notifyDataSetChanged();
+//            adapter.notifyDataSetChanged();
         }
     }
 
