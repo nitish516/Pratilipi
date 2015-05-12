@@ -3,6 +3,7 @@ package com.pratilipi.pratilipi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ public class DetailPageActivity extends Activity {
             JSONObject obj = new JSONObject(getIntent().getStringExtra(JSON));
             TextView title = (TextView) findViewById(R.id.titleTextView);
             title.setText(obj.getString("title"));
+            Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
+            title.setTypeface(typeFace);
         }catch (Exception e){
             e.printStackTrace();
         }
