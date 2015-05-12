@@ -13,7 +13,8 @@ android:layout_marginRight="10dp">
     android:layout_height="wrap_content"
     android:layout_gravity="fill_horizontal"
     >
-    <ImageView
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/detail_image"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:src="@drawable/splash"/>
@@ -40,7 +41,7 @@ android:layout_marginRight="10dp">
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <RatingBar
-                android:id="@+id/averageRatingRatingBar"
+                android:id="@+id/averageRatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?android:attr/ratingBarStyleSmall"
@@ -56,11 +57,11 @@ android:layout_marginRight="10dp">
                 android:text="Average rating: -/5"
                 android:layout_margin="5dp"/>
             </LinearLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:text="Thriller"
-                android:layout_margin="5dp"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="20dp"-->
+                <!--android:text="Thriller"-->
+                <!--android:layout_margin="5dp"/>-->
        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,23 +83,23 @@ android:layout_marginRight="10dp">
         </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-<RatingBar
-    android:id="@+id/yourRatingRatingBar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    style="?android:attr/ratingBarStyleSmall"
-    android:numStars="5"
-    android:stepSize="0.1"
-    android:isIndicator="true"
-    android:layout_marginTop="15dp"
-    android:layout_marginLeft="15dp"/>
-<TextView
-    android:id="@+id/yourRatingTextView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    android:text="Your rating: -/5"
-    android:layout_marginLeft="10dp"/>
+<!--<RatingBar-->
+    <!--android:id="@+id/yourRatingRatingBar"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--style="?android:attr/ratingBarStyleSmall"-->
+    <!--android:numStars="5"-->
+    <!--android:stepSize="0.1"-->
+    <!--android:isIndicator="true"-->
+    <!--android:layout_marginTop="15dp"-->
+    <!--android:layout_marginLeft="15dp"/>-->
+<!--<TextView-->
+    <!--android:id="@+id/yourRatingTextView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+    <!--android:text="Your rating: -/5"-->
+    <!--android:layout_marginLeft="10dp"/>-->
 <TextView
     android:id="@+id/summaryTextView"
     android:layout_width="match_parent"

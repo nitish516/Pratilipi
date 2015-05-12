@@ -11,8 +11,11 @@ import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 
 import org.json.JSONObject;
@@ -32,10 +35,30 @@ public class DetailPageActivity extends Activity {
         setContentView(R.layout.activity_detail_page);
         try{
             JSONObject obj = new JSONObject(getIntent().getStringExtra(JSON));
+
             TextView title = (TextView) findViewById(R.id.titleTextView);
             title.setText(obj.getString("title"));
             Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
             title.setTypeface(typeFace);
+
+            ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+            NetworkImageView imageView = (NetworkImageView) findViewById(R.id.detail_image);
+            imageView.setImageUrl("http:" +obj.getString("coverImageUrl"), imageLoader);
+
+            RatingBar ratingBar  = (RatingBar) findViewById(R.id.averageRatingBar);
+            TextView averageRatingTextView = (TextView) findViewById(R.id.averageRatingTextView);
+            if(obj.getLong("ratingCount")> 0) {
+                float val = (float)obj.getLong("starCount")/obj.getLong("ratingCount");
+                ratingBar.setRating(val);
+                averageRatingTextView.setText("Average rating: " + val +"/5");
+            }
+            TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
+            TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);
+            authorTextView.setText(obj.getJSONObject("author").getString("name"));
+
+            summaryTextView.setText(obj.getString("summary"));
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
