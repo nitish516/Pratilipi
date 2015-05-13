@@ -300,11 +300,14 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.action_font_dec:
-                changeFont(false);
-                return true;
-            case R.id.action_font_inc:
-                changeFont(true);
+//            case R.id.action_font_dec:
+//                changeFont(false);
+//                return true;
+//            case R.id.action_font_inc:
+//                changeFont(true);
+//                return true;
+            case R.id.action_font:
+                openActionProvider();
                 return true;
             case R.id.action_index:
                 openIndex();
@@ -321,6 +324,10 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         } else {
             mDrawerLayout.openDrawer(Gravity.RIGHT);
         }
+    }
+
+    public void openActionProvider(){
+
     }
 
     public void changeFont(boolean isIncrease)
