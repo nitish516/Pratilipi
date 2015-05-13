@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PersistableBundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -135,16 +136,16 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
 
         mDecorView  = getWindow().getDecorView();
         mDecorView.setOnSystemUiVisibilityChangeListener(new
-        View.OnSystemUiVisibilityChangeListener(){
+                                                                 View.OnSystemUiVisibilityChangeListener() {
 
-             @Override
-             public void onSystemUiVisibilityChange(int visibility) {
-                 boolean visible = (visibility & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0;
-                 controlsView.setVisibility(visible
-                         ? View.VISIBLE
-                         : View.GONE);
-             }
-        });
+                                                                     @Override
+                                                                     public void onSystemUiVisibilityChange(int visibility) {
+                                                                         boolean visible = (visibility & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0;
+                                                                         controlsView.setVisibility(visible
+                                                                                 ? View.VISIBLE
+                                                                                 : View.GONE);
+                                                                     }
+                                                                 });
 
         controlsView.setClickable(true);
 
@@ -176,6 +177,9 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         selectItem(0);
+
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     void parseJson(JSONObject response) {
@@ -312,6 +316,8 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
             case R.id.action_index:
                 openIndex();
                 return true;
+            case R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
             default:
                 return super.onOptionsItemSelected(item);
         }

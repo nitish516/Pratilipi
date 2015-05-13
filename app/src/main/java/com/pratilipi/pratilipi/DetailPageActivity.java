@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,11 +38,12 @@ public class DetailPageActivity extends Activity {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
-            String s = obj.getString("title");
-            String temp = new String(s.getBytes(), "UTF16");
-            title.setText(temp);
-            Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
+
+            final Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
             title.setTypeface(typeFace);
+            String s = obj.getString("title");
+        //    String temp = new String(s.getBytes(), "UTF-8");
+            title.setText(s);
 
             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
             NetworkImageView imageView = (NetworkImageView) findViewById(R.id.detail_image);
@@ -54,15 +56,17 @@ public class DetailPageActivity extends Activity {
                 ratingBar.setRating(val);
                 averageRatingTextView.setText("Average rating: " + val +"/5");
             }
-
             TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
             TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);
             authorTextView.setText(obj.getJSONObject("author").getString("name"));
+
             summaryTextView.setText(obj.getString("summary"));
+
 
         }catch (Exception e){
             e.printStackTrace();
         }
+
     }
 
     public void launchReader(View view)

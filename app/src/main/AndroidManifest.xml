@@ -50,7 +50,11 @@
             android:icon="@drawable/back"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_read"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:theme="@style/Theme.AppCompat.Light">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 
