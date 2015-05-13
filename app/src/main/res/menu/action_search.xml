@@ -8,4 +8,8 @@
         android:title="Search"
         android:showAsAction="always"
         android:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:showAsAction="never" />
 </menu>

@@ -80,14 +80,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public boolean onCreateOptionsMenu(Menu menu) {
 
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.action_search, menu);
-//        SearchManager searchMgr = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-//
-//        searchView.setSearchableInfo(searchMgr.getSearchableInfo(getComponentName()));
-//        searchView.setIconifiedByDefault(false);
-//        searchView.setSubmitButtonEnabled(true);
-
+        MenuInflater mi = getMenuInflater();
+        mi.inflate(R.menu.menu_main, menu);
         return true;
     }
 
