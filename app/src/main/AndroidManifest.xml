@@ -47,7 +47,6 @@
         </activity>
         <activity
             android:name=".ReadActivity"
-            android:icon="@drawable/back"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_read"
             android:theme="@style/Theme.AppCompat.Light">
@@ -55,6 +54,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/app_name"
+            android:theme="@style/actionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
         </activity>
     </application>
 

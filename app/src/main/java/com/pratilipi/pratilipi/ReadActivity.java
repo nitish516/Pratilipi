@@ -1,6 +1,7 @@
 package com.pratilipi.pratilipi;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,10 +9,12 @@ import android.os.PersistableBundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Layout;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -293,6 +298,18 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_read, menu);
+
+//        MenuItem mItem = (MenuItem) menu.findItem(R.id.action_font);
+//
+//        ShareActionProvider mShare = (ShareActionProvider) mItem.getActionProvider();
+//
+//        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//        shareIntent.setAction(Intent.ACTION_SEND);
+//        shareIntent.setType("text/plain");
+//        shareIntent.putExtra(Intent.EXTRA_TEXT, "Text to share");
+//
+//        mShare.setShareIntent(shareIntent);
+
         if(mTitles.size()<1){
             menu.findItem(R.id.action_index).setVisible(false);
         }
@@ -302,6 +319,7 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle presses on the action bar items
         switch (item.getItemId()) {
 //            case R.id.action_font_dec:
@@ -333,6 +351,7 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
     }
 
     public void openActionProvider(){
+//        Toast.makeText(this,"Clicked",Toast.LENGTH_SHORT).show();
 
     }
 

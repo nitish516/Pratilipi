@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -23,18 +22,16 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -81,7 +78,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         super.onCreateOptionsMenu(menu);
         MenuInflater mi = getMenuInflater();
-        mi.inflate(R.menu.menu_main, menu);
+        mi.inflate(R.menu.action_search, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch (item.getItemId()) {
+
+            case R.id.action_search_item:
+                Intent inti = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(inti);
+
+                return true;
+            default: Toast.makeText(getApplicationContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
+        }
         return true;
     }
 

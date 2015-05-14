@@ -20,7 +20,7 @@
         android:title="@string/action_font"
         app:showAsAction="ifRoom"
         android:actionLayout="@layout/action_provider"
-        android:actionProviderClass="com.pratilipi.pratilipi.helper.FontProvider"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         />
     <item android:id="@+id/action_index"
         android:icon="@drawable/hamburger"
