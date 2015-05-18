@@ -1,4 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+<LinearLayout
     android:orientation="vertical"
     android:id="@+id/relative_layout"
     android:layout_width="match_parent"
@@ -49,9 +54,10 @@
                 <LinearLayout
                     android:id="@+id/linear_layout_featured"
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_height="250dp"
                     android:orientation="horizontal"
                     android:scrollbarAlwaysDrawHorizontalTrack="false"
+                    android:layout_marginLeft="20dp"
                     >
 
                 </LinearLayout>
@@ -155,3 +161,4 @@
             android:gravity="center"/>
     </RadioGroup>
 </LinearLayout>
+</ScrollView>

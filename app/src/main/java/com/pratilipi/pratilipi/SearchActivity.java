@@ -11,18 +11,22 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
 /**
  * Created by MOHIT KHAITAN on 14-05-2015.
  */
-public class SearchActivity extends ActionBarActivity {
 
-    private TextView txtqury;
+
+public class SearchActivity extends ActionBarActivity {
+    TextView txtqury;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_layout);
+
+        txtqury = (TextView)findViewById(R.id.txtQuery);
     }
 
     @Override
@@ -32,9 +36,8 @@ public class SearchActivity extends ActionBarActivity {
         MenuInflater mi = getMenuInflater();
         mi.inflate(R.menu.menu_main, menu);
 
-//        MenuItem menuItem = menu.findItem(R.id.action_search);
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-//        searchView.setIconifiedByDefault(true);
+        SearchView searchVeiw = (SearchView)menu.findItem(R.id.action_search).getActionView();
+        searchVeiw.setIconified(true);
 
         return true;
     }

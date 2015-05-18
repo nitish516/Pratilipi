@@ -32,6 +32,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -87,10 +88,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         switch (item.getItemId()) {
 
             case R.id.action_search_item:
-                Intent inti = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(inti);
-
-                return true;
+                 Intent inti = new Intent(MainActivity.this, SearchActivity.class);
+                 startActivity(inti);
+                 return true;
             default: Toast.makeText(getApplicationContext(), "Wrong Input", Toast.LENGTH_SHORT).show();
         }
         return true;
@@ -108,11 +108,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
     }
 
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Create the adapter that will return a fragment for each of the three primary sections
+         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
         mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
@@ -328,8 +329,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
                          NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
                          RatingBar ratingBar  = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
+                         TextView ratingNum = (TextView)viewItemlayout.findViewById(R.id.ratingNumber);
                          if(obj.getLong("ratingCount")> 0) {
-                             ratingBar.setRating((float)obj.getLong("starCount")/obj.getLong("ratingCount"));
+                             ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+                             ratingNum.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
                          }
                          // Populate the image
                          imageView.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader);
