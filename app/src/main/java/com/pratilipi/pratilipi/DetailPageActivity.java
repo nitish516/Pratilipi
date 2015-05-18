@@ -51,10 +51,12 @@ public class DetailPageActivity extends Activity {
 
             RatingBar ratingBar  = (RatingBar) findViewById(R.id.averageRatingBar);
             TextView averageRatingTextView = (TextView) findViewById(R.id.averageRatingTextView);
+            TextView detailPageRate = (TextView)findViewById(R.id.detailPageRatingNumber);
             if(obj.getLong("ratingCount")> 0) {
                 float val = (float)obj.getLong("starCount")/obj.getLong("ratingCount");
                 ratingBar.setRating(val);
-                averageRatingTextView.setText("Average rating: " + val +"/5");
+                averageRatingTextView.setText("Average rating: " + String.valueOf(val) + "/5");
+                detailPageRate.setText(String.valueOf("("+obj.getLong("ratingCount"))+" rating)");
             }
             TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
             TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);

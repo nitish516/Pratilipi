@@ -36,9 +36,11 @@ android:layout_marginRight="10dp">
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Author Name"
             android:layout_margin="5dp"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="horizontal">
             <RatingBar
                 android:id="@+id/averageRatingBar"
@@ -48,15 +50,23 @@ android:layout_marginRight="10dp">
                 android:numStars="5"
                 android:stepSize="0.1"
                 android:isIndicator="true"
-                android:layout_margin="5dp"/>
-            <TextView
-                android:id="@+id/averageRatingTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Average rating: -/5"
-                android:layout_margin="5dp"/>
-            </LinearLayout>
+                android:layout_margin="5dp"
+                android:layout_gravity="center"/>
+                <TextView
+                    android:id="@+id/detailPageRatingNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/averageRatingBar"
+                    android:text="(124 rating)"
+                    android:layout_gravity="center" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/averageRatingTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Average rating: -/5"
+            android:layout_margin="5dp"/>
             <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="20dp"-->
