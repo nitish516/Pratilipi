@@ -18,12 +18,12 @@
     <item android:id="@+id/action_font"
         android:icon="@drawable/aa"
         android:title="@string/action_font"
-        app:showAsAction="ifRoom"
-        android:actionLayout="@layout/action_provider"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        />
+        app:showAsAction="always|collapseActionView"
+        app:actionLayout="@layout/action_provider" />
+        <!--android:actionProviderClass="com.pratilipi.pratilipi.helper.FontProvider"/>-->
+
     <item android:id="@+id/action_index"
         android:icon="@drawable/hamburger"
         android:title="@string/action_index"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>

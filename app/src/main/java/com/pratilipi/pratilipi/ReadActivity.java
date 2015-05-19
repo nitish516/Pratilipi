@@ -15,6 +15,7 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.support.v7.internal.view.menu.ActionMenuItem;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -297,20 +298,10 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_read, menu);
+           getMenuInflater().inflate(R.menu.menu_read, menu);
+           final MenuItem mItem = (MenuItem) menu.findItem(R.id.action_font);
 
-//        MenuItem mItem = (MenuItem) menu.findItem(R.id.action_font);
-//
-//        ShareActionProvider mShare = (ShareActionProvider) mItem.getActionProvider();
-//
-//        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//        shareIntent.setAction(Intent.ACTION_SEND);
-//        shareIntent.setType("text/plain");
-//        shareIntent.putExtra(Intent.EXTRA_TEXT, "Text to share");
-//
-//        mShare.setShareIntent(shareIntent);
-
-        if(mTitles.size()<1){
+       if(mTitles.size()<1){
             menu.findItem(R.id.action_index).setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -329,7 +320,6 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
 //                changeFont(true);
 //                return true;
             case R.id.action_font:
-                openActionProvider();
                 return true;
             case R.id.action_index:
                 openIndex();
@@ -348,11 +338,6 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
         } else {
             mDrawerLayout.openDrawer(Gravity.RIGHT);
         }
-    }
-
-    public void openActionProvider(){
-//        Toast.makeText(this,"Clicked",Toast.LENGTH_SHORT).show();
-
     }
 
     public void changeFont(boolean isIncrease)
