@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PersistableBundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Layout;
@@ -295,11 +296,13 @@ public class ReadActivity extends ActionBarActivity implements ReaderFragment.On
             mHideSystemUiHandler.removeMessages(0);
     }
 
+    private ShareActionProvider mShareActionProvider;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
            getMenuInflater().inflate(R.menu.menu_read, menu);
            final MenuItem mItem = (MenuItem) menu.findItem(R.id.action_font);
+                mItem.getActionView();
 
        if(mTitles.size()<1){
             menu.findItem(R.id.action_index).setVisible(false);

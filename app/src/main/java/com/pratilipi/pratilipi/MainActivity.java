@@ -347,6 +347,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                                          }
                        );
                     }
+
+                LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+                layout.addView(morebtnlayout);
+
                 } catch (JSONException e) {
                 e.printStackTrace();
             }
