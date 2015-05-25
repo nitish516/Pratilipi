@@ -47,6 +47,7 @@ import com.pratilipi.pratilipi.adapter.CustomArrayAdapter;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
+import com.software.shell.fab.ActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -141,6 +142,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 
+        final ActionButton actionButtonPrevious = (ActionButton)findViewById(R.id.action_fab);
+
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             // Create a tab with text corresponding to the page title defined by the adapter.
@@ -166,6 +169,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                 }
                             }));
         }
+        actionButtonPrevious.setType(ActionButton.Type.DEFAULT);
+        actionButtonPrevious.setButtonColor(getResources().getColor(R.color.fab_material_white));
+        actionButtonPrevious.setButtonColorPressed(getResources().getColor(R.color.fab_material_white));
+        actionButtonPrevious.setImageResource(R.drawable.unnamed);
+        actionButtonPrevious.cancelLongPress();
+        actionButtonPrevious.setButtonColorRipple(getResources().getColor(R.color.fab_material_grey_500));
+        actionButtonPrevious.setShadowResponsiveEffectEnabled(false);
+        actionButtonPrevious.setRippleEffectEnabled(true);
+
+        actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent nxt = new Intent(MainActivity.this, ReadPrevious.class);
+                startActivity(nxt);
+            }
+        });
     }
 
     @Override
@@ -244,9 +263,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         CustomArrayAdapter adapter;
         private ProgressBar pBar;
 
+
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
+
+//            actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent nxt = new Intent(this, ReadPrevious.class);
+//                    startActivity(nxt);
+//                }
+//            });
+
 
             View rootView = inflater.inflate(R.layout.fragment_home, container, false);
             RadioButton rb = (RadioButton) rootView.findViewById(R.id.radio_top);

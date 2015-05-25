@@ -67,6 +67,11 @@
                 android:resource="@xml/searchable" />
 
         </activity>
+        <activity
+            android:name=".ReadPrevious"
+            android:label="Pratilipi"
+            android:theme="@style/actionBar">
+        </activity>
     </application>
 
 </manifest>
