@@ -1,14 +1,17 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true">
 <LinearLayout
     android:orientation="vertical"
     android:id="@+id/relative_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:widget="http://schemas.android.com/apk/res-auto">
+    xmlns:widget="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        android:layout_weight="1" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -136,8 +139,8 @@
                 <!--widget:dividerWidth="3dp" />-->
         </RelativeLayout>
     </LinearLayout>
+    </ScrollView>
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_marginTop="10dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -162,4 +165,3 @@
             android:gravity="center"/>
     </RadioGroup>
 </LinearLayout>
-</ScrollView>
