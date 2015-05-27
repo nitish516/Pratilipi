@@ -32,8 +32,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+//import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -42,6 +44,9 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.CustomArrayAdapter;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
@@ -142,6 +147,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         });
 
+        //Floating Action Button
         final ActionButton actionButtonPrevious = (ActionButton)findViewById(R.id.action_fab);
 
         // For each of the sections in the app, add a tab to the action bar.
@@ -169,6 +175,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                                 }
                             }));
         }
+
+        //Floating Action Button
         actionButtonPrevious.setType(ActionButton.Type.DEFAULT);
         actionButtonPrevious.setButtonColor(getResources().getColor(R.color.fab_material_white));
         actionButtonPrevious.setButtonColorPressed(getResources().getColor(R.color.fab_material_white));
@@ -185,6 +193,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 startActivity(nxt);
             }
         });
+
+
     }
 
     @Override
@@ -201,7 +211,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    /**
+     /**
      * A {@link android.support.v4.app.FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
