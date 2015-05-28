@@ -263,13 +263,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public static class HomeFragment extends Fragment {
 
-
-        //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
         private ArrayList<Metadata> mMetaData ;
         private ProgressBar pBar;
-
-
-
+        private LinearLayout featuredList;
+        private LinearLayout newReleasesList;
+        private ProgressDialog pDialog;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -290,10 +288,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             rb.setChecked(true);
 
             pBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
-            mMetaData = new ArrayList<Metadata>();
-            for(int i=0;i<6;i++)
-                mMetaData.add(new Metadata());
-            makeJsonArryReq((LinearLayout) rootView.findViewById(R.id.linear_layout_featured) );
+            featuredList = (LinearLayout) rootView.findViewById(R.id.linear_layout_featured);
+            newReleasesList = (LinearLayout)rootView.findViewById(R.id.linear_layout_new_releases);
+
+            makeJsonArryReq();
 //            adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
 //            LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.linear_layout);
 //            lv.setAdapter(adapter);
@@ -301,19 +299,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 //            lv2.setAdapter(adapter);
             return rootView;
         }
-        private ProgressDialog pDialog;
 
         private void showProgressDialog() {
-                pBar.setVisibility(View.VISIBLE);
+            pBar.setVisibility(View.VISIBLE);
+        }
+        private void hideProgressDialog() {
+            pBar.setVisibility(View.GONE);
         }
 
-        private void hideProgressDialog() {
-                pBar.setVisibility(View.GONE);
-        }
         /**
          * Making json array request
          * */
-        private void makeJsonArryReq(final LinearLayout layout) {
+        private void makeJsonArryReq() {
           showProgressDialog();
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                     "http://www.pratilipi.com/api.pratilipi/mobileinit?languageId=5130467284090880", null,
@@ -321,7 +318,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         @Override
                         public void onResponse(JSONObject response) {
                             Log.d(TAG, response.toString());
-                            parseJson(response,layout);
+                            parseJson(response);
                             hideProgressDialog();
                         }
                     }, new Response.ErrorListener() {
@@ -341,11 +338,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             // ApplicationController.getInstance().getRequestQueue().cancelAll(tag_json_arry);
         }
 
-        void parseJson(JSONObject response, LinearLayout layout)
+        void parseJson(JSONObject response)
         {
             try {
                    JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
-                   for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
+                   for (int i = 1; i < topReadPratilipiDataList.length(); i++) {
                         final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
                         //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
                         final Metadata metaData = new Metadata(
@@ -373,8 +370,31 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                          }
                          // Populate the image
                          imageView.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader);
-                         layout.addView(viewItemlayout);
+                         featuredList.addView(viewItemlayout);
+
+                       LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+                       ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
+                       NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
+                       RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
+                       TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
+                       if(obj.getLong("ratingCount")> 0) {
+                           ratingBar1.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+                           ratingNum.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
+                       }
+                       // Populate the image
+                       imageView1.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader1);
+                       newReleasesList.addView((layout));
+
                        viewItemlayout.setOnClickListener(new View.OnClickListener() {
+                                                                                       @Override
+                                                                                       public void onClick(View v) {
+                                                                                           Intent i = new Intent(getActivity(), DetailPageActivity.class);
+                                                                                           i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                                                                                           getActivity().startActivity(i);
+                                                                                       }
+                                                                                   }
+                       );
+                       layout.setOnClickListener(new View.OnClickListener() {
                                                              @Override
                                                              public void onClick(View v) {
                                                                  Intent i = new Intent(getActivity(), DetailPageActivity.class);
@@ -386,7 +406,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
 
                 LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-                layout.addView(morebtnlayout);
+                featuredList.addView(morebtnlayout);
+                LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+                newReleasesList.addView((morebtnlayout1));
 
                 } catch (JSONException e) {
                 e.printStackTrace();
