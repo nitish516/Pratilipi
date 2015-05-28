@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -344,14 +345,14 @@ public class ReadActivity extends ActionBarActivity {
 
     public void changeFont(boolean isIncrease)
     {
-//        if(isIncrease && fontSize < 30){
-//            fontSize += 5;
-////            selectItem(0);
-//        }
-//        else if(!isIncrease && fontSize > 10){
-//            fontSize -=5;
-////            selectItem(0);
-//        }
+        if(isIncrease){
+                 WebSettings settings = webView.getSettings();
+                 settings.setTextZoom(settings.getTextZoom() + 5);
+        }
+        else if(!isIncrease){
+                 WebSettings settings = webView.getSettings();
+                 settings.setTextZoom(settings.getTextZoom() - 5);
+        }
     }
 
     /* The click listner for ListView in the navigation drawer */
