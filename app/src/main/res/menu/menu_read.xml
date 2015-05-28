@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<item android:id="@+id/action_font_dec"-->
-        <!--android:icon="@drawable/amin"-->
-        <!--android:title="@string/action_font"-->
-        <!--app:showAsAction="ifRoom"-->
-        <!--android:actionLayout="@layout/action_provider"-->
-        <!--app:actionProviderClass="com.pratilipi.pratilipi.helper.FontProvide"-->
-        <!--/>-->
-    <!--<item android:id="@+id/action_font_inc"-->
-        <!--android:icon="@drawable/aplus"-->
-        <!--android:title="@string/action_font"-->
-        <!--app:showAsAction="ifRoom"-->
-        <!--android:actionLayout="@layout/action_provider"-->
-        <!--app:actionProviderClass="com.pratilipi.pratilipi.helper.FontProvide"-->
-        <!--/>-->
-    <item android:id="@+id/action_font"
-        android:icon="@drawable/aa"
+    <item android:id="@+id/action_font_dec"
+        android:icon="@drawable/amin"
         android:title="@string/action_font"
         app:showAsAction="ifRoom"
-        app:actionLayout="@layout/action_provider" />
-        <!--app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>-->
+        android:actionLayout="@layout/action_provider"
+        app:actionProviderClass="com.pratilipi.pratilipi.helper.FontProvide"
+        />
+    <item android:id="@+id/action_font_inc"
+        android:icon="@drawable/aplus"
+        android:title="@string/action_font"
+        app:showAsAction="ifRoom"
+        android:actionLayout="@layout/action_provider"
+        app:actionProviderClass="com.pratilipi.pratilipi.helper.FontProvide"
+        />
+    <!--<item android:id="@+id/action_font"-->
+        <!--android:icon="@drawable/aa"-->
+        <!--android:title="@string/action_font"-->
+        <!--app:showAsAction="ifRoom"-->
+        <!--app:actionLayout="@layout/action_provider" />-->
+        <!--&lt;!&ndash;app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>&ndash;&gt;-->
 
 
     <item android:id="@+id/action_index"

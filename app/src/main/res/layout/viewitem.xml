@@ -7,13 +7,6 @@
     android:background="#EEEEEE"
     android:paddingRight="20dp"
     >
-
-    <!--<com.android.volley.toolbox.NetworkImageView-->
-        <!--android:id="@+id/image"-->
-        <!--android:layout_width="100dp"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1"-->
-        <!--android:scaleType="centerCrop"/>-->
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/image"
         android:layout_gravity="center"

@@ -48,7 +48,6 @@ import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
-import com.pratilipi.pratilipi.adapter.CustomArrayAdapter;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
@@ -270,7 +269,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
         private ArrayList<Metadata> mMetaData ;
-        CustomArrayAdapter adapter;
         private ProgressBar pBar;
 
 
