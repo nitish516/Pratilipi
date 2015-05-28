@@ -37,7 +37,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/actionBar" >
+            android:theme="@style/Theme.Mycustomstyle" >
         </activity>
         <activity
             android:name=".DetailPageActivity"
@@ -58,7 +58,7 @@
         <activity
             android:name=".SearchActivity"
             android:label="@string/app_name"
-            android:theme="@style/actionBar">
+            android:theme="@style/Theme.Mycustomstyle">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

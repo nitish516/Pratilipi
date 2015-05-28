@@ -99,33 +99,14 @@
                 android:fadingEdgeLength="5dp"
                 android:requiresFadingEdge="horizontal">
                 <LinearLayout
+                    android:id="@+id/linear_layout_new_releases"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/hindi1"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/hindi2"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/g1"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/g2"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/t1"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/t2"/>
+                    android:layout_height="250dp"
+                    android:orientation="horizontal"
+                    android:scrollbarAlwaysDrawHorizontalTrack="false"
+                    android:layout_marginLeft="20dp"
+                    >
+
                 </LinearLayout>
             </HorizontalScrollView>
             <!--<com.pratilipi.pratilipi.HorizontalListView-->
