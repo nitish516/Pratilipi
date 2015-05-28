@@ -379,7 +379,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                        TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
                        if(obj.getLong("ratingCount")> 0) {
                            ratingBar1.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
-                           ratingNum.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
+                           ratingNum1.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
                        }
                        // Populate the image
                        imageView1.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader1);
@@ -388,21 +388,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                        viewItemlayout.setOnClickListener(new View.OnClickListener() {
                                                                                        @Override
                                                                                        public void onClick(View v) {
-                                                                                           Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                                                                                           i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                                                                                           getActivity().startActivity(i);
-                                                                                       }
-                                                                                   }
-                       );
+                               Intent i = new Intent(getActivity(), DetailPageActivity.class);
+                               i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                               getActivity().startActivity(i);
+                           }
+                       });
                        layout.setOnClickListener(new View.OnClickListener() {
                                                              @Override
                                                              public void onClick(View v) {
-                                                                 Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                                                                 i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                                                                 getActivity().startActivity(i);
-                                                             }
-                                                         }
-                       );
+                                 Intent i = new Intent(getActivity(), DetailPageActivity.class);
+                                 i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                                 getActivity().startActivity(i);
+                             }
+                         });
                     }
 
                 LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
