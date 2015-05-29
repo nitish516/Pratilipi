@@ -29,7 +29,7 @@ public class DetailPageActivity extends Activity {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
-            final Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/Hindi.ttf");
+            final Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
             title.setTypeface(typeFace);
             // Note: This flag is required for proper typeface rendering
             title.setPaintFlags(title.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
