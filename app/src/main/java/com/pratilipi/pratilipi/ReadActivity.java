@@ -19,6 +19,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -232,20 +233,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         try {
             webView.getSettings().setJavaScriptEnabled(true);
             webView.loadUrl("file:///android_asset/html.html");
-
-            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-            webView.setWebChromeClient(new WebChromeClient(){
-                                            public void onPageFinished(WebView view,String URL)
-                                            {
-                                                String javascript = null;
-                                                try {
-                                                    webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                               }
-                                       });
-//            webView.loadUrl("file:///android_asset/html.html" + "javascript:init('" + response.getString("pageContent") + "')");
+            webView.setWebViewClient(new WebViewClient(){
+                public void onPageFinished(WebView view, String url){
+                    try {
+                        webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             if(scrollToLast)
                 webView.scrollTo(0,webView.getContentHeight());
 
