@@ -1,0 +1,17 @@
+#container {
+    width: 100%;
+    overflow: hidden;
+    background-color: white;
+}
+#content {
+    position: relative;
+    height: 100%;
+
+	-moz-column-width: auto;
+    -webkit-column-width: 240px;
+    column-width: 240px;
+
+    -moz-column-gap: 100%;
+    -webkit-column-gap: 10px;
+    column-gap: 10px;
+}

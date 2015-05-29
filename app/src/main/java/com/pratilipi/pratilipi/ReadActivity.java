@@ -1,5 +1,6 @@
 package com.pratilipi.pratilipi;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -39,7 +41,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
-public class ReadActivity extends ActionBarActivity {
+public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     View mDecorView;
     View controlsView;
@@ -67,6 +69,7 @@ public class ReadActivity extends ActionBarActivity {
     String url = "";
     Long pId;
     boolean scrollToLast;
+    JSONObject jsonObject;
 
    @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,29 +223,29 @@ public class ReadActivity extends ActionBarActivity {
     }
 
     private void makeRequest(int pageNo) {
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET, url+pId+"&pageNo="+pageNo, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, response.toString());
-                        parseJson(response);
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-            }
-        });
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq,
-                "jobj_req");
+        RequestTask task =  new RequestTask();
+        task.execute(url+pId+"&pageNo="+pageNo);
+        task.delegate = this;
     }
 
-    void parseJson(JSONObject response) {
+    void parseJson() {
         try {
-            webView.loadData(response.getString("pageContent"),"text/html",null);
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.loadUrl("file:///android_asset/html.html");
+
+            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+            webView.setWebChromeClient(new WebChromeClient(){
+                                            public void onPageFinished(WebView view,String URL)
+                                            {
+                                                String javascript = null;
+                                                try {
+                                                    webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                               }
+                                       });
+//            webView.loadUrl("file:///android_asset/html.html" + "javascript:init('" + response.getString("pageContent") + "')");
             if(scrollToLast)
                 webView.scrollTo(0,webView.getContentHeight());
 
@@ -352,6 +355,17 @@ public class ReadActivity extends ActionBarActivity {
         else if(!isIncrease){
                  WebSettings settings = webView.getSettings();
                  settings.setTextZoom(settings.getTextZoom() - 5);
+        }
+    }
+
+    @Override
+    public void processFinish(String output) {
+        Log.d("Output", output);
+        try {
+            jsonObject = new  JSONObject(output);
+            parseJson( );
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

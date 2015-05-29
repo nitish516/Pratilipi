@@ -44,16 +44,28 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.StringRequest;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 import com.software.shell.fab.ActionButton;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -261,7 +273,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public static class HomeFragment extends Fragment {
+    public static class HomeFragment extends Fragment implements AsyncResponse{
 
         private ArrayList<Metadata> mMetaData ;
         private ProgressBar pBar;
@@ -306,36 +318,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private void hideProgressDialog() {
             pBar.setVisibility(View.GONE);
         }
-
         /**
          * Making json array request
          * */
         private void makeJsonArryReq() {
-          showProgressDialog();
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-                    "http://www.pratilipi.com/api.pratilipi/mobileinit?languageId=5130467284090880", null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d(TAG, response.toString());
-                            parseJson(response);
-                            hideProgressDialog();
-                        }
-                    }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    hideProgressDialog();
-                }
-            });
-
-            // Adding request to request queue
-            AppController.getInstance().addToRequestQueue(jsonObjReq,
-                    "jobj_req");
-
-            // Cancelling request
-            // ApplicationController.getInstance().getRequestQueue().cancelAll(tag_json_arry);
+            RequestTask task =  new RequestTask();
+            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId=5130467284090880");
+            task.delegate = this;
         }
 
         void parseJson(JSONObject response)
@@ -412,6 +401,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 e.printStackTrace();
             }
 //            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void processFinish(String output) {
+            Log.d("Output",output);
+            try {
+                parseJson(new JSONObject(output));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

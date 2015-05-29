@@ -1,0 +1,28 @@
+<head>
+    <style type="text/css">
+        @font-face {
+        font-family: MyFont;
+        src: url("file:///android_asset/fonts/Hindi.ttf")
+        }
+        body {
+        font-family: MyFont;
+        font-size: medium;
+        text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+    </div>
+
+<script type="text/javascript">
+function init(val){
+document.getElementById('content').innerHTML=val;
+}
+window.addEventListener('load',function(){
+	console.log("Window Loader");
+	init();
+});
+</script>
+</body>
+
