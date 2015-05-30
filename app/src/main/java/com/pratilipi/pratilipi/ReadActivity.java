@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -31,11 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -77,6 +70,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     Long pId;
     boolean scrollToLast;
     JSONObject jsonObject;
+    String type;
 
    @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +79,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
             pId = obj.getLong("id");
-            String type = obj.getString("contentType");
-            if(type.equalsIgnoreCase("PRATILIPI"))
+            type = obj.getString("contentType");
                 url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
-            else if(type.equalsIgnoreCase("IMAGE"))
-                url ="http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId=";
 
             Gson gson = new GsonBuilder().create();
             JsonArray indexArr = gson.fromJson( obj.getString("index"), JsonElement.class ).getAsJsonArray();
@@ -209,7 +200,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                return true;
            }
        });
-       launchChapter(0);
+       launchChapter(1);
     }
 
     public boolean isOnline() {
@@ -260,7 +251,13 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private void launchChapter(int chapterNo) {
         currentPage = chapterNo;
         if(isOnline())
-            makeRequest(chapterNo);
+            if(type.equalsIgnoreCase("PRATILIPI")) {
+                makeRequest(chapterNo);
+            }
+            else if(type.equalsIgnoreCase("IMAGE")){
+                webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
+                        +pId+"&pageNo="+chapterNo);
+            }
         else
         {
             showNoConnectionDialog(this);
@@ -276,19 +273,20 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     void parseJson() {
         try {
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.loadUrl("file:///android_asset/html.html");
-            webView.setWebViewClient(new WebViewClient(){
-                public void onPageFinished(WebView view, String url){
-                    try {
-                        webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.loadUrl("file:///android_asset/html.html");
+                webView.setWebViewClient(new WebViewClient(){
+                    public void onPageFinished(WebView view, String url){
+                        try {
+                            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-            if(scrollToLast)
-                webView.scrollTo(0,webView.getContentHeight());
+                });
+                if(scrollToLast)
+                    webView.scrollTo(0,webView.getContentHeight());
+
 
         }catch (Exception e){
             e.printStackTrace();
