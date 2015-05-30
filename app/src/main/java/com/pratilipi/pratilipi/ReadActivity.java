@@ -1,6 +1,12 @@
 package com.pratilipi.pratilipi;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -206,6 +212,40 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
        launchChapter(0);
     }
 
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+    public static void showNoConnectionDialog(Context ctx1) {
+        final Context ctx = ctx1;
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.no_connection);
+        builder.setTitle(R.string.no_connection_title);
+        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent dialogIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(dialogIntent);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                return;
+            }
+        });
+
+        builder.show();
+    }
+
     private void launchChapter(boolean isNext) {
         if(isNext && currentPage < pageCount) {
             makeRequest(++currentPage);
@@ -219,7 +259,12 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     private void launchChapter(int chapterNo) {
         currentPage = chapterNo;
-        makeRequest(chapterNo);
+        if(isOnline())
+            makeRequest(chapterNo);
+        else
+        {
+            showNoConnectionDialog(this);
+        }
         scrollToLast = false;
     }
 

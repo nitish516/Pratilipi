@@ -2,16 +2,21 @@
 package com.pratilipi.pratilipi;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -284,17 +289,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
-
-//            actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent nxt = new Intent(this, ReadPrevious.class);
-//                    startActivity(nxt);
-//                }
-//            });
-
-
             View rootView = inflater.inflate(R.layout.fragment_home, container, false);
             RadioButton rb = (RadioButton) rootView.findViewById(R.id.radio_top);
             rb.setChecked(true);
@@ -303,7 +297,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             featuredList = (LinearLayout) rootView.findViewById(R.id.linear_layout_featured);
             newReleasesList = (LinearLayout)rootView.findViewById(R.id.linear_layout_new_releases);
 
-            makeJsonArryReq();
+            if(isOnline())
+                makeJsonArryReq();
+            else
+            {
+                showNoConnectionDialog(getActivity());
+            }
 //            adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
 //            LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.linear_layout);
 //            lv.setAdapter(adapter);
@@ -318,6 +317,41 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private void hideProgressDialog() {
             pBar.setVisibility(View.GONE);
         }
+
+        public boolean isOnline() {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnectedOrConnecting();
+        }
+        public static void showNoConnectionDialog(Context ctx1) {
+            final Context ctx = ctx1;
+            AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+            builder.setCancelable(true);
+            builder.setMessage(R.string.no_connection);
+            builder.setTitle(R.string.no_connection_title);
+            builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                Intent dialogIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(dialogIntent);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    return;
+                }
+            });
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                    return;
+                }
+            });
+
+            builder.show();
+        }
+
         /**
          * Making json array request
          * */

@@ -40,4 +40,10 @@
 
     <string name="Search_Website">Search Pratilipi</string>
 
+    <string name="no_connection">Please enable internet to fetch latest contents.</string>
+    <string name="no_connection_title">No Internet Connection</string>
+    <string name="settings">Settings</string>
+    <string name="cancel">Cancel</string>
+
+
 </resources>
