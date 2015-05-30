@@ -53,6 +53,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ArrayList<String> mTitles;
+    private ArrayList<Integer> mTitleChapters;
     private ArrayList<String> mContents;
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String JSON = "JSON";
@@ -76,7 +77,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitles = new ArrayList<>();
-        try {
+        mTitleChapters = new ArrayList<>();
+       try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
             pId = obj.getLong("id");
             type = obj.getString("contentType");
@@ -91,6 +93,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     String title = jsonObject.get( "title" ).toString();
                     Log.d("TITLE",title);
                     mTitles.add(i,title.substring(1,title.length()-1));
+                    mTitleChapters.add(i,Integer.parseInt(jsonObject.get("pageNo").toString()));
                 }
             }
 
@@ -412,7 +415,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            launchChapter(position);
+            launchChapter(mTitleChapters.get(position));
             hideSystemUI();
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
