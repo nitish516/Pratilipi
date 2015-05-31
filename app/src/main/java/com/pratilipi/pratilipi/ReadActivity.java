@@ -289,8 +289,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private void makeRequest(int pageNo) {
         int index = mTitleChapters.indexOf(pageNo);
         if(index >= 0 ) {
-            mDrawerList.setItemChecked(mTitleChapters.indexOf(pageNo), true);
+            mDrawerList.setItemChecked(index, true);
             mDrawerList.setSelector(R.drawable.drawer_select);
+            mDrawerList.setSelection(index);
         }
         RequestTask task =  new RequestTask();
         task.execute(url+pId+"&pageNo="+pageNo);
