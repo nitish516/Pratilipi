@@ -1,11 +1,6 @@
 package com.pratilipi.pratilipi;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,14 +16,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -53,7 +55,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ArrayList<String> mTitles;
-    private ArrayList<Integer> mTitleChapters;
     private ArrayList<String> mContents;
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String JSON = "JSON";
@@ -71,18 +72,19 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     Long pId;
     boolean scrollToLast;
     JSONObject jsonObject;
-    String type;
 
    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitles = new ArrayList<>();
-        mTitleChapters = new ArrayList<>();
-       try {
+        try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
             pId = obj.getLong("id");
-            type = obj.getString("contentType");
+            String type = obj.getString("contentType");
+            if(type.equalsIgnoreCase("PRATILIPI"))
                 url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
+            else if(type.equalsIgnoreCase("IMAGE"))
+                url ="http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId=";
 
             Gson gson = new GsonBuilder().create();
             JsonArray indexArr = gson.fromJson( obj.getString("index"), JsonElement.class ).getAsJsonArray();
@@ -93,7 +95,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     String title = jsonObject.get( "title" ).toString();
                     Log.d("TITLE",title);
                     mTitles.add(i,title.substring(1,title.length()-1));
-                    mTitleChapters.add(i,Integer.parseInt(jsonObject.get("pageNo").toString()));
                 }
             }
 
@@ -203,41 +204,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                return true;
            }
        });
-       launchChapter(1);
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-    public static void showNoConnectionDialog(Context ctx1) {
-        final Context ctx = ctx1;
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setCancelable(true);
-        builder.setMessage(R.string.no_connection);
-        builder.setTitle(R.string.no_connection_title);
-        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-                Intent dialogIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
-                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ctx.startActivity(dialogIntent);
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        });
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            public void onCancel(DialogInterface dialog) {
-                return;
-            }
-        });
-
-        builder.show();
+       launchChapter(0);
     }
 
     private void launchChapter(boolean isNext) {
@@ -253,18 +220,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     private void launchChapter(int chapterNo) {
         currentPage = chapterNo;
-        if(isOnline())
-            if(type.equalsIgnoreCase("PRATILIPI")) {
-                makeRequest(chapterNo);
-            }
-            else if(type.equalsIgnoreCase("IMAGE")){
-                webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
-                        +pId+"&pageNo="+chapterNo);
-            }
-        else
-        {
-            showNoConnectionDialog(this);
-        }
+        makeRequest(chapterNo);
         scrollToLast = false;
     }
 
@@ -276,20 +232,19 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     void parseJson() {
         try {
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.loadUrl("file:///android_asset/html.html");
-                webView.setWebViewClient(new WebViewClient(){
-                    public void onPageFinished(WebView view, String url){
-                        try {
-                            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.loadUrl("file:///android_asset/html.html");
+            webView.setWebViewClient(new WebViewClient(){
+                public void onPageFinished(WebView view, String url){
+                    try {
+                        webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
-                if(scrollToLast)
-                    webView.scrollTo(0,webView.getContentHeight());
-
+                }
+            });
+            if(scrollToLast)
+                webView.scrollTo(0,webView.getContentHeight());
 
         }catch (Exception e){
             e.printStackTrace();
@@ -415,12 +370,13 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            launchChapter(mTitleChapters.get(position));
+            launchChapter(position);
             hideSystemUI();
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
 //        setTitle(mTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
+            mDrawerList.setSelector(R.drawable.drawer_select);
         }
     }
 }

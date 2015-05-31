@@ -1,45 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
-android:id="@+id/font_menu"
-android:layout_width="240dp"
-android:layout_height="wrap_content"
-    android:clickable="true">
-<RelativeLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="240dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="fill_horizontal">
-    <ImageButton
-        android:src="@drawable/dec"
-        android:id="@+id/buttonDec"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        />
-    <Button
-        android:src="@drawable/inc"
-        android:id="@+id/buttonInc"
-        android:layout_width="120dp"
-        android:layout_height="120dp" />
-</RelativeLayout>
-<RelativeLayout
-    android:layout_width="240dp"
-    android:layout_height="wrap_content"
-    android:layout_gravity="fill_horizontal">
-    <Button
-        android:id="@+id/buttonWhite"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:text="White"/>
-    <Button
-        android:id="@+id/buttonNite"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:text="White" />
-    <Button
-        android:id="@+id/buttonSepia"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:text="White" />
-</RelativeLayout>
-    </RelativeLayout>
+    android:background="#E0E0E0" >
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:background="#E0E0E0"
+        android:layout_gravity="fill_horizontal">
+
+        <ImageButton
+            android:id="@+id/fontInc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/aplus"
+            android:layout_weight="0.5" />
+
+        <ImageButton
+            android:id="@+id/fontDec"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/amin"
+            android:layout_weight="0.5" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:background="#E0E0E0">
+
+        <ImageButton
+            android:id="@+id/dayMode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            android:layout_weight="0.3" />
+
+        <ImageButton
+            android:id="@+id/nightMode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            android:layout_weight="0.3" />
+
+        <ImageButton
+            android:id="@+id/sepia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            android:layout_weight="0.3" />
+    </LinearLayout>
+
+</LinearLayout>

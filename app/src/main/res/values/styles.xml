@@ -6,8 +6,8 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="android:activatedBackgroundIndicator">@drawable/list_item_background</item>
     </style>
 
     <style name="FullscreenTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -73,6 +73,7 @@
         <item name="actionModeBackground">@drawable/cab_background_top_mycustomstyle</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_mycustomstyle</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Mycustomstyle</item>
+        <item name="android:logo">@drawable/pratilipi_logo_vector</item>
 
         <!-- Light.DarkActionBar specific -->
         <item name="actionBarWidgetTheme">@style/Theme.Mycustomstyle.Widget</item>

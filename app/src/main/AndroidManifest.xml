@@ -12,7 +12,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat.Light">
+        android:theme="@style/Theme.AppCompat.Light"
+        android:logo="@drawable/pratilipi_logo_vector">
         <provider
             android:name=".helper.PratilipiProvider"
             android:authorities="com.pratilipi.pratilipi.helper.PratilipiData" >
@@ -49,7 +50,7 @@
             android:name=".ReadActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_read"
-            android:theme="@style/Theme.AppCompat.Light">
+            android:theme="@style/AppTheme">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

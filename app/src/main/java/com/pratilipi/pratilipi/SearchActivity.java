@@ -38,6 +38,8 @@ public class SearchActivity extends ActionBarActivity {
 
         SearchView searchVeiw = (SearchView)menu.findItem(R.id.action_search).getActionView();
         searchVeiw.setIconified(true);
+        searchVeiw.setIconifiedByDefault(true);
+        searchVeiw.setActivated(true);
 
         return true;
     }
