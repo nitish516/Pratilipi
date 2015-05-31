@@ -11,5 +11,8 @@ public class ReadPrevious extends Activity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.read_previous_activity);
+
+
+
     }
 }

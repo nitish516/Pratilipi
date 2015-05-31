@@ -10,6 +10,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -30,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -37,6 +39,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -127,8 +130,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
     }
 
-
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -201,15 +203,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionButtonPrevious.setShadowResponsiveEffectEnabled(false);
         actionButtonPrevious.setRippleEffectEnabled(true);
 
-        actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent nxt = new Intent(MainActivity.this, ReadPrevious.class);
-                startActivity(nxt);
-            }
-        });
-
-
+         actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+//                Intent nxt = new Intent(MainActivity.this, ReadPrevious.class);
+//                startActivity(nxt);
+                 if (null != savedInstanceState) {
+                     ReadActivity read = new ReadActivity();
+                     read.onSaveInstanceState(savedInstanceState);
+                     read.onRestoreInstanceState(savedInstanceState);
+                 } else {
+                     Toast.makeText(getApplicationContext(), "No Previous Book Read", Toast.LENGTH_SHORT).show();
+                 }
+             }
+         });
     }
 
     @Override
@@ -430,10 +437,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
                 LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
                 featuredList.addView(morebtnlayout);
+
+                View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
+
+                moreBttn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent in = new Intent(getActivity(), MoreFeaturedBooks.class);
+                        startActivity(in);
+                    }
+                });
+
                 LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
                 newReleasesList.addView((morebtnlayout1));
 
-                } catch (JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 //            adapter.notifyDataSetChanged();

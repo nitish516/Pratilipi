@@ -225,6 +225,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
        launchChapter(1);
     }
 
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
+    }
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        webView.restoreState(savedInstanceState);
+    }
+
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
