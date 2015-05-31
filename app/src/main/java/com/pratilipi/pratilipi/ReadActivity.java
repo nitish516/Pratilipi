@@ -180,8 +180,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         else if(lan.equalsIgnoreCase("gu"))
             typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
 
-        TextView tv = (TextView) findViewById(R.id.titleTextView);
-//        tv.setTypeface(typeFace);
+        for(int i=0;i<mDrawerList.getChildCount();i++){
+            TextView tv = (TextView)mDrawerList.getChildAt(i);
+            tv.setTypeface(typeFace);
+        }
 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
