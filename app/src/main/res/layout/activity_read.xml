@@ -15,6 +15,7 @@ tools:context=".MainActivity">
     android:padding="10dp"
     android:paddingTop="50dp"
     android:paddingBottom="30dp"
+    android:scrollbars="none"
     />
 
 <ListView
