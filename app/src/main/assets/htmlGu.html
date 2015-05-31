@@ -1,0 +1,31 @@
+<head xmlns:margin="http://www.w3.org/1999/xhtml" xmlns:margin="http://www.w3.org/1999/xhtml">
+
+    <!--<link rel="stylesheet" type="text/css" href="cssBinder.css">-->
+
+    <style type="text/css">
+        @font-face {
+        font-family: MyFont;
+        src: url("file:///android_asset/fonts/gujarati.ttf")
+        }
+        body {
+        font-family: MyFont;
+        font-size: medium;
+        text-align: justify;
+        }
+    </style>
+</head>
+<body>
+<div id="content" >
+</div>
+
+<script type="text/javascript">
+function init(val){
+document.getElementById('content').innerHTML=val;
+}
+window.addEventListener('load',function(){
+	console.log("Window Loader");
+	init();
+});
+</script>
+</body>
+
