@@ -1,5 +1,12 @@
 package com.pratilipi.pratilipi;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,6 +62,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ArrayList<String> mTitles;
+    private ArrayList<Integer> mTitleChapters;
     private ArrayList<String> mContents;
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String JSON = "JSON";
@@ -72,11 +80,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     Long pId;
     boolean scrollToLast;
     JSONObject jsonObject;
-
+    String type;
+    boolean isLoading = false;
+    ProgressDialog progressDialog;
    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitles = new ArrayList<>();
+        mTitleChapters = new ArrayList<>();
         try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
             pId = obj.getLong("id");
@@ -95,6 +106,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     String title = jsonObject.get( "title" ).toString();
                     Log.d("TITLE",title);
                     mTitles.add(i,title.substring(1,title.length()-1));
+                    mTitleChapters.add(i,Integer.parseInt(jsonObject.get("pageNo").toString()));
                 }
             }
 
@@ -167,26 +179,31 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
            public boolean onTouch(View v, MotionEvent ev) {
                final int action = ev.getAction();
                float x = ev.getX();
-               switch(action & MotionEventCompat.ACTION_MASK){
+               switch (action & MotionEventCompat.ACTION_MASK) {
                    case MotionEvent.ACTION_DOWN:
                        mStartDragX = x;
                        break;
                    case MotionEvent.ACTION_MOVE:
                    break;
                    case MotionEvent.ACTION_UP:
-                       if (x>mStartDragX){
-                           if( webView.getScrollY() > 1 )
-                                webView.scrollBy(0,-webView.getHeight());
-                           else
-                               launchChapter(false);
-                       }else if(x<mStartDragX){
-                           if( webView.getScrollY() < webView.getContentHeight())
-                               webView.scrollBy(0,webView.getHeight());
-                           else
-                               launchChapter(true);
-                       }
-                       else {
-                           int b =  mDecorView.getSystemUiVisibility();
+                       if (x > mStartDragX) {
+                           if (webView.getScrollY() > 1)
+                               webView.scrollBy(0, -webView.getHeight());
+                           else {
+                               if (!isLoading) {
+                                   launchChapter(false);
+                               }
+                           }
+                       } else if (x < mStartDragX) {
+                           if (webView.getScrollY() < webView.getContentHeight())
+                               webView.scrollBy(0, webView.getHeight());
+                           else {
+                               if (!isLoading) {
+                                   launchChapter(true);
+                               }
+                           }
+                       } else {
+                           int b = mDecorView.getSystemUiVisibility();
                            int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
                            boolean visibility = (a & b) == 0;
@@ -204,10 +221,50 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                return true;
            }
        });
-       launchChapter(0);
+
+       launchChapter(1);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+    public static void showNoConnectionDialog(Context ctx1) {
+        final Context ctx = ctx1;
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setCancelable(true);
+        builder.setMessage(R.string.no_connection);
+        builder.setTitle(R.string.no_connection_title);
+        builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent dialogIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(dialogIntent);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                return;
+            }
+        });
+
+        builder.show();
     }
 
     private void launchChapter(boolean isNext) {
+        progressDialog = new ProgressDialog(webView.getContext());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        isLoading = true;
         if(isNext && currentPage < pageCount) {
             makeRequest(++currentPage);
             scrollToLast = false;
@@ -219,12 +276,22 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     }
 
     private void launchChapter(int chapterNo) {
+        progressDialog = new ProgressDialog(webView.getContext());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        isLoading = true;
         currentPage = chapterNo;
         makeRequest(chapterNo);
         scrollToLast = false;
     }
 
     private void makeRequest(int pageNo) {
+        int index = mTitleChapters.indexOf(pageNo);
+        if(index >= 0 ) {
+            mDrawerList.setItemChecked(mTitleChapters.indexOf(pageNo), true);
+            mDrawerList.setSelector(R.drawable.drawer_select);
+        }
         RequestTask task =  new RequestTask();
         task.execute(url+pId+"&pageNo="+pageNo);
         task.delegate = this;
@@ -232,19 +299,31 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     void parseJson() {
         try {
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.loadUrl("file:///android_asset/html.html");
-            webView.setWebViewClient(new WebViewClient(){
-                public void onPageFinished(WebView view, String url){
-                    try {
-                        webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.loadUrl("file:///android_asset/html.html");
+                webView.setWebViewClient(new WebViewClient() {
+                    //Show loader on url load
+                    public void onLoadResource(WebView view, String url) {
+                        try {
+                            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-            if(scrollToLast)
-                webView.scrollTo(0,webView.getContentHeight());
+
+                    public void onPageFinished(WebView view, String url) {
+                        try {
+                            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                            progressDialog.dismiss();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                if(scrollToLast)
+                    webView.scrollTo(0,webView.getContentHeight());
+
+                isLoading  = false;
 
         }catch (Exception e){
             e.printStackTrace();
@@ -370,13 +449,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            launchChapter(position);
+            launchChapter(mTitleChapters.get(position));
             hideSystemUI();
         // update selected item and title, then close the drawer
-        mDrawerList.setItemChecked(position, true);
+//        mDrawerList.setItemChecked(position, true);
+//            mDrawerList.setSelection(position);
+//            mDrawerList.getItemAtPosition(position);
 //        setTitle(mTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
-            mDrawerList.setSelector(R.drawable.drawer_select);
         }
     }
 }
