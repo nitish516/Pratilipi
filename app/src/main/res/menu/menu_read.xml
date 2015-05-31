@@ -30,9 +30,9 @@
         app:showAsAction="always"
         android:orderInCategory="4"/>
 
-    <item android:id="@+id/content_formatter"
-        android:title="Content Formatter"
-        app:showAsAction="always"
-        android:icon="@drawable/aa"
-        android:orderInCategory="3" />
+    <!--<item android:id="@+id/content_formatter"-->
+        <!--android:title="Content Formatter"-->
+        <!--app:showAsAction="always"-->
+        <!--android:icon="@drawable/aa"-->
+        <!--android:orderInCategory="3" />-->
 </menu>
