@@ -78,7 +78,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private int indexSize = 0;
     private int pageCount = 0;
     private int currentPage = 1;
-    String url = "";
+    String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
     Long pId;
     boolean scrollToLast;
     JSONObject jsonObject;
@@ -95,11 +95,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
             pId = obj.getLong("id");
-            String type = obj.getString("contentType");
-            if(type.equalsIgnoreCase("PRATILIPI"))
-                url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
-            else if(type.equalsIgnoreCase("IMAGE"))
-                url ="http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId=";
+            type = obj.getString("contentType");
+            pageCount = obj.getInt("pageCount");
 
             Gson gson = new GsonBuilder().create();
             JsonArray indexArr = gson.fromJson( obj.getString("index"), JsonElement.class ).getAsJsonArray();
@@ -113,8 +110,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     mTitleChapters.add(i,Integer.parseInt(jsonObject.get("pageNo").toString()));
                 }
             }
-
-            pageCount = obj.getInt("pageCount");
 
         }catch (JSONException e) {
                 e.getCause();
@@ -208,7 +203,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                    break;
                    case MotionEvent.ACTION_UP:
                        if (x > mStartDragX) {
-                           if (webView.getScrollY() > 1)
+                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
                                webView.scrollBy(0, -webView.getHeight());
                            else {
                                if (!isLoading) {
@@ -216,7 +211,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                }
                            }
                        } else if (x < mStartDragX) {
-                           if (webView.getScrollY() < webView.getContentHeight())
+                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
                                webView.scrollBy(0, webView.getHeight());
                            else {
                                if (!isLoading) {
@@ -290,11 +285,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     }
 
     private void launchChapter(boolean isNext) {
-        progressDialog = new ProgressDialog(webView.getContext());
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
-
-        isLoading = true;
         if(isNext && currentPage < pageCount) {
             makeRequest(++currentPage);
             scrollToLast = false;
@@ -306,31 +296,46 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     }
 
     private void launchChapter(int chapterNo) {
-        progressDialog = new ProgressDialog(webView.getContext());
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
-
-        isLoading = true;
         currentPage = chapterNo;
         makeRequest(chapterNo);
         scrollToLast = false;
     }
 
     private void makeRequest(int pageNo) {
+       if(isOnline()) {
+           if (type.equalsIgnoreCase("PRATILIPI")) {
+               progressDialog = new ProgressDialog(webView.getContext());
+               progressDialog.setMessage("Loading...");
+               progressDialog.show();
+               isLoading = true;
+
+               task = new RequestTask();
+               task.execute(url + pId + "&pageNo=" + pageNo);
+               task.delegate = this;
+           } else if (type.equalsIgnoreCase("IMAGE")) {
+               webView.setInitialScale(30);
+               WebSettings webSettings = webView.getSettings();
+               webSettings.setUseWideViewPort(true);
+               webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
+                       + pId + "&pageNo=" + pageNo);
+           }
+       }
+       else {
+            showNoConnectionDialog(this);
+       }
         int index = mTitleChapters.indexOf(pageNo);
         if(index >= 0 ) {
             mDrawerList.setItemChecked(index, true);
             mDrawerList.setSelector(R.drawable.drawer_select);
             mDrawerList.setSelection(index);
         }
-        task =  new RequestTask();
-        task.execute(url+pId+"&pageNo="+pageNo);
-        task.delegate = this;
     }
 
     void parseJson() {
         try {
                 webView.getSettings().setJavaScriptEnabled(true);
+                webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+
                 String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
                 if(lan.equalsIgnoreCase("hi"))
                     webView.loadUrl("file:///android_asset/htmlHi.html");
@@ -363,8 +368,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         }
                     }
                 });
-
-
                 isLoading  = false;
 
         }catch (Exception e){
