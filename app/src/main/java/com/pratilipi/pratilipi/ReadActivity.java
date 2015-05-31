@@ -32,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -73,6 +74,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private static final Gson gson = new GsonBuilder().create();
     WebView webView;
     float mStartDragX = 0;
+    float mStartDragY = 0;
     private int indexSize = 0;
     private int pageCount = 0;
     private int currentPage = 1;
@@ -83,7 +85,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     String type;
     boolean isLoading = false;
     ProgressDialog progressDialog;
-   @Override
+    RequestTask task;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitles = new ArrayList<>();
@@ -164,8 +168,21 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             }
         });
 
+
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mTitles));
+        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+        Typeface typeFace = null;
+        if(lan.equalsIgnoreCase("hi"))
+            typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
+        else if(lan.equalsIgnoreCase("ta"))
+            typeFace= Typeface.createFromAsset(getAssets(), "fonts/tamil.ttf");
+        else if(lan.equalsIgnoreCase("gu"))
+            typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
+
+        TextView tv = (TextView) findViewById(R.id.titleTextView);
+//        tv.setTypeface(typeFace);
+
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
@@ -179,9 +196,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
            public boolean onTouch(View v, MotionEvent ev) {
                final int action = ev.getAction();
                float x = ev.getX();
+               float y = ev.getY();
                switch (action & MotionEventCompat.ACTION_MASK) {
                    case MotionEvent.ACTION_DOWN:
                        mStartDragX = x;
+                       mStartDragY = y;
                        break;
                    case MotionEvent.ACTION_MOVE:
                    break;
@@ -202,7 +221,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                    launchChapter(true);
                                }
                            }
-                       } else {
+                       } else if (x == mStartDragX){
                            int b = mDecorView.getSystemUiVisibility();
                            int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
@@ -302,7 +321,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             mDrawerList.setSelector(R.drawable.drawer_select);
             mDrawerList.setSelection(index);
         }
-        RequestTask task =  new RequestTask();
+        task =  new RequestTask();
         task.execute(url+pId+"&pageNo="+pageNo);
         task.delegate = this;
     }
@@ -324,14 +343,26 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     public void onPageFinished(WebView view, String url) {
                         try {
                             webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
+                            if(scrollToLast) {
+                                webView.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if (webView.getProgress() == 100) {
+                                            webView.postDelayed(new Runnable() {
+                                                public void run() {
+                                                    webView.scrollTo(0, webView.getBottom());
+                                                }
+                                            }, 10);
+                                        }
+                                    }
+                                }, 10);
+                            }
                             progressDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 });
-                if(scrollToLast)
-                    webView.scrollTo(0,webView.getContentHeight());
+
 
                 isLoading  = false;
 
@@ -446,15 +477,23 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     @Override
     public void processFinish(String output) {
-        Log.d("Output", output);
-        try {
-            jsonObject = new  JSONObject(output);
-            parseJson( );
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(null!= output) {
+            Log.d("Output", output);
+            try {
+                jsonObject = new JSONObject(output);
+                parseJson();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(null != task)
+            task.cancel(true);
+    }
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

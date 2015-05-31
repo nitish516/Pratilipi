@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -77,6 +78,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
@@ -130,7 +132,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
     }
 
-    public void onCreate(final Bundle savedInstanceState) {
+
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -203,20 +206,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionButtonPrevious.setShadowResponsiveEffectEnabled(false);
         actionButtonPrevious.setRippleEffectEnabled(true);
 
-         actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
+//         actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
+//             @Override
+//             public void onClick(View view) {
 //                Intent nxt = new Intent(MainActivity.this, ReadPrevious.class);
 //                startActivity(nxt);
-                 if (null != savedInstanceState) {
-                     ReadActivity read = new ReadActivity();
-                     read.onSaveInstanceState(savedInstanceState);
-                     read.onRestoreInstanceState(savedInstanceState);
-                 } else {
-                     Toast.makeText(getApplicationContext(), "No Previous Book Read", Toast.LENGTH_SHORT).show();
-                 }
-             }
-         });
+//                 if (null != savedInstanceState) {
+//                     ReadActivity read = new ReadActivity();
+//                     read.onSaveInstanceState(savedInstanceState);
+//                     read.onRestoreInstanceState(savedInstanceState);
+//                 } else {
+//                     Toast.makeText(getApplicationContext(), "No Previous Book Read", Toast.LENGTH_SHORT).show();
+//                 }
+//             }
+//         });
     }
 
     @Override
@@ -366,7 +369,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
          * */
         private void makeJsonArryReq() {
             RequestTask task =  new RequestTask();
-            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId=5130467284090880");
+            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            Long lanId = null;
+            if(lan.equalsIgnoreCase("hi"))
+                lanId = 5130467284090880l;
+            else if(lan.equalsIgnoreCase("ta"))
+                lanId = 6319546696728576l;
+            else if(lan.equalsIgnoreCase("gu"))
+                lanId = 5965057007550464l;
+
+            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
             task.delegate = this;
         }
 
@@ -374,8 +386,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         {
             try {
                    JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
-                   for (int i = 1; i < topReadPratilipiDataList.length(); i++) {
+                   for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
                         final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+                       if(!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
+                           continue;
                         //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
                         final Metadata metaData = new Metadata(
                                 obj.getString("id"),
@@ -451,7 +465,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
                 newReleasesList.addView((morebtnlayout1));
 
-            } catch (JSONException e) {
+                } catch (JSONException e) {
                 e.printStackTrace();
             }
 //            adapter.notifyDataSetChanged();

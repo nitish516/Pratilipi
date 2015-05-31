@@ -1,6 +1,7 @@
 package com.pratilipi.pratilipi;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -23,13 +24,22 @@ public class DetailPageActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+       super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_page);
         try{
             obj = new JSONObject(getIntent().getStringExtra(JSON));
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
-            final Typeface typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
+
+            String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            Typeface typeFace = null;
+            if(lan.equalsIgnoreCase("hi"))
+                typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
+            else if(lan.equalsIgnoreCase("ta"))
+                typeFace= Typeface.createFromAsset(getAssets(), "fonts/tamil.ttf");
+            else if(lan.equalsIgnoreCase("gu"))
+                typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
+
             title.setTypeface(typeFace);
             // Note: This flag is required for proper typeface rendering
             title.setPaintFlags(title.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
