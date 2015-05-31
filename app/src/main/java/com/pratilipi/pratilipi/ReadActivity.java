@@ -331,16 +331,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     void parseJson() {
         try {
                 webView.getSettings().setJavaScriptEnabled(true);
-                webView.loadUrl("file:///android_asset/html.html");
+                String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+                if(lan.equalsIgnoreCase("hi"))
+                    webView.loadUrl("file:///android_asset/htmlHi.html");
+                else if(lan.equalsIgnoreCase("ta"))
+                    webView.loadUrl("file:///android_asset/htmlTa.html");
+                else if(lan.equalsIgnoreCase("gu"))
+                    webView.loadUrl("file:///android_asset/htmlGu.html");
+
                 webView.setWebViewClient(new WebViewClient() {
-                    //Show loader on url load
-                    public void onLoadResource(WebView view, String url) {
-                        try {
-                            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
                     public void onPageFinished(WebView view, String url) {
                         try {
