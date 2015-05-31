@@ -47,13 +47,16 @@
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:text="(124)"/>-->
-        <Button
+        <TextView
             android:id="@+id/freeBtn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Free !!"
+            android:text="Free!"
             android:background="@color/Teal"
-            android:textColor="@color/White"/>
+            android:textColor="@color/White"
+            android:gravity="center"
+            android:textSize="16dp"
+            />
     </LinearLayout>
 
 </LinearLayout>

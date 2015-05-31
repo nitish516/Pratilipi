@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:widget="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingBottom="10dp">
 
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,7 +22,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp">
             <TextView
                 android:id="@+id/fetures_tv"
                 android:layout_width="wrap_content"
@@ -29,18 +32,14 @@
                 android:text="@string/title_featured_books"
                 android:textColor="#FF0000"
                 android:textSize="16dp"
-                android:paddingTop="20dp"
-                android:paddingLeft="20dp"
-                android:paddingBottom="10dp"/>
+                android:paddingLeft="20dp"/>
             <TextView
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
-                android:paddingTop="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"/>
+                android:paddingRight="20dp"/>
             <ProgressBar
                 android:layout_below="@id/fetures_tv"
                 android:id="@+id/progress_bar"
@@ -58,7 +57,7 @@
                 <LinearLayout
                     android:id="@+id/linear_layout_featured"
                     android:layout_width="fill_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:scrollbarAlwaysDrawHorizontalTrack="false"
                     android:layout_marginLeft="20dp"
@@ -70,7 +69,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp">
             <TextView
                 android:id="@+id/release_tv"
                 android:layout_width="wrap_content"
@@ -78,19 +79,14 @@
                 android:text="@string/title_new_releases"
                 android:textColor="#FF0000"
                 android:textSize="16dp"
-                android:paddingTop="20dp"
-                android:paddingLeft="20dp"
-                android:paddingBottom="10dp"
-                />
+                android:paddingLeft="20dp"/>
             <TextView
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
-                android:paddingTop="20dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="10dp"/>
+                android:paddingRight="20dp"/>
             <ProgressBar
                 android:layout_below="@id/release_tv"
                 android:id="@+id/progress_bar1"
@@ -108,7 +104,7 @@
                 <LinearLayout
                     android:id="@+id/linear_layout_new_releases"
                     android:layout_width="fill_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:scrollbarAlwaysDrawHorizontalTrack="false"
                     android:layout_marginLeft="20dp"
@@ -116,22 +112,14 @@
 
                 </LinearLayout>
             </HorizontalScrollView>
-            <!--<com.pratilipi.pratilipi.HorizontalListView-->
-                <!--android:layout_below="@id/release_tv"-->
-                <!--android:id="@+id/listview_new_releases"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="fill_parent"-->
-                <!--android:divider="#fff"-->
-                <!--android:fadingEdgeLength="5dp"-->
-                <!--android:requiresFadingEdge="horizontal"-->
-                <!--widget:dividerWidth="3dp" />-->
         </RelativeLayout>
     </LinearLayout>
     </ScrollView>
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
         <RadioButton android:id="@+id/radio_top"
             android:layout_width="0dp"
             android:layout_weight=".5"

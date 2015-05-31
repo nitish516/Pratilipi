@@ -387,38 +387,66 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             try {
                    JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
                    for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
-                        final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
-                       if(!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
+                       final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+                       if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
                            continue;
-                        //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
-                        final Metadata metaData = new Metadata(
-                                obj.getString("id"),
-                                obj.getString("title"),
-                                obj.getString("type"),
-                                obj.getString("authorId"),
-                                obj.getJSONObject("author").getString("name"),
-                                "",
-                                "",
-                                obj.getString("coverImageUrl"),
-                                obj.getString("pageUrl")
-                                );
+                       //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
+                       final Metadata metaData = new Metadata(
+                               obj.getString("id"),
+                               obj.getString("title"),
+                               obj.getString("type"),
+                               obj.getString("authorId"),
+                               obj.getJSONObject("author").getString("name"),
+                               "",
+                               "",
+                               obj.getString("coverImageUrl"),
+                               obj.getString("pageUrl")
+                       );
 //                              mMetaData.add(metaData);
 
-                         LinearLayout viewItemlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
-                         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+                       LinearLayout viewItemlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+                       ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
-                         NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
-                         RatingBar ratingBar  = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
-                         TextView ratingNum = (TextView)viewItemlayout.findViewById(R.id.ratingNumber);
-                         if(obj.getLong("ratingCount")> 0) {
-                             ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
-                             ratingNum.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
-                         }
-                         // Populate the image
-                         imageView.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader);
-                         featuredList.addView(viewItemlayout);
+                       NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
+                       RatingBar ratingBar = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
+                       TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
+                       if (obj.getLong("ratingCount") > 0) {
+                           ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+                           ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
+                       }
+                       // Populate the image
+                       imageView.setImageUrl("http:" + metaData.get_coverImageUrl(), imageLoader);
+                       featuredList.addView(viewItemlayout);
 
-                       LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+                       viewItemlayout.setOnClickListener(new View.OnClickListener() {
+                           @Override
+                           public void onClick(View v) {
+                               Intent i = new Intent(getActivity(), DetailPageActivity.class);
+                               i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                               getActivity().startActivity(i);
+                           }
+                       });
+                   }
+                for (int i = topReadPratilipiDataList.length()-1; i >=0 ; i--) {
+
+                    final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+                    if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
+                        continue;
+                    //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
+                    final Metadata metaData = new Metadata(
+                            obj.getString("id"),
+                            obj.getString("title"),
+                            obj.getString("type"),
+                            obj.getString("authorId"),
+                            obj.getJSONObject("author").getString("name"),
+                            "",
+                            "",
+                            obj.getString("coverImageUrl"),
+                            obj.getString("pageUrl")
+                    );
+//                              mMetaData.add(metaData);
+
+                    LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
                        ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
                        NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
                        RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
@@ -431,14 +459,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                        imageView1.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader1);
                        newReleasesList.addView((layout));
 
-                       viewItemlayout.setOnClickListener(new View.OnClickListener() {
-                                                                                       @Override
-                                                                                       public void onClick(View v) {
-                               Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                               i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                               getActivity().startActivity(i);
-                           }
-                       });
                        layout.setOnClickListener(new View.OnClickListener() {
                                                              @Override
                                                              public void onClick(View v) {
@@ -498,21 +518,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_shelf, container, false);
-            gridView = (GridView) rootView.findViewById(R.id.grid_view);
-            utils = new com.pratilipi.pratilipi.util.Utils(getActivity());
-
-            // Initilizing Grid View
-            InitilizeGridLayout();
-
-            // loading all image paths from SD card
-            imagePaths = utils.getFilePaths();
-
-            // Gridview adapter
-            adapter = new GridViewImageAdapter(getActivity(), imagePaths,
-                    columnWidth);
-
-            // setting grid view adapter
-            gridView.setAdapter(adapter);
+//            gridView = (GridView) rootView.findViewById(R.id.grid_view);
+//            utils = new com.pratilipi.pratilipi.util.Utils(getActivity());
+//
+//            // Initilizing Grid View
+//            InitilizeGridLayout();
+//
+//            // loading all image paths from SD card
+//            imagePaths = utils.getFilePaths();
+//
+//            // Gridview adapter
+//            adapter = new GridViewImageAdapter(getActivity(), imagePaths,
+//                    columnWidth);
+//
+//            // setting grid view adapter
+//            gridView.setAdapter(adapter);
 
             return rootView;
         }
