@@ -53,7 +53,8 @@
                 android:layout_height="fill_parent"
                 android:divider="#fff"
                 android:fadingEdgeLength="5dp"
-                android:requiresFadingEdge="horizontal">
+                android:requiresFadingEdge="horizontal"
+                android:scrollbars="none">
                 <LinearLayout
                     android:id="@+id/linear_layout_featured"
                     android:layout_width="fill_parent"
@@ -100,7 +101,8 @@
                 android:layout_height="fill_parent"
                 android:divider="#fff"
                 android:fadingEdgeLength="5dp"
-                android:requiresFadingEdge="horizontal">
+                android:requiresFadingEdge="horizontal"
+                android:scrollbars="none">
                 <LinearLayout
                     android:id="@+id/linear_layout_new_releases"
                     android:layout_width="fill_parent"
