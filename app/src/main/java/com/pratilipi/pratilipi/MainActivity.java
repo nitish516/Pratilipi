@@ -478,12 +478,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     @Override
                     public void onClick(View view) {
                         Intent in = new Intent(getActivity(), MoreFeaturedBooks.class);
+                        in.putExtra("TITLE","Featured");
                         startActivity(in);
                     }
                 });
 
                 LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
                 newReleasesList.addView((morebtnlayout1));
+                View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
+
+                moreBttn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent in = new Intent(getActivity(), MoreFeaturedBooks.class);
+                        in.putExtra("TITLE","New Releases");
+                        startActivity(in);
+                    }
+                });
 
                 } catch (JSONException e) {
                 e.printStackTrace();

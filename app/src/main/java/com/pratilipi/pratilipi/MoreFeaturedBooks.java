@@ -1,5 +1,6 @@
 package com.pratilipi.pratilipi;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -59,6 +60,9 @@ public class MoreFeaturedBooks extends ActionBarActivity implements AsyncRespons
         {
             showNoConnectionDialog(this);
         }
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(getIntent().getStringExtra("TITLE"));
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
 public boolean isOnline() {
