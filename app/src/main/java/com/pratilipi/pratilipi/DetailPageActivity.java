@@ -69,15 +69,16 @@ public class DetailPageActivity extends Activity {
                     summaryTextView.setTypeface(typeFace);
                 }
             }
-            String authorString = obj.getString("summary");
-            if(null!= authorString) {
-                Spanned author = Html.fromHtml(authorString);
+            JSONObject authorObj = obj.getJSONObject("author")
+            if(null != authorObj){
+                Spanned author = Html.fromHtml(authorObj.getString("name"));
                 if (null != author) {
                     TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
                     authorTextView.setText(author);
                     authorTextView.setTypeface(typeFace);
                 }
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
