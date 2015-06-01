@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -38,6 +39,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.support.v7.internal.view.menu.MenuItemImpl;
 import android.widget.Toast;
 //import android.support.v7.app.AppCompatActivity;
 
@@ -73,44 +75,59 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     ViewPager mViewPager;
     private static String TAG = MainActivity.class.getSimpleName();
-    SearchView searchView;
+    SearchView searchViewButton;
 
-    public MainActivity() {
-        searchView = null;
-    }
+//    public MainActivity() {
+////        searchView = null;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         super.onCreateOptionsMenu(menu);
         MenuInflater mi = getMenuInflater();
-        mi.inflate(R.menu.menu_main, menu);
+        mi.inflate(R.menu.action_search, menu);
+//        searchView.setIconified(true);
+//        searchView.setIconifiedByDefault(true);
+//        searchView.setActivated(true);
+//        searchView.setQueryHint("Search View Hint");
+//        searchViewButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+//                startActivity(searchIntent);            }
+//        });
 
-        searchView = (SearchView)menu.findItem(R.id.action_search).getActionView();
-        searchView.setIconified(true);
-        searchView.setIconifiedByDefault(true);
-        searchView.setActivated(true);
-        searchView.setQueryHint("Search View Hint");
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //Log.e("onQueryTextChange", "called");
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Intent in = new Intent(getApplicationContext(), MoreFeaturedBooks.class);
-                in.putExtra("TITLE",query);
-                startActivity(in);
-
-                return true;
-            }
-
-        });
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                //Log.e("onQueryTextChange", "called");
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Intent in = new Intent(getApplicationContext(), MoreFeaturedBooks.class);
+//                in.putExtra("TITLE",query);
+//                startActivity(in);
+//
+//                return true;
+//            }
+//
+//        });
         return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case R.id.action_search_item:
+                Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(searchIntent);
+                return true;
+            default: return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -123,8 +140,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 startActivity(new Intent(this, LanguageSelectionActivity.class));
                 finish();
             }
-        if(null!= searchView)
-            searchView.clearFocus();
+        if(null!= searchViewButton)
+            searchViewButton.clearFocus();
     }
 
 
@@ -501,7 +518,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public void processFinish(String output) {
-            Log.d("Output",output);
+            Log.d("Output", output);
             try {
                 parseJson(new JSONObject(output));
             } catch (JSONException e) {
