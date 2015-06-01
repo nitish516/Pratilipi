@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -59,16 +60,24 @@ public class DetailPageActivity extends Activity {
                 detailPageRate.setText(String.valueOf("("+obj.getLong("ratingCount"))+" rating)");
             }
 
-            TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
-            authorTextView.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
-            authorTextView.setTypeface(typeFace);
-            authorTextView.setPaintFlags(title.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
-
-            TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);
-            summaryTextView.setText(Html.fromHtml(obj.getString("summary")));
-            summaryTextView.setTypeface(typeFace);
-            summaryTextView.setPaintFlags(title.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
-
+            String summaryString = obj.getString("summary");
+            if(null!= summaryString) {
+                Spanned summary = Html.fromHtml(summaryString);
+                if (null != summary) {
+                    TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);
+                    summaryTextView.setText(summary);
+                    summaryTextView.setTypeface(typeFace);
+                }
+            }
+            String authorString = obj.getString("summary");
+            if(null!= authorString) {
+                Spanned author = Html.fromHtml(authorString);
+                if (null != author) {
+                    TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
+                    authorTextView.setText(author);
+                    authorTextView.setTypeface(typeFace);
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

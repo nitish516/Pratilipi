@@ -36,11 +36,22 @@ public class MoreFeaturedBooks extends ActionBarActivity implements AsyncRespons
     LinearLayout linearLayout;
     Long lanId = null;
     Typeface typeFace = null;
+    String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/list?state=PUBLISHED&languageId=";
+    boolean isSearch = false;
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.more_featured_content);
         linearLayout = (LinearLayout)findViewById(R.id.linear_layout_more_featured);
+
+        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        String title = getIntent().getStringExtra("TITLE");
+        actionBar.setTitle(title);
+        if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases"))){
+            isSearch = true;
+            url = "http://www.pratilipi.com/api.pratilipi/search?query="+title+"&languageId=";
+        }
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
         if(lan.equalsIgnoreCase("hi")) {
@@ -62,9 +73,6 @@ public class MoreFeaturedBooks extends ActionBarActivity implements AsyncRespons
         {
             showNoConnectionDialog(this);
         }
-        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(getIntent().getStringExtra("TITLE"));
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -119,17 +127,35 @@ private void makeJsonArryReq() {
 
     RequestTask task =  new RequestTask();
 
-    task.execute("http://www.pratilipi.com/api.pratilipi/pratilipi/list?state=PUBLISHED&languageId="+lanId);
+    task.execute(url+lanId);
         task.delegate = this;
         }
 
-        void parseJson(JSONObject response, final Context context)
+        void parseJson(JSONObject response)
         {
         try {
-            JSONArray pratilipiList = response.getJSONArray("pratilipiList");
+            JSONArray pratilipiList;
+            if(isSearch) {
+                 pratilipiList = response.getJSONArray("pratilipiDataList");
+            }
+            else {
+                 pratilipiList = response.getJSONArray("pratilipiList");
+            }
+
             for (int i = 0; i < pratilipiList.length(); i++) {
                 final JSONObject obj = pratilipiList.getJSONObject(i);
+                if(obj.getLong("languageId") != lanId)
+                    continue;
                 CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.card_view, null);
+                cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), DetailPageActivity.class);
+                        i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                        if(!isSearch)
+                        startActivity(i);
+                    }
+                });
                 ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
                 NetworkImageView imageView = (NetworkImageView) cardView.findViewById(R.id.detail_image);
@@ -142,7 +168,10 @@ private void makeJsonArryReq() {
 
                 TextView author = (TextView) cardView.findViewById(R.id.authorTextViewMoreFeatured);
                 author.setTypeface(typeFace);
-                author.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
+                if(isSearch)
+                    author.setVisibility(View.GONE);
+                else
+                    author.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
 
                 if (obj.getLong("ratingCount") > 0) {
                     ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
@@ -152,14 +181,6 @@ private void makeJsonArryReq() {
                 imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
                 linearLayout.addView(cardView);
 
-                cardView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(context, DetailPageActivity.class);
-                        i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                        startActivity(i);
-                    }
-                });
             }
             } catch (JSONException e1) {
             e1.printStackTrace();
@@ -169,7 +190,7 @@ private void makeJsonArryReq() {
     public void processFinish(String output) {
         Log.d("Output", output);
         try {
-            parseJson(new JSONObject(output),this);
+            parseJson(new JSONObject(output));
         } catch (JSONException e) {
             e.printStackTrace();
         }

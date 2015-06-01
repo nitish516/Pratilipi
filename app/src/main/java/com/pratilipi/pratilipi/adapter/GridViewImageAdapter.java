@@ -73,46 +73,46 @@ public class GridViewImageAdapter extends BaseAdapter {
         // image view click listener
         switch (position)
         {
-            case 0:
-                imageView.setImageResource(R.drawable.betal);
-                imageView.setTag("4843865324388352");
-                break;
-            case 1:
-                imageView.setImageResource(R.drawable.hindi1);
-                imageView.setTag("4843865324388352");
-                break;
-            case 2:
-                imageView.setImageResource(R.drawable.hindi2);
-                imageView.setTag("4843865324388352");
-                break;
-            case 3:
-                imageView.setImageResource(R.drawable.g1);
-                imageView.setTag("4843865324388352");
-                break;
-            case 4:
-                imageView.setImageResource(R.drawable.g2);
-                imageView.setTag("4843865324388352");
-                break;
-            case 5:
-                imageView.setImageResource(R.drawable.t1);
-                imageView.setTag("4843865324388352");
-                break;
-            case 6:
-                imageView.setImageResource(R.drawable.t2);
-                imageView.setTag("4843865324388352");
-                break;
-            case 7:
-                imageView.setImageResource(R.drawable.r);
-                imageView.setTag("4843865324388352");
-                break;
-            case 8:
-                imageView.setImageResource(R.drawable.r2);
-                imageView.setTag("4843865324388352");
-                break;
-            case 9:
-                imageView.setImageResource(R.drawable.r3);
-                imageView.setTag("4843865324388352");
-                break;
+//            case 0:
+//                imageView.setImageResource(R.drawable.betal);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 1:
+//                imageView.setImageResource(R.drawable.hindi1);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 2:
+//                imageView.setImageResource(R.drawable.hindi2);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 3:
+//                imageView.setImageResource(R.drawable.g1);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 4:
+//                imageView.setImageResource(R.drawable.g2);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 5:
+//                imageView.setImageResource(R.drawable.t1);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 6:
+//                imageView.setImageResource(R.drawable.t2);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 7:
+//                imageView.setImageResource(R.drawable.r);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 8:
+//                imageView.setImageResource(R.drawable.r2);
+//                imageView.setTag("4843865324388352");
+//                break;
+//            case 9:
+//                imageView.setImageResource(R.drawable.r3);
+//                imageView.setTag("4843865324388352");
+//                break;
         }
         imageView.setOnClickListener(new OnImageClickListener(position,String.valueOf(imageView.getTag())));
 
