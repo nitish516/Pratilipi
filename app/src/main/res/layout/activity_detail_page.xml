@@ -35,14 +35,12 @@ android:layout_marginRight="10dp">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Title"
             android:padding="5dp"/>
         <TextView
             android:id="@+id/authorTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Author Name"
             android:padding="5dp"/>
 
         <LinearLayout

@@ -68,18 +68,24 @@ public class DetailPageActivity extends Activity {
                     summaryTextView.setTypeface(typeFace);
                 }
             }
+            TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
             JSONObject authorObj = obj.getJSONObject("author");
             if(null != authorObj){
                 String name = authorObj.getString("name");
                 if(null!= name) {
                     Spanned author = Html.fromHtml(name);
-                    if (null != author) {
-                        TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
-                        authorTextView.setText(author);
+                   if (null != author) {
+                       authorTextView.setText(author);
                         authorTextView.setTypeface(typeFace);
                     }
+                    else
+                        authorTextView.setVisibility(View.GONE);
                 }
+                else
+                    authorTextView.setVisibility(View.GONE);
             }
+            else
+                authorTextView.setVisibility(View.GONE);
 
         }catch (Exception e){
             e.printStackTrace();
