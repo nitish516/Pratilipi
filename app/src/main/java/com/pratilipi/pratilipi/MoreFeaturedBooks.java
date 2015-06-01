@@ -146,14 +146,13 @@ private void makeJsonArryReq() {
                 final JSONObject obj = pratilipiList.getJSONObject(i);
                 if(obj.getLong("languageId") != lanId)
                     continue;
-                CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.card_view, null);
+                final CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.card_view, null);
                 cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(getApplicationContext(), DetailPageActivity.class);
+                        Intent i = new Intent(linearLayout.getContext(), DetailPageActivity.class);
                         i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                        if(!isSearch)
-                        startActivity(i);
+//                        startActivity(i);
                     }
                 });
                 ImageLoader imageLoader = AppController.getInstance().getImageLoader();

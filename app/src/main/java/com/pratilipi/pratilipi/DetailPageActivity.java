@@ -42,8 +42,7 @@ public class DetailPageActivity extends Activity {
                 typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
 
             title.setTypeface(typeFace);
-            // Note: This flag is required for proper typeface rendering
-            title.setPaintFlags(title.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+
             title.setText(Html.fromHtml(obj.getString("title")));
 
             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
@@ -69,13 +68,16 @@ public class DetailPageActivity extends Activity {
                     summaryTextView.setTypeface(typeFace);
                 }
             }
-            JSONObject authorObj = obj.getJSONObject("author")
+            JSONObject authorObj = obj.getJSONObject("author");
             if(null != authorObj){
-                Spanned author = Html.fromHtml(authorObj.getString("name"));
-                if (null != author) {
-                    TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
-                    authorTextView.setText(author);
-                    authorTextView.setTypeface(typeFace);
+                String name = authorObj.getString("name");
+                if(null!= name) {
+                    Spanned author = Html.fromHtml(name);
+                    if (null != author) {
+                        TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
+                        authorTextView.setText(author);
+                        authorTextView.setTypeface(typeFace);
+                    }
                 }
             }
 
