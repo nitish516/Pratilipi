@@ -152,7 +152,7 @@ private void makeJsonArryReq() {
                     public void onClick(View v) {
                         Intent i = new Intent(linearLayout.getContext(), DetailPageActivity.class);
                         i.putExtra(DetailPageActivity.JSON,  obj.toString());
-//                        startActivity(i);
+                        startActivity(i);
                     }
                 });
                 ImageLoader imageLoader = AppController.getInstance().getImageLoader();
