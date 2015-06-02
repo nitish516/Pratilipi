@@ -16,13 +16,19 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -86,6 +92,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     boolean isLoading = false;
     ProgressDialog progressDialog;
     RequestTask task;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +101,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         mTitleChapters = new ArrayList<>();
         try {
             obj = new JSONObject(getIntent().getStringExtra(JSON));
+            title = obj.getString("title");
             pId = obj.getLong("id");
             type = obj.getString("contentType");
             pageCount = obj.getInt("pageCount");
@@ -185,6 +193,16 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        LayoutInflater layoutInflate = LayoutInflater.from(this);
+        View v = layoutInflate.inflate(R.layout.actionbar_custom_title, null);
+        TextView actionBarTitleTextView = (TextView)v.findViewById(R.id.actionBarTitle);
+        actionBarTitleTextView.setTypeface(typeFace);
+        actionBarTitleTextView.setText(title);
+
+        getSupportActionBar().setCustomView(v);
 
        webView = (WebView)findViewById(R.id.webView);
        webView.setVerticalScrollBarEnabled(false);

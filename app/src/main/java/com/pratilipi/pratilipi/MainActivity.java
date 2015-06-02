@@ -77,46 +77,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private static String TAG = MainActivity.class.getSimpleName();
     SearchView searchViewButton;
 
-//    public MainActivity() {
-////        searchView = null;
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         super.onCreateOptionsMenu(menu);
         MenuInflater mi = getMenuInflater();
         mi.inflate(R.menu.action_search, menu);
-//        searchView.setIconified(true);
-//        searchView.setIconifiedByDefault(true);
-//        searchView.setActivated(true);
-//        searchView.setQueryHint("Search View Hint");
-//        searchViewButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
-//                startActivity(searchIntent);            }
-//        });
 
-
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                //Log.e("onQueryTextChange", "called");
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                Intent in = new Intent(getApplicationContext(), MoreFeaturedBooks.class);
-//                in.putExtra("TITLE",query);
-//                startActivity(in);
-//
-//                return true;
-//            }
-//
-//        });
         return true;
     }
 
