@@ -13,6 +13,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -151,55 +152,81 @@ private void makeJsonArryReq() {
             else {
                  pratilipiList = response.getJSONArray("pratilipiList");
             }
+            if(pratilipiList != null) {
+                for (int i = 0; i < pratilipiList.length(); i++) {
+                    final JSONObject obj = pratilipiList.getJSONObject(i);
+                    if (obj.getLong("languageId") != lanId)
+                        continue;
+                    final CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.card_view, null);
+                    cardView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(linearLayout.getContext(), DetailPageActivity.class);
+                            i.putExtra(DetailPageActivity.JSON, obj.toString());
+                            startActivity(i);
+                        }
+                    });
+                    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
-            for (int i = 0; i < pratilipiList.length(); i++) {
-                final JSONObject obj = pratilipiList.getJSONObject(i);
-                if(obj.getLong("languageId") != lanId)
-                    continue;
-                final CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.card_view, null);
-                cardView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(linearLayout.getContext(), DetailPageActivity.class);
-                        i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                        startActivity(i);
+                    NetworkImageView imageView = (NetworkImageView) cardView.findViewById(R.id.detail_image);
+                    RatingBar ratingBar = (RatingBar) cardView.findViewById(R.id.averageRatingBarFeatured);
+                    TextView ratingNum = (TextView) cardView.findViewById(R.id.featuredPageRatingNumber);
+
+                    TextView title = (TextView) cardView.findViewById(R.id.titleTextViewMoreFeatured);
+                    title.setTypeface(typeFace);
+                    title.setText(Html.fromHtml(obj.getString("title")));
+
+                    TextView author = (TextView) cardView.findViewById(R.id.authorTextViewMoreFeatured);
+                    author.setTypeface(typeFace);
+                    if (isSearch)
+                        author.setVisibility(View.GONE);
+                    else
+                        author.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
+
+                    if (obj.getLong("ratingCount") > 0) {
+                        ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+                        ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
                     }
-                });
-                ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+                    // Populate the image
+                    imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
+                    linearLayout.addView(cardView);
 
-                NetworkImageView imageView = (NetworkImageView) cardView.findViewById(R.id.detail_image);
-                RatingBar ratingBar = (RatingBar) cardView.findViewById(R.id.averageRatingBarFeatured);
-                TextView ratingNum = (TextView) cardView.findViewById(R.id.featuredPageRatingNumber);
-
-                TextView title = (TextView) cardView.findViewById(R.id.titleTextViewMoreFeatured);
-                title.setTypeface(typeFace);
-                title.setText(Html.fromHtml(obj.getString("title")));
-
-                TextView author = (TextView) cardView.findViewById(R.id.authorTextViewMoreFeatured);
-                author.setTypeface(typeFace);
-                if(isSearch)
-                    author.setVisibility(View.GONE);
-                else
-                    author.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
-
-                if (obj.getLong("ratingCount") > 0) {
-                    ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
-                    ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
                 }
-                // Populate the image
-                imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
-                linearLayout.addView(cardView);
+                if(linearLayout.getChildAt(0) == null){
+                    TextView tv = new TextView(linearLayout.getContext());
+                    tv.setText("No reults");
+                    tv.setGravity(Gravity.CENTER);
+                    tv.setTextSize(32);
+                    linearLayout.setGravity(Gravity.CENTER);
+                    linearLayout.addView(tv);
+                }
 
+            }else
+            {
+                TextView tv = new TextView(linearLayout.getContext());
+                tv.setText("No reults");
+                tv.setGravity(Gravity.CENTER);
+                tv.setTextSize(32);
+                linearLayout.setGravity(Gravity.CENTER);
+                linearLayout.addView(tv);
             }
             } catch (JSONException e1) {
             e1.printStackTrace();
-
-            progressBar.setVisibility(View.GONE);
         }
+            progressBar.setVisibility(View.GONE);
         }
     @Override
     public void processFinish(String output) {
         Log.d("Output", output);
+        if(null == output || output.isEmpty())
+        {
+            TextView tv = new TextView(linearLayout.getContext());
+            tv.setText("No reults");
+            tv.setTextSize(32);
+            tv.setGravity(Gravity.CENTER);
+            linearLayout.setGravity(Gravity.CENTER);
+            linearLayout.addView(tv);
+        }
         try {
             parseJson(new JSONObject(output));
         } catch (JSONException e) {
