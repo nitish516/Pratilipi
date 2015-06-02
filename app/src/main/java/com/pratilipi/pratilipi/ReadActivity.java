@@ -16,6 +16,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TypefaceSpan;
@@ -370,6 +372,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
                     public void onPageFinished(WebView view, String url) {
                         try {
+                            String pageContent = jsonObject.getString("pageContent");
+                            Spanned parsedPageContent = Html.fromHtml(jsonObject.getString("pageContent"));
+//                            Log.d("parsedPageContent",0+parsedPageContent);
+
+
                             webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
                             if(scrollToLast) {
                                 webView.postDelayed(new Runnable() {
