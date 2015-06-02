@@ -39,6 +39,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -196,9 +197,12 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        getSupportActionBar().setIcon(R.drawable.pratilipi_logo_vector);
+
         LayoutInflater layoutInflate = LayoutInflater.from(this);
         View v = layoutInflate.inflate(R.layout.actionbar_custom_title, null);
         TextView actionBarTitleTextView = (TextView)v.findViewById(R.id.actionBarTitle);
+        actionBarTitleTextView.setTextColor(getResources().getColor(R.color.fab_material_black));
         actionBarTitleTextView.setTypeface(typeFace);
         actionBarTitleTextView.setText(title);
 
@@ -469,8 +473,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             case R.id.action_index:
                 openIndex();
                 return true;
-            case R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+            case android.R.id.home:
+                super.onBackPressed();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

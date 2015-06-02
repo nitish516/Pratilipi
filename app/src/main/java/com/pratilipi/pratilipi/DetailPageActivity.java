@@ -1,13 +1,16 @@
 package com.pratilipi.pratilipi;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -16,19 +19,22 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.json.JSONObject;
 
-public class DetailPageActivity extends Activity {
+public class DetailPageActivity extends ActionBarActivity {
 
     public static final String PID = "PId";
     public static final String POSITION = "Position";
     public static final String JSON = "JSON";
     private JSONObject obj;
 
+    String title1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_page);
+            setContentView(R.layout.activity_detail_page);
         try{
             obj = new JSONObject(getIntent().getStringExtra(JSON));
+            title1 = obj.getString("title");
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
 
@@ -40,6 +46,19 @@ public class DetailPageActivity extends Activity {
                 typeFace= Typeface.createFromAsset(getAssets(), "fonts/tamil.ttf");
             else if(lan.equalsIgnoreCase("gu"))
                 typeFace= Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
+
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowCustomEnabled(true);
+
+            LayoutInflater layoutInflate = LayoutInflater.from(this);
+            View v = layoutInflate.inflate(R.layout.actionbar_custom_title, null);
+            TextView actionBarTitleTextView = (TextView)v.findViewById(R.id.actionBarTitle);
+            actionBarTitleTextView.setTypeface(typeFace);
+            actionBarTitleTextView.setText(title1);
+
+            getSupportActionBar().setCustomView(v);
 
             title.setTypeface(typeFace);
 

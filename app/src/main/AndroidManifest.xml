@@ -42,7 +42,11 @@
         <activity
             android:name=".DetailPageActivity"
             android:label="@string/title_activity_detail_page"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+            android:theme="@style/Theme.Mycustomstyle" >
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
 
         </activity>
         <activity
@@ -50,10 +54,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_read"
             android:theme="@style/AppTheme">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+            <!--<meta-data-->
+                <!--android:name="android.support.PARENT_ACTIVITY"-->
+                <!--android:value=".MainActivity" />-->
         </activity>
         <activity
             android:name=".SearchActivity"

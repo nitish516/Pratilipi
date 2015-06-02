@@ -12,6 +12,7 @@
         android:textSize="20dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:text="" />
+        android:text=""
+        android:textColor="@color/White"/>
 
 </RelativeLayout>
