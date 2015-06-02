@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -110,6 +111,16 @@ public class DetailPageActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                super.onBackPressed();
+                return true;
+            default:super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     public void launchReader(View view)
