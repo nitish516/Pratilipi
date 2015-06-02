@@ -5,21 +5,16 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -39,8 +34,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.support.v7.internal.view.menu.MenuItemImpl;
-import android.widget.Toast;
 //import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -48,7 +41,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
-import com.pratilipi.pratilipi.helper.PratilipiProvider;
 import com.software.shell.fab.ActionButton;
 
 import org.json.JSONArray;
@@ -90,7 +82,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.action_search_item:
-                Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+                Intent searchIntent = new Intent(MainActivity.this, CardListActivity.class);
+                searchIntent.putExtra("TITLE","Search");
                 startActivity(searchIntent);
                 return true;
             default: return super.onOptionsItemSelected(item);
@@ -458,7 +451,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 moreBttn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent in = new Intent(getActivity(), MoreFeaturedBooks.class);
+                        Intent in = new Intent(getActivity(), CardListActivity.class);
                         in.putExtra("TITLE","Featured");
                         startActivity(in);
                     }
@@ -471,7 +464,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 moreBttn1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent in = new Intent(getActivity(), MoreFeaturedBooks.class);
+                        Intent in = new Intent(getActivity(), CardListActivity.class);
                         in.putExtra("TITLE","New Releases");
                         startActivity(in);
                     }

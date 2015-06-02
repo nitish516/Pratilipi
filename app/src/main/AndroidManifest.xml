@@ -73,7 +73,7 @@
             android:theme="@style/actionBar">
         </activity>
         <activity
-            android:name=".MoreFeaturedBooks"
+            android:name=".CardListActivity"
             android:label="@string/title_featured_books"
             android:theme="@style/Theme.Mycustomstyle">
         </activity>

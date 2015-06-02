@@ -1,29 +1,30 @@
 package com.pratilipi.pratilipi;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.pratilipi.pratilipi.DataFiles.Metadata;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,24 +33,27 @@ import org.json.JSONObject;
 /**
  * Created by MOHIT KHAITAN on 31-05-2015.
  */
-public class MoreFeaturedBooks extends ActionBarActivity implements AsyncResponse{
+public class CardListActivity extends ActionBarActivity implements AsyncResponse{
     LinearLayout linearLayout;
+    ProgressBar progressBar;
     Long lanId = null;
     Typeface typeFace = null;
     String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/list?state=PUBLISHED&languageId=";
     boolean isSearch = false;
+    SearchView searchView;
 
     protected void onCreate(Bundle savedInstanceState){
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.more_featured_content);
+        setContentView(R.layout.activity_card_list);
         linearLayout = (LinearLayout)findViewById(R.id.linear_layout_more_featured);
+        progressBar = (ProgressBar)findViewById((R.id.progress_bar_more_featured));
 
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         String title = getIntent().getStringExtra("TITLE");
         actionBar.setTitle(title);
         if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases"))){
             isSearch = true;
-            url = "http://www.pratilipi.com/api.pratilipi/search?query="+title+"&languageId=";
         }
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -67,11 +71,14 @@ public class MoreFeaturedBooks extends ActionBarActivity implements AsyncRespons
             typeFace = Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
         }
 
-        if(isOnline())
-            makeJsonArryReq();
-        else
-        {
-            showNoConnectionDialog(this);
+        if(!isSearch){
+            if(isOnline()) {
+                makeJsonArryReq();
+            }
+            else
+            {
+                showNoConnectionDialog(this);
+            }
         }
     }
 
@@ -125,6 +132,7 @@ public void onCancel(DialogInterface dialog) {
  * */
 private void makeJsonArryReq() {
 
+    progressBar.setVisibility(View.VISIBLE);
     RequestTask task =  new RequestTask();
 
     task.execute(url+lanId);
@@ -183,6 +191,8 @@ private void makeJsonArryReq() {
             }
             } catch (JSONException e1) {
             e1.printStackTrace();
+
+            progressBar.setVisibility(View.GONE);
         }
         }
     @Override
@@ -194,5 +204,54 @@ private void makeJsonArryReq() {
             e.printStackTrace();
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
+        super.onCreateOptionsMenu(menu);
+
+        if(isSearch){
+            MenuInflater mi = getMenuInflater();
+            mi.inflate(R.menu.menu_main, menu);
+
+            searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+            searchView.setIconified(true);
+            searchView.setIconifiedByDefault(false);
+            searchView.setActivated(true);
+            searchView.setQueryHint("Search Pratilipi");
+            searchView.setVisibility(View.VISIBLE);
+            searchView.requestFocus();
+            searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    if(isOnline()) {
+                        url = "http://www.pratilipi.com/api.pratilipi/search?query="+s+"&languageId=";
+                        makeJsonArryReq();
+                        searchView.clearFocus();
+                    }
+                    else
+                    {
+                        showNoConnectionDialog(searchView.getContext());
+                    }
+
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+
+            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    linearLayout.removeAllViews();
+                    return false;
+                }
+            });
+        }
+        return true;
+    }
 }
