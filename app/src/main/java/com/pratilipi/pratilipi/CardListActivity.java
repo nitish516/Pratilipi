@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -41,6 +42,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/list?state=PUBLISHED&languageId=";
     boolean isSearch = false;
     SearchView searchView;
+    android.support.v7.app.ActionBar actionBar;
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -49,7 +51,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         linearLayout = (LinearLayout)findViewById(R.id.linear_layout_more_featured);
         progressBar = (ProgressBar)findViewById((R.id.progress_bar_more_featured));
 
-        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         String title = getIntent().getStringExtra("TITLE");
         actionBar.setTitle(title);
         if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases"))){
@@ -229,6 +231,7 @@ private void makeJsonArryReq() {
                         url = "http://www.pratilipi.com/api.pratilipi/search?query="+s+"&languageId=";
                         makeJsonArryReq();
                         searchView.clearFocus();
+                        actionBar.setTitle(s);
                     }
                     else
                     {
@@ -244,11 +247,13 @@ private void makeJsonArryReq() {
                 }
             });
 
-            searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
-                public boolean onClose() {
-                    linearLayout.removeAllViews();
-                    return false;
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus) {
+                        linearLayout.removeAllViews();
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
                 }
             });
         }
