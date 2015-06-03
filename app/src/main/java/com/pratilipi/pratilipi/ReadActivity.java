@@ -81,7 +81,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private String content;
     private Matcher matcher;
     private static final Gson gson = new GsonBuilder().create();
-    WebView webView;
+    CustomWebView webView;
     float mStartDragX = 0;
     float mStartDragY = 0;
     private int indexSize = 0;
@@ -210,9 +210,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
         getSupportActionBar().setCustomView(v);
 
-       webView = (WebView)findViewById(R.id.webView);
+       webView = (CustomWebView)findViewById(R.id.webView);
        webView.setVerticalScrollBarEnabled(false);
-       webView.setOnTouchListener(new View.OnTouchListener() {
+       webView.setGestureDetector(new GestureDetector(new CustomeGestureDetector()));
+
+        webView.setOnTouchListener(new View.OnTouchListener() {
            @Override
            public boolean onTouch(View v, MotionEvent ev) {
                final int action = ev.getAction();
@@ -226,23 +228,24 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                    case MotionEvent.ACTION_MOVE:
                    break;
                    case MotionEvent.ACTION_UP:
-                       if (x > mStartDragX) {
-                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-                               webView.scrollBy(0, -webView.getHeight());
-                           else {
-                               if (!isLoading) {
-                                   launchChapter(false);
-                               }
-                           }
-                       } else if (x < mStartDragX) {
-                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-                               webView.scrollBy(0, webView.getHeight());
-                           else {
-                               if (!isLoading) {
-                                   launchChapter(true);
-                               }
-                           }
-                       } else if (x == mStartDragX){
+//                       if (x > mStartDragX) {
+//                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
+//                               webView.scrollBy(0, -webView.getHeight());
+//                           else {
+//                               if (!isLoading) {
+//                                   launchChapter(false);
+//                               }
+//                           }
+//                       } else if (x < mStartDragX) {
+//                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
+//                               webView.scrollBy(0, webView.getHeight());
+//                           else {
+//                               if (!isLoading) {
+//                                   launchChapter(true);
+//                               }
+//                           }
+//                       } else
+                           if (x == mStartDragX){
                            int b = mDecorView.getSystemUiVisibility();
                            int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
@@ -342,6 +345,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                webSettings.setUseWideViewPort(true);
                webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
                        + pId + "&pageNo=" + pageNo);
+               webSettings.setSupportZoom(true);
+               webSettings.setBuiltInZoomControls(true);
            }
        }
        else {
@@ -502,10 +507,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         if(isIncrease){
                  WebSettings settings = webView.getSettings();
                  settings.setTextZoom(settings.getTextZoom() + 5);
+            webView.setInitialScale(100);
+            WebSettings webSettings = webView.getSettings();
+            webSettings.setSupportZoom(true);
+            webSettings.setBuiltInZoomControls(true);
         }
         else if(!isIncrease){
                  WebSettings settings = webView.getSettings();
                  settings.setTextZoom(settings.getTextZoom() - 5);
+            webView.setInitialScale(30);
         }
     }
 
@@ -534,12 +544,91 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             launchChapter(mTitleChapters.get(position));
             hideSystemUI();
-        // update selected item and title, then close the drawer
-//        mDrawerList.setItemChecked(position, true);
-//            mDrawerList.setSelection(position);
-//            mDrawerList.getItemAtPosition(position);
 //        setTitle(mTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
         }
+    }
+
+    private class CustomeGestureDetector   extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
+                return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+                                float distanceY) {
+            if(distanceX > 0)
+            {
+                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
+                    webView.scrollBy(0, -webView.getHeight());
+                else {
+                    if (!isLoading) {
+                        launchChapter(false);
+                    }
+                }
+            }
+            else if(distanceX < 0)
+            {
+                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
+                    webView.scrollBy(0, webView.getHeight());
+                else {
+                    if (!isLoading) {
+                        launchChapter(true);
+                    }
+                }
+            }
+            return true;
+        }
+
+//        @Override
+//        public boolean onTouch(View v, MotionEvent ev) {
+//            final int action = ev.getAction();
+//            float x = ev.getX();
+//            float y = ev.getY();
+//            switch (action & MotionEventCompat.ACTION_MASK) {
+//                case MotionEvent.ACTION_DOWN:
+//                    mStartDragX = x;
+//                    mStartDragY = y;
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                   if (x > mStartDragX) {
+//                       if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
+//                           webView.scrollBy(0, -webView.getHeight());
+//                       else {
+//                           if (!isLoading) {
+//                               launchChapter(false);
+//                           }
+//                       }
+//                   } else if (x < mStartDragX) {
+//                       if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
+//                           webView.scrollBy(0, webView.getHeight());
+//                       else {
+//                           if (!isLoading) {
+//                               launchChapter(true);
+//                           }
+//                       }
+//                   } else
+//                    if (x == mStartDragX){
+//                        int b = mDecorView.getSystemUiVisibility();
+//                        int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+//
+//                        boolean visibility = (a & b) == 0;
+//                        if(visibility) {
+//                            hideSystemUI();
+//                            if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
+//                                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+//                        }
+//                        else
+//                            showSystemUI();
+//                    }
+//                    mStartDragX = 0;
+//                    break;
+//            }
+//            return true;
+//        }
     }
 }

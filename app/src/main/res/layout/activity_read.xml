@@ -14,7 +14,7 @@ tools:context=".MainActivity">
     android:paddingTop="25dp"
     android:paddingBottom="25dp"
     android:background="@color/White">
-    <WebView
+    <com.pratilipi.pratilipi.CustomWebView
     android:id="@+id/webView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
