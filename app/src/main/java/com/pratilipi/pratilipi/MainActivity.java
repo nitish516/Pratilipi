@@ -359,24 +359,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         void parseJson(JSONObject response)
         {
             try {
-                   JSONArray topReadPratilipiDataList = response.getJSONArray("topReadsPratilipiDataList");
+                   JSONArray topReadPratilipiDataList = response.getJSONArray("featuredPratilipiDataList");
                    for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
                        final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
                        if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
                            continue;
-                       //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
-                       final Metadata metaData = new Metadata(
-                               obj.getString("id"),
-                               obj.getString("title"),
-                               obj.getString("type"),
-                               obj.getString("authorId"),
-                               obj.getJSONObject("author").getString("name"),
-                               "",
-                               "",
-                               obj.getString("coverImageUrl"),
-                               obj.getString("pageUrl")
-                       );
-//                              mMetaData.add(metaData);
 
                        LinearLayout viewItemlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
                        ImageLoader imageLoader = AppController.getInstance().getImageLoader();
@@ -389,7 +376,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                            ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
                        }
                        // Populate the image
-                       imageView.setImageUrl("http:" + metaData.get_coverImageUrl(), imageLoader);
+                       imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
                        featuredList.addView(viewItemlayout);
 
                        viewItemlayout.setOnClickListener(new View.OnClickListener() {
@@ -401,24 +388,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                            }
                        });
                    }
-                for (int i = topReadPratilipiDataList.length()-1; i >=0 ; i--) {
+                JSONArray newReleasesPratilipiDataList = response.getJSONArray("newReleasesPratilipiDataList");
 
-                    final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+                for (int i = newReleasesPratilipiDataList.length()-1; i >=0 ; i--) {
+
+                    final JSONObject obj = newReleasesPratilipiDataList.getJSONObject(i);
                     if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
                         continue;
-                    //      String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl
-                    final Metadata metaData = new Metadata(
-                            obj.getString("id"),
-                            obj.getString("title"),
-                            obj.getString("type"),
-                            obj.getString("authorId"),
-                            obj.getJSONObject("author").getString("name"),
-                            "",
-                            "",
-                            obj.getString("coverImageUrl"),
-                            obj.getString("pageUrl")
-                    );
-//                              mMetaData.add(metaData);
 
                     LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
                        ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
@@ -430,7 +406,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                            ratingNum1.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
                        }
                        // Populate the image
-                       imageView1.setImageUrl("http:" +metaData.get_coverImageUrl(), imageLoader1);
+                       imageView1.setImageUrl("http:" +obj.getString("coverImageUrl"), imageLoader1);
                        newReleasesList.addView((layout));
 
                        layout.setOnClickListener(new View.OnClickListener() {
