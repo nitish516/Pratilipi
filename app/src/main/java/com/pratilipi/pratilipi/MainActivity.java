@@ -456,7 +456,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public void processFinish(String output) {
             if(!(null == output || output.isEmpty())) {
                 Log.d("Output", output);
-
                 try {
                     parseJson(new JSONObject(output));
                 } catch (JSONException e) {

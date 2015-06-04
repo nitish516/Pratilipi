@@ -218,7 +218,7 @@ private void makeJsonArryReq() {
 
     @Override
     public void processFinish(String output) {
-        if(!(null == output || output.isEmpty())) {
+        if(null == output || output.isEmpty()){
             Log.d("Output", output);
 
             TextView tv = new TextView(linearLayout.getContext());
@@ -228,10 +228,12 @@ private void makeJsonArryReq() {
             linearLayout.setGravity(Gravity.CENTER);
             linearLayout.addView(tv);
         }
-        try {
-            parseJson(new JSONObject(output));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        else {
+            try {
+                parseJson(new JSONObject(output));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
