@@ -217,9 +217,10 @@ private void makeJsonArryReq() {
         }
     @Override
     public void processFinish(String output) {
-        Log.d("Output", output);
         if(null == output || output.isEmpty())
         {
+            Log.d("Output", output);
+
             TextView tv = new TextView(linearLayout.getContext());
             tv.setText("No reults");
             tv.setTextSize(32);

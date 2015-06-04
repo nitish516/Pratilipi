@@ -478,11 +478,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public void processFinish(String output) {
-            Log.d("Output", output);
-            try {
-                parseJson(new JSONObject(output));
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if(null == output || output.isEmpty()) {
+                Log.d("Output", output);
+
+                try {
+                    parseJson(new JSONObject(output));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
