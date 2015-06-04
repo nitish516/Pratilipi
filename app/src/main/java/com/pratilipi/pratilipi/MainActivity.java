@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -118,11 +120,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         // Specify that the Home/Up button should not be enabled, since there is no hierarchical
         // parent.
-        actionBar.setLogo(R.drawable.pratilipi_logo_vector);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-
-//        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(true);
 
         // Specify that we will be displaying tabs in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
