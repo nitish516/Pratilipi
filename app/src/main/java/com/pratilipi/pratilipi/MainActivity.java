@@ -271,6 +271,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private LinearLayout featuredList;
         private LinearLayout newReleasesList;
         private ProgressDialog pDialog;
+        private float DecimalRating;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -372,7 +373,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                        RatingBar ratingBar = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
                        TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
                        if (obj.getLong("ratingCount") > 0) {
-                           ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+                           DecimalRating = ((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+                           ratingBar.setRating(DecimalRating);
                            ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
                        }
                        // Populate the image

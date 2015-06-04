@@ -20,6 +20,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
+
 public class DetailPageActivity extends ActionBarActivity {
 
     public static final String PID = "PId";
@@ -75,7 +77,13 @@ public class DetailPageActivity extends ActionBarActivity {
             if(obj.getLong("ratingCount")> 0) {
                 float val = (float)obj.getLong("starCount")/obj.getLong("ratingCount");
                 ratingBar.setRating(val);
-                averageRatingTextView.setText("Average rating: " + String.valueOf(val) + "/5");
+
+                NumberFormat numberformatter = NumberFormat.getNumberInstance();
+                numberformatter.setMaximumFractionDigits(1);
+                numberformatter.setMinimumFractionDigits(1);
+                String rating = numberformatter.format(val);
+
+                averageRatingTextView.setText("Average rating: " + String.valueOf(rating) + "/5");
                 detailPageRate.setText(String.valueOf("("+obj.getLong("ratingCount"))+" rating)");
             }
 
