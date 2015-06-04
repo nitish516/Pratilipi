@@ -217,8 +217,8 @@ private void makeJsonArryReq() {
         }
     @Override
     public void processFinish(String output) {
-        if(null == output || output.isEmpty())
-        {
+        if(!(null == output || output.isEmpty())) {
+            {
             Log.d("Output", output);
 
             TextView tv = new TextView(linearLayout.getContext());

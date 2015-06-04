@@ -521,7 +521,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     @Override
     public void processFinish(String output) {
-        if(null!= output) {
+        if(!(null == output || output.isEmpty())) {
             Log.d("Output", output);
             try {
                 jsonObject = new JSONObject(output);
