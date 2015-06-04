@@ -228,23 +228,23 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                    case MotionEvent.ACTION_MOVE:
                    break;
                    case MotionEvent.ACTION_UP:
-//                       if (x > mStartDragX) {
-//                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-//                               webView.scrollBy(0, -webView.getHeight());
-//                           else {
-//                               if (!isLoading) {
-//                                   launchChapter(false);
-//                               }
-//                           }
-//                       } else if (x < mStartDragX) {
-//                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-//                               webView.scrollBy(0, webView.getHeight());
-//                           else {
-//                               if (!isLoading) {
-//                                   launchChapter(true);
-//                               }
-//                           }
-//                       } else
+                       if (x > mStartDragX) {
+                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
+                               webView.scrollBy(0, -webView.getHeight());
+                           else {
+                               if (!isLoading) {
+                                   launchChapter(false);
+                               }
+                           }
+                       } else if (x < mStartDragX) {
+                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
+                               webView.scrollBy(0, webView.getHeight());
+                           else {
+                               if (!isLoading) {
+                                   launchChapter(true);
+                               }
+                           }
+                       } else
                            if (x == mStartDragX){
                            int b = mDecorView.getSystemUiVisibility();
                            int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
