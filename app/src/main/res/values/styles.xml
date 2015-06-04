@@ -133,5 +133,12 @@
         <item name="popupMenuStyle">@style/PopupMenu.Mycustomstyle</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Mycustomstyle</item>
     </style>
+    
+    <!-- Rating Bar Style-->
+    <style name="CustomRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/custom_rating_bar_full</item>
+        <item name="android:minHeight">23dip</item>
+        <item name="android:maxHeight">23dip</item>
+    </style>
 
 </resources>
