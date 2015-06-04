@@ -359,7 +359,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         void parseJson(JSONObject response)
         {
             try {
-                   JSONArray topReadPratilipiDataList = response.getJSONArray("topReadPratilipiDataList");
+                   JSONArray topReadPratilipiDataList = response.getJSONArray("topReadsPratilipiDataList");
                    for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
                        final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
                        if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))

@@ -214,11 +214,11 @@ private void makeJsonArryReq() {
             e1.printStackTrace();
         }
             progressBar.setVisibility(View.GONE);
-        }
+    }
+
     @Override
     public void processFinish(String output) {
         if(!(null == output || output.isEmpty())) {
-            {
             Log.d("Output", output);
 
             TextView tv = new TextView(linearLayout.getContext());
@@ -234,6 +234,7 @@ private void makeJsonArryReq() {
             e.printStackTrace();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
