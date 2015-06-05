@@ -2,32 +2,51 @@ package com.pratilipi.pratilipi;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.gson.JsonParseException;
+import com.pratilipi.pratilipi.DataFiles.Metadata;
+import com.pratilipi.pratilipi.helper.PratilipiProvider;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.text.NumberFormat;
 
-public class DetailPageActivity extends ActionBarActivity {
+import io.fabric.sdk.android.services.concurrency.Task;
+
+public class DetailPageActivity extends ActionBarActivity implements AsyncResponse{
 
     public static final String PID = "PId";
     public static final String POSITION = "Position";
     public static final String JSON = "JSON";
     private JSONObject obj;
+    URI mUri;
 
     String title1;
 
@@ -136,5 +155,91 @@ public class DetailPageActivity extends ActionBarActivity {
         Intent i = new Intent(this, ReadActivity.class);
         i.putExtra(DetailPageActivity.JSON,  obj.toString());
         startActivity(i);
+    }
+
+    public void addData(View view) {
+        ContentValues values = new ContentValues();
+
+        int pageCount = 0;
+        String contentType = "";
+        Long pId = 0l;
+        try {
+            pageCount = obj.getInt("pageCount");
+            contentType = obj.getString("contentType");
+            pId = obj.getLong("id");
+            values.put(PratilipiProvider.PID , String.valueOf(pId));
+            values.put(PratilipiProvider.TITLE , obj.getString("title"));
+            values.put(PratilipiProvider.CONTENT_TYPE ,contentType);
+            values.put(PratilipiProvider.AUTHOR_ID , String.valueOf(obj.getLong("authorId")));
+            values.put(PratilipiProvider.AUTHOR_NAME , obj.getJSONObject("author").getString("name"));
+            values.put(PratilipiProvider.CH_COUNT , String.valueOf(pageCount));
+            values.put(PratilipiProvider.IMG_URL , obj.getString("coverImgUrl"));
+            values.put(PratilipiProvider.PG_URL , obj.getString("pageUrl"));
+            values.put(PratilipiProvider.INDEX , obj.getString("index"));
+
+
+            ContentResolver cv = getContentResolver();
+            Uri uri = cv.insert(
+                    PratilipiProvider.METADATA_URI, values);
+
+            for(int i=1;i<=pageCount;i++){
+    //            makeRequest(i,contentType,pId);
+        }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    private void makeRequest(int pageNo,String type,Long pId) {
+        if(isOnline()) {
+            if (type.equalsIgnoreCase("PRATILIPI")) {
+                RequestTask task = new RequestTask();
+                String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
+                task.execute(url + pId + "&pageNo=" + pageNo);
+                task.delegate = this;
+            } else if (type.equalsIgnoreCase("IMAGE")) {
+
+            }
+        }
+    }
+
+    void parseJson(JSONObject obj) {
+        ContentValues values = new ContentValues();
+        try {
+            values.put(PratilipiProvider.PID , String.valueOf(obj.getLong("pratilipiId")));
+            values.put(PratilipiProvider.CONTENT , obj.getString("pageContent"));
+            values.put(PratilipiProvider.CH_NO, String.valueOf(obj.getInt("pageNo")));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        ContentResolver cv = getContentResolver();
+        Uri uri = cv.insert(
+                PratilipiProvider.CONTENT_URI, values);
+
+
+    }
+
+    @Override
+    public void processFinish(String output) {
+        if(!(null == output || output.isEmpty())) {
+            Log.d("Output", output);
+            try {
+                parseJson(new JSONObject(output));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

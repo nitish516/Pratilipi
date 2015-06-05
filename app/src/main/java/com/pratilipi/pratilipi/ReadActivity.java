@@ -283,6 +283,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
     public static void showNoConnectionDialog(Context ctx1) {
         final Context ctx = ctx1;
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
