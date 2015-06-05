@@ -25,6 +25,14 @@
             android:layout_weight="0.5"
             android:paddingTop="10dp"
             android:paddingBottom="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/view_more_featured_layout"
+                android:orientation="horizontal"
+                android:padding="-5dp"
+                android:clickable="false">
             <TextView
                 android:id="@+id/fetures_tv"
                 android:layout_width="wrap_content"
@@ -39,16 +47,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
-                android:paddingRight="20dp"/>
+                android:paddingRight="20dp"
+                android:layout_marginLeft="180dp"/>
+            </LinearLayout>
+
             <ProgressBar
-                android:layout_below="@id/fetures_tv"
+                android:layout_below="@id/view_more_featured_layout"
                 android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"/>
             <HorizontalScrollView
-                android:layout_below="@id/fetures_tv"
+                android:layout_below="@id/view_more_featured_layout"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:divider="#fff"
@@ -73,6 +84,14 @@
             android:layout_weight="0.5"
             android:paddingTop="10dp"
             android:paddingBottom="5dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/view_more_newrelease_layout"
+                android:padding="-5dp"
+                android:clickable="true">
+
             <TextView
                 android:id="@+id/release_tv"
                 android:layout_width="wrap_content"
@@ -87,16 +106,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
-                android:paddingRight="20dp"/>
+                android:paddingRight="20dp"
+                android:layout_marginLeft="140dp"/>
+            </LinearLayout>
+
             <ProgressBar
-                android:layout_below="@id/release_tv"
+                android:layout_below="@id/view_more_newrelease_layout"
                 android:id="@+id/progress_bar1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"/>
             <HorizontalScrollView
-                android:layout_below="@id/release_tv"
+                android:layout_below="@id/view_more_newrelease_layout"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:divider="#fff"

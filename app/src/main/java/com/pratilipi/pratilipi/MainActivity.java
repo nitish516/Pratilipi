@@ -295,7 +295,37 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 //            lv.setAdapter(adapter);
 //            ListView lv2 = (ListView) rootView.findViewById(R.id.listview_featured);
 //            lv2.setAdapter(adapter);
+
+
+            final View viewAllFeatured = rootView.findViewById(R.id.view_more_featured_layout);
+            viewAllFeatured.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LaunchCardView("Featured", viewAllFeatured);
+                }
+            });
+
+            final View viewAllNewReleases = rootView.findViewById(R.id.view_more_newrelease_layout);
+
+            viewAllNewReleases.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LaunchCardView("New Releases", viewAllNewReleases);
+                }
+            });
+
             return rootView;
+
+        }
+
+        private void LaunchCardView(String input, View view){
+
+//            view.setBackgroundColor(getResources().getColor(R.color.Gray200));
+
+            Intent NewReleaseIntent = new Intent(getActivity(), CardListActivity.class);
+            NewReleaseIntent.putExtra("TITLE",input);
+            startActivity(NewReleaseIntent);
+
         }
 
         private void showProgressDialog() {
@@ -398,7 +428,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
                         continue;
 
-                    LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+                       LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
                        ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
                        NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
                        RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
@@ -424,27 +454,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
                 featuredList.addView(morebtnlayout);
 
-                View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
+                final View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
 
                 moreBttn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent in = new Intent(getActivity(), CardListActivity.class);
-                        in.putExtra("TITLE","Featured");
-                        startActivity(in);
+                        LaunchCardView("Featured", moreBttn);
                     }
                 });
 
                 LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
                 newReleasesList.addView((morebtnlayout1));
-                View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
+                final View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
 
                 moreBttn1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent in = new Intent(getActivity(), CardListActivity.class);
-                        in.putExtra("TITLE","New Releases");
-                        startActivity(in);
+                        LaunchCardView("New Releases", moreBttn1);
                     }
                 });
 
