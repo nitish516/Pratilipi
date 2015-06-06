@@ -40,17 +40,14 @@
                 android:text="@string/title_featured_books"
                 android:textColor="#FF0000"
                 android:textSize="16dp"
-                android:paddingLeft="20dp"
-                android:layout_weight="0.5"/>
+                android:paddingLeft="20dp" />
             <TextView
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:paddingRight="20dp"
-                android:layout_marginLeft="135dp"
-                android:layout_weight="0.4"/>
+                android:gravity="right"/>
             </LinearLayout>
 
             <ProgressBar
@@ -60,25 +57,6 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"/>
-            <HorizontalScrollView
-                android:layout_below="@id/view_more_featured_layout"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:divider="#fff"
-                android:fadingEdgeLength="5dp"
-                android:requiresFadingEdge="horizontal"
-                android:scrollbars="none">
-                <LinearLayout
-                    android:id="@+id/linear_layout_featured"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:scrollbarAlwaysDrawHorizontalTrack="false"
-                    android:layout_marginLeft="20dp"
-                    >
-
-                </LinearLayout>
-                </HorizontalScrollView>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -96,22 +74,19 @@
 
             <TextView
                 android:id="@+id/release_tv"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/title_new_releases"
                 android:textColor="#FF0000"
                 android:textSize="16dp"
-                android:paddingLeft="20dp"
-                android:layout_weight="0.6" />
+                android:paddingLeft="20dp" />
             <TextView
-                android:layout_alignParentRight="true"
-                android:layout_width="0dp"
+                android:gravity="right"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
-                android:paddingRight="20dp"
-                android:layout_weight="0.5"
-                android:layout_marginLeft="100dp"/>
+                android:paddingRight="20dp"/>
             </LinearLayout>
 
             <ProgressBar
@@ -140,6 +115,30 @@
 
                 </LinearLayout>
             </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:divider="#fff"
+                android:fadingEdgeLength="5dp"
+                android:requiresFadingEdge="horizontal"
+                android:scrollbars="none"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="43dp"
+                android:layout_marginStart="43dp">
+                <LinearLayout
+                    android:id="@+id/linear_layout_featured"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:scrollbarAlwaysDrawHorizontalTrack="false"
+                    android:layout_marginLeft="20dp"
+                    >
+
+                </LinearLayout>
+                </HorizontalScrollView>
         </RelativeLayout>
     </LinearLayout>
     </ScrollView>
