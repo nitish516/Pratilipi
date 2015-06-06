@@ -11,8 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.LayerDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -22,6 +20,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,6 +43,11 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
@@ -398,94 +402,105 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         void parseJson(JSONObject response)
         {
-            try {
-                   JSONArray topReadPratilipiDataList = response.getJSONArray("featuredPratilipiDataList");
-                   for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
-                       final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
-                       if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
-                           continue;
+//            Gson gson = new GsonBuilder().create();
+//            JsonArray responseArr = gson.fromJson(String.valueOf(response), JsonElement.class ).getAsJsonArray();
+//            Log.d("responseArr", ""+ responseArr);
+//            if(null != responseArr) {
+//                     JsonObject topReads = (JsonObject) responseArr.get(0);
+//                     Log.d("topReads", ""+ topReads);
+//                 }
+            //                   JSONArray topReadPratilipiDataList = response.getJSONArray("featuredPratilipiDataList");
+//                   for (int i = 0; i < topReadPratilipiDataList.length(); i++) {
+//                       final JSONObject obj = topReadPratilipiDataList.getJSONObject(i);
+//                       if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
+//                           continue;
+//
+//                       CardView cardView = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+//                       LinearLayout viewItemlayout = (LinearLayout)cardView.findViewById(R.id.view_item_layout);
+//                       ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+//
+//                       NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
+//                       RatingBar ratingBar = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
+//                       TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
+//                       if (obj.getLong("ratingCount") > 0) {
+//                           DecimalRating = ((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+//                           ratingBar.setRating(DecimalRating);
+//                           ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
+//                       }
+//                       // Populate the image
+//                       imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
+//                       featuredList.addView(cardView);
+//
+//                       viewItemlayout.setOnClickListener(new View.OnClickListener() {
+//                           @Override
+//                           public void onClick(View v) {
+//                               Intent i = new Intent(getActivity(), DetailPageActivity.class);
+//                               i.putExtra(DetailPageActivity.JSON,  obj.toString());
+//                               getActivity().startActivity(i);
+//                           }
+//                       });
+//                   }
+//
+//                JSONArray newReleasesPratilipiDataList = response.getJSONArray("newReleasesPratilipiDataList");
 
-                       LinearLayout viewItemlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
-                       ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-
-                       NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
-                       RatingBar ratingBar = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
-                       TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
-                       if (obj.getLong("ratingCount") > 0) {
-                           DecimalRating = ((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
-                           ratingBar.setRating(DecimalRating);
-                           ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
-                       }
-                       // Populate the image
-                       imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
-                       featuredList.addView(viewItemlayout);
-
-                       viewItemlayout.setOnClickListener(new View.OnClickListener() {
-                           @Override
-                           public void onClick(View v) {
-                               Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                               i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                               getActivity().startActivity(i);
-                           }
-                       });
-                   }
-                JSONArray newReleasesPratilipiDataList = response.getJSONArray("newReleasesPratilipiDataList");
-
-                for (int i = newReleasesPratilipiDataList.length()-1; i >=0 ; i--) {
-
-                    final JSONObject obj = newReleasesPratilipiDataList.getJSONObject(i);
-                    if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
-                        continue;
-
-                       LinearLayout layout =  (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
-                       ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
-                       NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
-                       RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
-                       TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
-                       if(obj.getLong("ratingCount")> 0) {
-                           ratingBar1.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
-                           ratingNum1.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
-                       }
-                       // Populate the image
-                       imageView1.setImageUrl("http:" +obj.getString("coverImageUrl"), imageLoader1);
-                       newReleasesList.addView((layout));
-
-                       layout.setOnClickListener(new View.OnClickListener() {
-                                                             @Override
-                                                             public void onClick(View v) {
-                                 Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                                 i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                                 getActivity().startActivity(i);
-                             }
-                         });
-                    }
-
-                LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-                featuredList.addView(morebtnlayout);
-
-                final View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
-
-                moreBttn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        LaunchCardView("Featured", moreBttn);
-                    }
-                });
-
-                LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-                newReleasesList.addView((morebtnlayout1));
-                final View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
-
-                moreBttn1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        LaunchCardView("New Releases", moreBttn1);
-                    }
-                });
-
-                } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//                for (int i = 0; i < newReleasesPratilipiDataList.length(); i++) {
+//
+//                    final JSONObject obj = newReleasesPratilipiDataList.getJSONObject(i);
+//                    if (!obj.getString("state").equalsIgnoreCase("PUBLISHED"))
+//                        continue;
+//
+//                    CardView cardView1 = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+//                    LinearLayout layout =  (LinearLayout) cardView1.findViewById(R.id.view_item_layout);
+//                       ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
+//                       NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
+//                       RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
+//                       TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
+//                       if(obj.getLong("ratingCount")> 0) {
+//                           ratingBar1.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
+//                           ratingNum1.setText((String.valueOf("("+(obj.getLong("ratingCount")+")"))));
+//                       }
+//                       // Populate the image
+//                       imageView1.setImageUrl("http:" +obj.getString("coverImageUrl"), imageLoader1);
+//                       newReleasesList.addView((layout));
+//
+//                       layout.setOnClickListener(new View.OnClickListener() {
+//                                                             @Override
+//                                                             public void onClick(View v) {
+//                                 Intent i = new Intent(getActivity(), DetailPageActivity.class);
+//                                 i.putExtra(DetailPageActivity.JSON,  obj.toString());
+//                                 getActivity().startActivity(i);
+//                         }
+//                     });
+//                }
+//
+//                LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+//                featuredList.addView(morebtnlayout);
+//
+//                View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
+//
+//                moreBttn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                            LaunchCardView("Featured", moreBttn);
+//                    }
+//                });
+//
+//                LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+//                newReleasesList.addView((morebtnlayout1));
+//                View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
+//
+//                moreBttn1.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Intent in = new Intent(getActivity(), CardListActivity.class);
+//                        in.putExtra("TITLE","New Releases");
+//                        startActivity(in);
+//                    }
+//                });
+//
+//                } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
 //            adapter.notifyDataSetChanged();
         }
 
