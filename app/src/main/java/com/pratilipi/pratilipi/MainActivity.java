@@ -5,6 +5,8 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +39,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 //import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -43,6 +47,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
+import com.pratilipi.pratilipi.helper.PratilipiProvider;
 import com.software.shell.fab.ActionButton;
 
 import org.json.JSONArray;
@@ -57,14 +62,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-     * three primary sections of the app. We use a {@link android.support.v4.app.FragmentPagerAdapter}
+     * three primary sections of the app. We use a {@link FragmentPagerAdapter}
      * derivative, which will keep every loaded fragment in memory. If this becomes too memory
      * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     AppSectionsPagerAdapter mAppSectionsPagerAdapter;
 
     /**
-     * The {@link android.support.v4.view.ViewPager} that will display the three primary sections of the app, one at a
+     * The {@link ViewPager} that will display the three primary sections of the app, one at a
      * time.
      */
     ViewPager mViewPager;
@@ -211,7 +216,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
      /**
-     * A {@link android.support.v4.app.FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
     public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
@@ -231,6 +236,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
                     return new ShelfFragment();
+                case 3:
+                    return new ProfileFragment();
 
                 default:
                     // The other sections of the app are dummy placeholders.
@@ -244,7 +251,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -258,6 +265,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return getResources().getString(R.string.title_categories);
                 case 2:
                     return getResources().getString(R.string.title_shelf);
+                case 3:
+                    return getResources().getString(R.string.title_profile);
             }
 
             return "Section " + (position + 1);
