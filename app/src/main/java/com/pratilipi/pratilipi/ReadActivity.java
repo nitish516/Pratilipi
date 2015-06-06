@@ -512,6 +512,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             WebSettings webSettings = webView.getSettings();
             webSettings.setSupportZoom(true);
             webSettings.setBuiltInZoomControls(true);
+            webSettings.setUseWideViewPort(true);
         }
         else if(!isIncrease){
                  WebSettings settings = webView.getSettings();

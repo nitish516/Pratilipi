@@ -40,7 +40,8 @@
                 android:text="@string/title_featured_books"
                 android:textColor="#FF0000"
                 android:textSize="16dp"
-                android:paddingLeft="20dp"/>
+                android:paddingLeft="20dp"
+                android:layout_weight="0.5"/>
             <TextView
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
@@ -48,7 +49,8 @@
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:paddingRight="20dp"
-                android:layout_marginLeft="180dp"/>
+                android:layout_marginLeft="135dp"
+                android:layout_weight="0.4"/>
             </LinearLayout>
 
             <ProgressBar
@@ -86,7 +88,7 @@
             android:paddingBottom="5dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/view_more_newrelease_layout"
                 android:padding="-5dp"
@@ -94,20 +96,22 @@
 
             <TextView
                 android:id="@+id/release_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title_new_releases"
                 android:textColor="#FF0000"
                 android:textSize="16dp"
-                android:paddingLeft="20dp"/>
+                android:paddingLeft="20dp"
+                android:layout_weight="0.6" />
             <TextView
                 android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:paddingRight="20dp"
-                android:layout_marginLeft="140dp"/>
+                android:layout_weight="0.5"
+                android:layout_marginLeft="100dp"/>
             </LinearLayout>
 
             <ProgressBar
