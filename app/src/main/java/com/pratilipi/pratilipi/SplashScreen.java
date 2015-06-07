@@ -19,7 +19,7 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
 
-        Intent i = new Intent(SplashScreen.this, MainActivity.class);
+        Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
         finish();
     }

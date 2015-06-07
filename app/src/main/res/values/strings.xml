@@ -47,6 +47,10 @@
     <string name="demo_user">Demo User</string>
     <string name="user_since">User Since 2 months</string>
     <string name="books_in_shelf">50 Books in shelf</string>
+    <string name="title_activity_login">Login Page</string>
+    <string name="title_activity_register">Register Page</string>
+    <string name="e_mail_id_log">E-mail ID</string>
+    <string name="add_to_shelf"> ADD TO SHELF </string>
 
 
 </resources>

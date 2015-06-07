@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    tools:context="com.pratilipi.pratilipi.LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_nam_r"
+        android:text="Name"
+        android:layout_margin="5dp"
+        android:textSize="18dp"/>
+
+
+    <EditText
+        android:id="@+id/editText_nam_r"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_usr_r"
+        android:text="E-Mail ID"
+        android:layout_margin="5dp"
+        android:textSize="18dp"/>
+
+
+    <EditText
+        android:id="@+id/editText_usr_r"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_pass_r"
+        android:text="Password"
+        android:layout_margin="5dp"
+        android:textSize="18dp"/>
+
+    <EditText
+        android:id="@+id/editText_pass_r"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:layout_margin="5dp"/>
+
+    <Button
+        android:id="@+id/bregister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:text=" REGISTER "/>
+
+</LinearLayout>

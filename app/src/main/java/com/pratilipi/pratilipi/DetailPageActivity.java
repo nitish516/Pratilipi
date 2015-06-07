@@ -23,6 +23,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -54,6 +55,18 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_detail_page);
+        Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
+        addToShelf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.addToShelfButton: {
+                        startActivity(new Intent(DetailPageActivity.this, LoginActivity.class));
+                        break;
+                    }
+                }
+            }
+        });
         try{
             obj = new JSONObject(getIntent().getStringExtra(JSON));
             title1 = obj.getString("title");
@@ -137,6 +150,8 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
 
     }
 
