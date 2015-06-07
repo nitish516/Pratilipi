@@ -402,8 +402,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         void parseJson(JSONObject response)
         {
-//            Gson gson = new GsonBuilder().create();
-//            JsonArray responseArr = gson.fromJson(String.valueOf(response), JsonElement.class ).getAsJsonArray();
+            Gson gson = new GsonBuilder().create();
+            try {
+                JSONArray arr = response.getJSONArray("response");
+                Log.d("arr",""+arr);
+                JsonArray responseArr = gson.fromJson(String.valueOf(response.getJSONArray("response")), JsonElement.class ).getAsJsonArray();
+                Log.d("responseArr",""+ responseArr);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
 //            Log.d("responseArr", ""+ responseArr);
 //            if(null != responseArr) {
 //                     JsonObject topReads = (JsonObject) responseArr.get(0);
