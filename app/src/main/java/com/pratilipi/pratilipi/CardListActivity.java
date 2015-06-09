@@ -55,7 +55,8 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         actionBar = getSupportActionBar();
         String title = getIntent().getStringExtra("TITLE");
         actionBar.setTitle(title);
-        if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases"))){
+        if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases")|| title.equalsIgnoreCase("Top Reads")
+            || title.equalsIgnoreCase("Books")|| title.equalsIgnoreCase("Poems")|| title.equalsIgnoreCase("Stories"))){
             isSearch = true;
         }
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -153,6 +154,7 @@ private void makeJsonArryReq() {
                  pratilipiList = response.getJSONArray("pratilipiList");
             }
             if(pratilipiList != null) {
+
                 for (int i = 0; i < pratilipiList.length(); i++) {
                     final JSONObject obj = pratilipiList.getJSONObject(i);
                     if (obj.getLong("languageId") != lanId)

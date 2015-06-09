@@ -30,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -258,7 +259,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
 
         @Override
@@ -286,6 +287,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private ProgressBar pBar;
         private LinearLayout featuredList;
         private LinearLayout newReleasesList;
+        private LinearLayout topReadsList;
         private ProgressDialog pDialog;
         private float DecimalRating;
 
@@ -299,6 +301,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             pBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
             featuredList = (LinearLayout) rootView.findViewById(R.id.linear_layout_featured);
             newReleasesList = (LinearLayout)rootView.findViewById(R.id.linear_layout_new_releases);
+            topReadsList = (LinearLayout)rootView.findViewById(R.id.linear_layout_top);
 
             if(isOnline())
                 makeJsonArryReq();
@@ -327,6 +330,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 @Override
                 public void onClick(View view) {
                     LaunchCardView("New Releases", viewAllNewReleases);
+                }
+            });
+
+            final View viewAllTopReads = rootView.findViewById(R.id.view_more_top_layout);
+
+            viewAllTopReads.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LaunchCardView("Top Reads", viewAllTopReads);
                 }
             });
 
@@ -407,6 +419,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         {
             JsonArray featuredPratilipiDataList = null;
             JsonArray newReleasesPratilipiDataList = null;
+            JsonArray topReadsPratilipiDataList = null;
             Gson gson = new GsonBuilder().create();
 
             try {
@@ -427,6 +440,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
                     else if(type.equalsIgnoreCase("New Releases")){
                         newReleasesPratilipiDataList = contentArr;
+                    }
+                    else if(type.equalsIgnoreCase("Top Reads")){
+                        topReadsPratilipiDataList = contentArr;
                     }
                 }
 
@@ -479,7 +495,36 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
                     // Populate the image
                     imageView1.setImageUrl("http:" +obj.get("coverImageUrl").getAsString(), imageLoader1);
-                    newReleasesList.addView((layout));
+                    newReleasesList.addView((cardView1));
+
+                    layout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(getActivity(), DetailPageActivity.class);
+                            i.putExtra(DetailPageActivity.JSON,  obj.toString());
+                            getActivity().startActivity(i);
+                        }
+                    });
+                }
+
+                for (int i = 0; i < topReadsPratilipiDataList.size(); i++) {
+                    final JsonObject obj = gson.fromJson( topReadsPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
+                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
+                        continue;
+
+                    CardView cardView1 = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+                    LinearLayout layout =  (LinearLayout) cardView1.findViewById(R.id.view_item_layout);
+                    ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
+                    NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
+                    RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
+                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
+                    if(obj.get("ratingCount").getAsLong()> 0) {
+                        ratingBar1.setRating((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
+                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
+                    }
+                    // Populate the image
+                    imageView1.setImageUrl("http:" +obj.get("coverImageUrl").getAsString(), imageLoader1);
+                    topReadsList.addView((cardView1));
 
                     layout.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -511,6 +556,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     @Override
                     public void onClick(View view) {
                         LaunchCardView("New Releases", moreBttn);
+                    }
+                });
+
+                LinearLayout morebtnlayout2 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+                topReadsList.addView((morebtnlayout2));
+                View moreBttn2 = morebtnlayout2.findViewById(R.id.more_btn_click);
+
+                moreBttn2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        LaunchCardView("Top Reads", moreBttn);
                     }
                 });
 
@@ -596,8 +652,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            String[] categoriesArray = {
-                    "Classic","Horror","Poems","Romance","Stories","Gazals"
+            final String[] categoriesArray = {
+                    "Books","Poems","Stories"
             };
             List<String> listCategories = new ArrayList<String>(
                     Arrays.asList(categoriesArray));
@@ -612,6 +668,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             View rootView = inflater.inflate(R.layout.fragment_categories, container, false);
             ListView linearLayout = (ListView) rootView.findViewById(R.id.listview_categories);
             linearLayout.setAdapter(mCategoriesAdapter);
+            linearLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String input = categoriesArray[position];
+                    Intent NewReleaseIntent = new Intent(getActivity(), CardListActivity.class);
+                    NewReleaseIntent.putExtra("TITLE",input);
+                    startActivity(NewReleaseIntent);
+                }
+            });
             return rootView;
         }
     }

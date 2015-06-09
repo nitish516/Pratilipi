@@ -100,7 +100,8 @@ android:layout_marginRight="10dp">
                android:text="ADD TO SHELF"
                android:background="@color/Red"
                android:textColor="#ffffff"
-               android:layout_marginLeft="2dp"/>
+               android:layout_marginLeft="2dp"
+               android:visibility="gone"/>
             <!--<Button-->
                 <!--android:id="@+id/reviewButton"-->
                 <!--android:layout_height="40sp"-->

@@ -21,8 +21,7 @@
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="5dp">
 
@@ -57,20 +56,41 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"/>
+            <HorizontalScrollView
+                android:layout_below="@id/view_more_featured_layout"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:divider="#fff"
+                android:fadingEdgeLength="5dp"
+                android:requiresFadingEdge="horizontal"
+                android:scrollbars="none"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+                <LinearLayout
+                    android:id="@+id/linear_layout_featured"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:scrollbarAlwaysDrawHorizontalTrack="false"
+                    android:layout_marginLeft="10dp"
+                    >
+
+                </LinearLayout>
+            </HorizontalScrollView>
         </RelativeLayout>
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
-            android:paddingTop="10dp"
-            android:paddingBottom="5dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/view_more_newrelease_layout"
-                android:padding="-5dp"
-                android:clickable="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/view_more_newrelease_layout"
+            android:padding="-5dp"
+            android:clickable="true">
 
             <TextView
                 android:id="@+id/release_tv"
@@ -87,17 +107,74 @@
                 android:text="@string/view_all"
                 android:textSize="16dp"
                 android:paddingRight="20dp"/>
+        </LinearLayout>
+
+        <ProgressBar
+            android:layout_below="@id/view_more_newrelease_layout"
+            android:id="@+id/progress_bar1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"/>
+        <HorizontalScrollView
+            android:layout_below="@id/view_more_newrelease_layout"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:divider="#fff"
+            android:fadingEdgeLength="5dp"
+            android:requiresFadingEdge="horizontal"
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/linear_layout_new_releases"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:scrollbarAlwaysDrawHorizontalTrack="false"
+                android:layout_marginLeft="10dp"
+                >
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </RelativeLayout>
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/view_more_top_layout"
+                android:padding="-5dp"
+                android:clickable="true">
+
+                <TextView
+                    android:id="@+id/top_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_top_reads"
+                    android:textColor="#FF0000"
+                    android:textSize="16dp"
+                    android:paddingLeft="20dp" />
+                <TextView
+                    android:gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_all"
+                    android:textSize="16dp"
+                    android:paddingRight="20dp"/>
             </LinearLayout>
 
             <ProgressBar
-                android:layout_below="@id/view_more_newrelease_layout"
-                android:id="@+id/progress_bar1"
+                android:layout_below="@id/view_more_top_layout"
+                android:id="@+id/progress_bar2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"/>
             <HorizontalScrollView
-                android:layout_below="@id/view_more_newrelease_layout"
+                android:layout_below="@id/view_more_top_layout"
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
                 android:divider="#fff"
@@ -105,40 +182,16 @@
                 android:requiresFadingEdge="horizontal"
                 android:scrollbars="none">
                 <LinearLayout
-                    android:id="@+id/linear_layout_new_releases"
+                    android:id="@+id/linear_layout_top"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:scrollbarAlwaysDrawHorizontalTrack="false"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="10dp"
                     >
 
                 </LinearLayout>
             </HorizontalScrollView>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:divider="#fff"
-                android:fadingEdgeLength="5dp"
-                android:requiresFadingEdge="horizontal"
-                android:scrollbars="none"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="43dp"
-                android:layout_marginStart="43dp">
-                <LinearLayout
-                    android:id="@+id/linear_layout_featured"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:scrollbarAlwaysDrawHorizontalTrack="false"
-                    android:layout_marginLeft="20dp"
-                    >
-
-                </LinearLayout>
-                </HorizontalScrollView>
         </RelativeLayout>
     </LinearLayout>
     </ScrollView>
