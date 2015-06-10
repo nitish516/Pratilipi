@@ -232,15 +232,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                            if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
                                webView.scrollBy(0, -webView.getHeight());
                            else {
-                               if (!isLoading) {
+                               if (!isLoading && webView.getScaleX() == 30) {
                                    launchChapter(false);
-                               }
+                              }
                            }
                        } else if (x < mStartDragX) {
                            if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
                                webView.scrollBy(0, webView.getHeight());
                            else {
-                               if (!isLoading) {
+                               if (!isLoading && webView.getScaleX() == 30) {
                                    launchChapter(true);
                                }
                            }
@@ -261,7 +261,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                        mStartDragX = 0;
                        break;
                }
-               return true;
+               return false;
            }
        });
 
@@ -346,7 +346,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                webSettings.setUseWideViewPort(true);
                webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
                        + pId + "&pageNo=" + pageNo);
-               webSettings.setSupportZoom(true);
+//               webSettings.setSupportZoom(true);
+               webSettings.setJavaScriptEnabled(true);
                webSettings.setBuiltInZoomControls(true);
            }
        }
@@ -505,19 +506,12 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     public void changeFont(boolean isIncrease)
     {
+        WebSettings settings = webView.getSettings();
         if(isIncrease){
-                 WebSettings settings = webView.getSettings();
                  settings.setTextZoom(settings.getTextZoom() + 5);
-            webView.setInitialScale(100);
-            WebSettings webSettings = webView.getSettings();
-            webSettings.setSupportZoom(true);
-            webSettings.setBuiltInZoomControls(true);
-            webSettings.setUseWideViewPort(true);
         }
         else if(!isIncrease){
-                 WebSettings settings = webView.getSettings();
                  settings.setTextZoom(settings.getTextZoom() - 5);
-            webView.setInitialScale(30);
         }
     }
 
@@ -581,7 +575,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     }
                 }
             }
-            return true;
+            return false;
         }
 
 //        @Override

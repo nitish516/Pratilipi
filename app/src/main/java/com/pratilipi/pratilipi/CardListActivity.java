@@ -261,6 +261,7 @@ private void makeJsonArryReq() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     if(isOnline()) {
+                        s = s.replace(" ", "%20");
                         url = "http://www.pratilipi.com/api.pratilipi/search?query="+s+"&languageId=";
                         makeJsonArryReq();
                         searchView.clearFocus();
