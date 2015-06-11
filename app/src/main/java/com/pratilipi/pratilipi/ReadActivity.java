@@ -348,7 +348,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                        + pId + "&pageNo=" + pageNo);
 //               webSettings.setSupportZoom(true);
                webSettings.setJavaScriptEnabled(true);
-               webSettings.setBuiltInZoomControls(true);
+               webSettings.setBuiltInZoomControls(false);
            }
        }
        else {

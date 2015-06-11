@@ -44,6 +44,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     boolean isSearch = false;
     SearchView searchView;
     android.support.v7.app.ActionBar actionBar;
+    String output ="";
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -61,29 +62,39 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         }
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-        if(lan.equalsIgnoreCase("hi")) {
-            lanId = 5130467284090880l;
-            typeFace = Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
-        }
-        else if(lan.equalsIgnoreCase("ta")){
-            lanId = 6319546696728576l;
-            typeFace= Typeface.createFromAsset(getAssets(), "fonts/tamil.ttf");
-        }
-        else if(lan.equalsIgnoreCase("gu")) {
-            lanId = 5965057007550464l;
-            typeFace = Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
-        }
+        if (savedInstanceState != null) {
+            try {
+                this.output = savedInstanceState.getString("Output");
+                parseJson(new JSONObject(output));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            if (lan.equalsIgnoreCase("hi")) {
+                lanId = 5130467284090880l;
+                typeFace = Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
+            } else if (lan.equalsIgnoreCase("ta")) {
+                lanId = 6319546696728576l;
+                typeFace = Typeface.createFromAsset(getAssets(), "fonts/tamil.ttf");
+            } else if (lan.equalsIgnoreCase("gu")) {
+                lanId = 5965057007550464l;
+                typeFace = Typeface.createFromAsset(getAssets(), "fonts/gujarati.ttf");
+            }
 
-        if(!isSearch){
-            if(isOnline()) {
-                makeJsonArryReq();
-            }
-            else
-            {
-                showNoConnectionDialog(this);
+            if (!isSearch) {
+                if (isOnline()) {
+                    makeJsonArryReq();
+                } else {
+                    showNoConnectionDialog(this);
+                }
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString("Output",output);
     }
 
     @Override
@@ -97,14 +108,15 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         return super.onOptionsItemSelected(item);
     }
 
-public boolean isOnline() {
+    public boolean isOnline() {
         ConnectivityManager cm =
         (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
-        }
-public static void showNoConnectionDialog(Context ctx1) {
-final Context ctx = ctx1;
+    }
+
+    public static void showNoConnectionDialog(Context ctx1) {
+        final Context ctx = ctx1;
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setCancelable(true);
         builder.setMessage(R.string.no_connection);
@@ -129,12 +141,12 @@ public void onCancel(DialogInterface dialog) {
         });
 
         builder.show();
-        }
+    }
 
-/**
- * Making json array request
- * */
-private void makeJsonArryReq() {
+    /**
+    * Making json array request
+    * */
+    private void makeJsonArryReq() {
 
     progressBar.setVisibility(View.VISIBLE);
     RequestTask task =  new RequestTask();
@@ -232,6 +244,7 @@ private void makeJsonArryReq() {
         }
         else {
             try {
+                this.output = output;
                 parseJson(new JSONObject(output));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -254,8 +267,10 @@ private void makeJsonArryReq() {
             searchView.setActivated(true);
             searchView.setQueryHint("Search Pratilipi");
             searchView.setVisibility(View.VISIBLE);
-            searchView.requestFocus();
             searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+            if(output.isEmpty()){
+                searchView.requestFocus();
+            }
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
