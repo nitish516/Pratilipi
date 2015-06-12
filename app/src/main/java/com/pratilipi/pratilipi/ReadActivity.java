@@ -123,11 +123,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             }
 
         }catch (JSONException e) {
-                e.getCause();
-                e.printStackTrace();
-            }catch (Exception e){
-        e.printStackTrace();
-    }
+            e.getCause();
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         setContentView(R.layout.activity_read);
         controlsView = findViewById(R.id.main_layout);
@@ -555,26 +555,26 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                                 float distanceY) {
-            if(distanceX > 0)
-            {
-                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-                    webView.scrollBy(0, -webView.getHeight());
-                else {
-                    if (!isLoading) {
-                        launchChapter(false);
-                    }
-                }
-            }
-            else if(distanceX < 0)
-            {
-                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-                    webView.scrollBy(0, webView.getHeight());
-                else {
-                    if (!isLoading) {
-                        launchChapter(true);
-                    }
-                }
-            }
+//            if(distanceX > 0)
+//            {
+//                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
+//                    webView.scrollBy(0, -webView.getHeight());
+//                else {
+//                    if (!isLoading) {
+//                        launchChapter(false);
+//                    }
+//                }
+//            }
+//            else if(distanceX < 0)
+//            {
+//                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
+//                    webView.scrollBy(0, webView.getHeight());
+//                else {
+//                    if (!isLoading) {
+//                        launchChapter(true);
+//                    }
+//                }
+//            }
             return false;
         }
 
