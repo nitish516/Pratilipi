@@ -83,13 +83,14 @@ public class ProfileFragment extends Fragment {
         TextView t1 = (TextView) v.findViewById(R.id.textView_profile);
         TextView t2 = (TextView) v.findViewById(R.id.textView2_profile);
         TextView t3 = (TextView) v.findViewById(R.id.textView3_profile);
-        TextView t4 = (TextView) v.findViewById(R.id.textView4_profile);
+        //TextView t4 = (TextView) v.findViewById(R.id.textView4_profile);
         //TextView t5 = (TextView) v.findViewById(R.id.textView5_profile);
         //TextView t6 = (TextView) v.findViewById(R.id.textView6_profile);
         //TextView t7 = (TextView) v.findViewById(R.id.textView7_profile);
         ImageView i = (ImageView) v.findViewById(R.id.imageView_profile);
+        //i.setBackground(R.drawable.profile_picture);
         Bitmap bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.profile_picture);
-        bImage=getRoundedCornerBitmap(bImage,60);
+        //bImage=getRoundedCornerBitmap(bImage,20);
         i.setImageBitmap(bImage);
         String[] forecastArray = {
                 "Reset Content Language",
@@ -105,7 +106,10 @@ public class ProfileFragment extends Fragment {
                 weekForecast);
 
         ListView listView = (ListView) v.findViewById(R.id.listView_profile);
+        listView.getDivider();
+
         listView.setAdapter(mForecastAdapter);
+        listView.getDivider();
 
 
         return v;
