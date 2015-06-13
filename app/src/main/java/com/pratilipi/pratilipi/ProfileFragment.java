@@ -1,5 +1,6 @@
 package com.pratilipi.pratilipi;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,10 +15,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,14 +93,14 @@ public class ProfileFragment extends Fragment {
         ImageView i = (ImageView) v.findViewById(R.id.imageView_profile);
         //i.setBackground(R.drawable.profile_picture);
         Bitmap bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.profile_picture);
-        //bImage=getRoundedCornerBitmap(bImage,20);
+        bImage=getRoundedCornerBitmap(bImage,90);
         i.setImageBitmap(bImage);
-        String[] forecastArray = {
+        final String[] profileArray = {
                 "Reset Content Language",
                 "Reset Menu Language",
                 "About Pratilipi",
         };
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
+        List<String> weekForecast = new ArrayList<String>(Arrays.asList(profileArray));
 
         mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
@@ -106,10 +109,21 @@ public class ProfileFragment extends Fragment {
                 weekForecast);
 
         ListView listView = (ListView) v.findViewById(R.id.listView_profile);
-        listView.getDivider();
-
         listView.setAdapter(mForecastAdapter);
-        listView.getDivider();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String input = profileArray[position];
+                switch (position) {
+                    case 0 :
+                        Intent intent = new Intent(getActivity(), LanguageSelectionActivity.class);
+                        intent.putExtra("TITLE", input);
+                        startActivity(intent);
+                }
+
+            }
+        });
+
 
 
         return v;
