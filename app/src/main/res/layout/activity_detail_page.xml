@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:fillViewport="true"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp">
-<LinearLayout
-android:orientation="vertical"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:layout_gravity="center_horizontal"
-android:layout_marginTop="30dp"
-android:layout_marginLeft="10dp"
-android:layout_marginRight="10dp">
-
-<LinearLayout
-    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="fill_horizontal"
-    >
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <include
+        android:id="@+id/tool_bar_detailpage_activity"
+        layout="@layout/custom_action_bar" >
+    </include>
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="1">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:id="@+id/layout">
     <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/detail_image"
+        android:id="@+id/detail_page_image"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:src="@drawable/splash"/>
+        android:src="@drawable/splash"
+        android:paddingLeft="5dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +51,7 @@ android:layout_marginRight="10dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:gravity="left"
             android:orientation="horizontal">
             <RatingBar
                 android:id="@+id/averageRatingBar"
@@ -56,7 +61,8 @@ android:layout_marginRight="10dp">
                 android:numStars="5"
                 android:stepSize="0.1"
                 android:isIndicator="true"
-                android:layout_marginLeft="5dp"/>
+                android:layout_marginLeft="5dp"
+                android:gravity="center"/>
             <TextView
                 android:id="@+id/detailPageRatingNumber"
                 android:layout_width="wrap_content"
@@ -128,13 +134,17 @@ android:layout_marginRight="10dp">
     <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
     <!--android:text="Your rating: -/5"-->
     <!--android:layout_marginLeft="10dp"/>-->
+
     <TextView
     android:id="@+id/summaryTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
-   android:layout_marginTop="10dp"
-        android:padding="5dp"/>
+    android:layout_marginTop="10dp"
+    android:padding="5dp"
+        android:layout_below="@+id/layout"/>
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
-    </ScrollView>

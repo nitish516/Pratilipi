@@ -42,25 +42,25 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:orientation="horizontal">
             <RatingBar
                 android:id="@+id/averageRatingBarFeatured"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 style="@style/CustomRatingBar"
                 android:numStars="5"
                 android:stepSize="0.1"
                 android:isIndicator="true"
-                android:layout_marginLeft="5dp"/>
+                android:layout_marginLeft="5dp"
+                android:gravity="center"/>
             <TextView
                 android:id="@+id/featuredPageRatingNumber"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_toLeftOf="@+id/averageRatingBar"
-                android:text="(124 rating)"
-                android:layout_gravity="center" />
+                android:text="(124 rating)" />
         </LinearLayout>
         <TextView
             android:id="@+id/averageRatingTextView"

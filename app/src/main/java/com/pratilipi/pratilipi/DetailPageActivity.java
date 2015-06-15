@@ -1,13 +1,9 @@
 package com.pratilipi.pratilipi;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,17 +16,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.google.gson.JsonParseException;
-import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import org.json.JSONException;
@@ -38,8 +30,6 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.text.NumberFormat;
-
-import io.fabric.sdk.android.services.concurrency.Task;
 
 public class DetailPageActivity extends ActionBarActivity implements AsyncResponse{
 
@@ -50,11 +40,18 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     URI mUri;
 
     String title1;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_detail_page);
+
+        toolbar = (Toolbar)findViewById(R.id.tool_bar_detailpage_activity);
+        setSupportActionBar(toolbar);
+
+        TextView toolbar_title = (TextView)toolbar.findViewById(R.id.title_toolbar);
+
         Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
         addToShelf.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,8 +87,8 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             LayoutInflater layoutInflate = LayoutInflater.from(this);
             View v = layoutInflate.inflate(R.layout.actionbar_custom_title, null);
             TextView actionBarTitleTextView = (TextView)v.findViewById(R.id.actionBarTitle);
-            actionBarTitleTextView.setTypeface(typeFace);
-            actionBarTitleTextView.setText(title1);
+            toolbar_title.setTypeface(typeFace);
+            toolbar_title.setText(" ");
 
             getSupportActionBar().setCustomView(v);
 
@@ -100,7 +97,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             title.setText(Html.fromHtml(obj.getString("title")));
 
             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-            NetworkImageView imageView = (NetworkImageView) findViewById(R.id.detail_image);
+            NetworkImageView imageView = (NetworkImageView) findViewById(R.id.detail_page_image);
             imageView.setImageUrl("http:" +obj.getString("coverImageUrl"), imageLoader);
 
             RatingBar ratingBar  = (RatingBar) findViewById(R.id.averageRatingBar);

@@ -10,4 +10,7 @@
     <color name="Gray800">#424242</color>
     <color name="Gray300">#E0E0E0</color>
     <color name="Orange800">#EF6C00</color>
+    <color name="ColorPrimary">#F5F5F5</color>
+    <color name="ColorPrimaryDark">#9E9E9E</color>
+    <color name="tabsScrollColor">#8a140e</color>
 </resources>

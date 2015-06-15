@@ -5,14 +5,13 @@
     android:layout_height="match_parent"
     xmlns:widget="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:paddingBottom="10dp">
+    android:paddingBottom="10dp" >
 
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:fillViewport="true"
-        android:layout_weight="1" >
+        android:fillViewport="true" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,33 +21,37 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
             android:paddingBottom="5dp">
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/view_more_featured_layout"
                 android:orientation="horizontal"
                 android:padding="-5dp"
-                android:clickable="false">
+                android:clickable="false"
+                android:background="@color/switch_thumb_disabled_material_light"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:gravity="center">
             <TextView
                 android:id="@+id/fetures_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/title_featured_books"
-                android:textColor="#FF0000"
+                android:textColor="#000000"
                 android:textSize="16dp"
-                android:paddingLeft="20dp" />
+                android:paddingLeft="20dp"
+                android:gravity="center"
+                android:textStyle="bold"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
-                android:textSize="16dp"
+                android:textSize="13dp"
                 android:paddingRight="20dp"
-                android:gravity="right"/>
-            </LinearLayout>
-
+                android:gravity="right"
+                android:textColor="@color/button_material_dark"/>
+            </RelativeLayout>
             <ProgressBar
                 android:layout_below="@id/view_more_featured_layout"
                 android:id="@+id/progress_bar"
@@ -66,15 +69,16 @@
                 android:scrollbars="none"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:fillViewport="false"
+                android:id="@+id/ratingBar">
                 <LinearLayout
                     android:id="@+id/linear_layout_featured"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:scrollbarAlwaysDrawHorizontalTrack="false"
-                    android:layout_marginLeft="10dp"
-                    >
+                    android:layout_marginLeft="10dp" >
 
                 </LinearLayout>
             </HorizontalScrollView>
@@ -82,32 +86,37 @@
         <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
+        android:paddingTop="15dp"
         android:paddingBottom="5dp">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/view_more_newrelease_layout"
-            android:padding="-5dp"
-            android:clickable="true">
+            android:clickable="true"
+            android:background="@color/switch_thumb_disabled_material_light"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:gravity="center">
 
             <TextView
                 android:id="@+id/release_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/title_new_releases"
-                android:textColor="#FF0000"
+                android:textColor="#000000"
                 android:textSize="16dp"
-                android:paddingLeft="20dp" />
+                android:paddingLeft="20dp"
+                android:gravity="center"
+                android:textStyle="bold"/>
             <TextView
                 android:gravity="right"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
-                android:textSize="16dp"
-                android:paddingRight="20dp"/>
-        </LinearLayout>
+                android:textSize="13dp"
+                android:paddingRight="20dp"
+                android:textColor="@color/button_material_dark"/>
+        </RelativeLayout>
 
         <ProgressBar
             android:layout_below="@id/view_more_newrelease_layout"
@@ -141,30 +150,35 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="5dp">
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/view_more_top_layout"
-                android:padding="-5dp"
-                android:clickable="true">
+                android:clickable="true"
+                android:background="@color/switch_thumb_disabled_material_light"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/top_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/title_top_reads"
-                    android:textColor="#FF0000"
+                    android:textColor="#000000"
                     android:textSize="16dp"
-                    android:paddingLeft="20dp" />
+                    android:paddingLeft="20dp"
+                    android:gravity="center"
+                    android:textStyle="bold"/>
                 <TextView
                     android:gravity="right"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/view_all"
-                    android:textSize="16dp"
-                    android:paddingRight="20dp"/>
-            </LinearLayout>
+                    android:textSize="13dp"
+                    android:paddingRight="20dp"
+                    android:textColor="@color/button_material_dark"/>
+            </RelativeLayout>
 
             <ProgressBar
                 android:layout_below="@id/view_more_top_layout"

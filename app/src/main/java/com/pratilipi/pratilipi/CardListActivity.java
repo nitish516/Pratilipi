@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -31,6 +31,10 @@ import com.android.volley.toolbox.NetworkImageView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.NumberFormat;
+
+//import android.support.v7.app.ActionBarActivity;
 
 /**
  * Created by MOHIT KHAITAN on 31-05-2015.
@@ -45,22 +49,31 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     SearchView searchView;
     android.support.v7.app.ActionBar actionBar;
     String output ="";
+    android.support.v7.app.ActionBar actionbar;
+    Toolbar toolbar;
 
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
+
+        toolbar = (Toolbar)findViewById(R.id.tool_bar_card_activity);
+        setSupportActionBar(toolbar);
+        TextView toolbar_title = (TextView)toolbar.findViewById(R.id.title_toolbar);
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         linearLayout = (LinearLayout)findViewById(R.id.linear_layout_more_featured);
         progressBar = (ProgressBar)findViewById((R.id.progress_bar_more_featured));
 
-        actionBar = getSupportActionBar();
+//        toolbar = getSupportActionBar();
         String title = getIntent().getStringExtra("TITLE");
-        actionBar.setTitle(title);
+        toolbar_title.setText(title);
         if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases")|| title.equalsIgnoreCase("Top Reads")
             || title.equalsIgnoreCase("Books")|| title.equalsIgnoreCase("Poems")|| title.equalsIgnoreCase("Stories"))){
             isSearch = true;
         }
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (savedInstanceState != null) {
             try {
@@ -190,6 +203,9 @@ public void onCancel(DialogInterface dialog) {
                     title.setTypeface(typeFace);
                     title.setText(Html.fromHtml(obj.getString("title")));
 
+                    TextView averageRatingTextView = (TextView) cardView.findViewById(R.id.averageRatingTextView);
+                    TextView detailPageRate = (TextView)cardView.findViewById(R.id.featuredPageRatingNumber);
+
                     TextView author = (TextView) cardView.findViewById(R.id.authorTextViewMoreFeatured);
                     author.setTypeface(typeFace);
                     if (isSearch)
@@ -198,9 +214,26 @@ public void onCancel(DialogInterface dialog) {
                         author.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
 
                     if (obj.getLong("ratingCount") > 0) {
-                        ratingBar.setRating((float) obj.getLong("starCount") / obj.getLong("ratingCount"));
-                        ratingNum.setText((String.valueOf("(" + (obj.getLong("ratingCount") + ")"))));
+
+                        float val = (float) obj.getLong("starCount") / obj.getLong("ratingCount");
+                        if (val != 0.0) {
+                            ratingBar.setRating(val);
+
+                            NumberFormat numberformatter = NumberFormat.getNumberInstance();
+                            numberformatter.setMaximumFractionDigits(1);
+                            numberformatter.setMinimumFractionDigits(1);
+                            String rating = numberformatter.format(val);
+
+                            detailPageRate.setText(String.valueOf("(" + obj.getLong("ratingCount")) + " ratings)");
+                            averageRatingTextView.setText("Average rating: " + rating + "/5");
+
+                        }else{
+                            Log.d("Val is Null","");
+                        }
                     }
+
+
+
                     // Populate the image
                     imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
                     linearLayout.addView(cardView);
@@ -208,7 +241,7 @@ public void onCancel(DialogInterface dialog) {
                 }
                 if(linearLayout.getChildAt(0) == null){
                     TextView tv = new TextView(linearLayout.getContext());
-                    tv.setText("No reults");
+                    tv.setText("No results");
                     tv.setGravity(Gravity.CENTER);
                     tv.setTextSize(32);
                     linearLayout.setGravity(Gravity.CENTER);
@@ -218,7 +251,7 @@ public void onCancel(DialogInterface dialog) {
             }else
             {
                 TextView tv = new TextView(linearLayout.getContext());
-                tv.setText("No reults");
+                tv.setText("No results");
                 tv.setGravity(Gravity.CENTER);
                 tv.setTextSize(32);
                 linearLayout.setGravity(Gravity.CENTER);
@@ -236,7 +269,7 @@ public void onCancel(DialogInterface dialog) {
             Log.d("Output", output);
 
             TextView tv = new TextView(linearLayout.getContext());
-            tv.setText("No reults");
+            tv.setText("No results");
             tv.setTextSize(32);
             tv.setGravity(Gravity.CENTER);
             linearLayout.setGravity(Gravity.CENTER);
@@ -267,6 +300,7 @@ public void onCancel(DialogInterface dialog) {
             searchView.setActivated(true);
             searchView.setQueryHint("Search Pratilipi");
             searchView.setVisibility(View.VISIBLE);
+            searchView.requestFocus();
             searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
             if(output.isEmpty()){
                 searchView.requestFocus();
@@ -280,7 +314,7 @@ public void onCancel(DialogInterface dialog) {
                         url = "http://www.pratilipi.com/api.pratilipi/search?query="+s+"&languageId=";
                         makeJsonArryReq();
                         searchView.clearFocus();
-                        actionBar.setTitle(s);
+                        toolbar.setTitle(s);
                     }
                     else
                     {

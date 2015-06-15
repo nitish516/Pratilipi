@@ -7,5 +7,4 @@
         yourapp:showAsAction="always"
         android:enabled="true"
         yourapp:actionViewClass="android.support.v7.widget.SearchView" />
-
 </menu>

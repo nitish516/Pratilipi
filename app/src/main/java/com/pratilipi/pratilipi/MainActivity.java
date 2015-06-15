@@ -3,25 +3,21 @@ package com.pratilipi.pratilipi;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -39,8 +35,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
-//import android.support.v7.app.AppCompatActivity;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -49,24 +43,20 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
-import com.pratilipi.pratilipi.helper.PratilipiProvider;
-import com.software.shell.fab.ActionButton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+//import android.support.v7.app.AppCompatActivity;
+
+public class MainActivity extends ActionBarActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -74,13 +64,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * derivative, which will keep every loaded fragment in memory. If this becomes too memory
      * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    AppSectionsPagerAdapter mAppSectionsPagerAdapter;
+//    AppSectionsPagerAdapter mAppSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will display the three primary sections of the app, one at a
      * time.
      */
-    ViewPager mViewPager;
     private static String TAG = MainActivity.class.getSimpleName();
     SearchView searchViewButton;
 
@@ -99,7 +88,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             case R.id.action_search_item:
                 Intent searchIntent = new Intent(MainActivity.this, CardListActivity.class);
                 searchIntent.putExtra("TITLE","Search");
-                startActivity(searchIntent);
+                searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivityForResult(searchIntent,0);
+                overridePendingTransition(0,0);
                 return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -120,78 +111,124 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
 
+    private Toolbar toolbar;
+    ViewPager mViewPager;
+    ViewPagerAdapter adapter;
+    SlidingTabLayout tabs;
+    CharSequence Titles[] = {"Home","Categories","Shelf","Profile"};
+    int NumbOfTabs = 4;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-         // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
-        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+        toolbar = (Toolbar)findViewById(R.id.tool_bar_main_activity);
+        setSupportActionBar(toolbar);
+        TextView toolbar_title = (TextView)toolbar.findViewById(R.id.title_toolbar);
+        getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
-        // Set up the action bar.
-        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        toolbar_title.setText("");
 
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(true);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(),Titles,NumbOfTabs);
 
-        // Specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mViewPager = (ViewPager)findViewById(R.id.pager_main_activity);
+        mViewPager.setAdapter(adapter);
 
-        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
-        // user swipes between sections.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mAppSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        tabs = (SlidingTabLayout)findViewById(R.id.tabs_main_activity);
+//        tabs.setDistributeEvenly(true);
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
-            public void onPageSelected(int position) {
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
-                actionBar.setSelectedNavigationItem(position);
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
             }
         });
+        tabs.setViewPager(mViewPager);
 
-        //Floating Action Button
-        final ActionButton actionButtonPrevious = (ActionButton)findViewById(R.id.action_fab);
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, as the
-            // listener for when this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(new android.support.v7.app.ActionBar.TabListener() {
-                                @Override
-                                public void onTabSelected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
-                                    mViewPager.setCurrentItem(tab.getPosition());
-                                }
-
-                                @Override
-                                public void onTabUnselected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
-
-                                }
-
-                                @Override
-                                public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
-
-                                }
-                            }));
-        }
-
-        //Floating Action Button
-        actionButtonPrevious.setType(ActionButton.Type.DEFAULT);
-        actionButtonPrevious.setButtonColor(getResources().getColor(R.color.fab_material_white));
-        actionButtonPrevious.setButtonColorPressed(getResources().getColor(R.color.fab_material_white));
-        actionButtonPrevious.setImageResource(R.drawable.unnamed);
-        actionButtonPrevious.cancelLongPress();
-        actionButtonPrevious.setButtonColorRipple(getResources().getColor(R.color.fab_material_grey_500));
-        actionButtonPrevious.setShadowResponsiveEffectEnabled(false);
-        actionButtonPrevious.setRippleEffectEnabled(true);
+//         // Create the adapter that will return a fragment for each of the three primary sections
+//        // of the app.
+//        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
+//
+//        // Set up the action bar.
+//
+//        toolbar = (Toolbar)findViewById(R.id.tool_bar);
+//        setSupportActionBar(toolbar);
+//
+//        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+//
+//        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
+//        // parent.
+//        actionBar.setDisplayUseLogoEnabled(true);
+//        actionBar.setHomeButtonEnabled(true);
+//        actionBar.setDisplayUseLogoEnabled(true);
+//
+//        tabs = (SlidingTabLayout)findViewById(R.id.tabs);
+//        tabs.setDistributeEvenly(true);
+//        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer(){
+//            @Override
+//            public int getIndicatorColor(int position) {
+//                return getResources().getColor(R.color.tabsScrollColor);
+//            }
+//        });
+//
+//        tabs.setViewPager(mViewPager);
+//
+//
+//        // Specify that we will be displaying tabs in the action bar.
+////        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+//
+//        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
+//        // user swipes between sections.
+//        mViewPager = (ViewPager) findViewById(R.id.pager);
+//        mViewPager.setAdapter(mAppSectionsPagerAdapter);
+//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                // When swiping between different app sections, select the corresponding tab.
+//                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
+//                // Tab.
+//                actionBar.setSelectedNavigationItem(position);
+//            }
+//        });
+//
+//        //Floating Action Button
+//        final ActionButton actionButtonPrevious = (ActionButton)findViewById(R.id.action_fab);
+//
+//        // For each of the sections in the app, add a tab to the action bar.
+//        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
+//            // Create a tab with text corresponding to the page title defined by the adapter.
+//            // Also specify this Activity object, which implements the TabListener interface, as the
+//            // listener for when this tab is selected.
+//            actionBar.addTab(
+//                    actionBar.newTab()
+//                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
+//                            .setTabListener(new android.support.v7.app.ActionBar.TabListener() {
+//                                @Override
+//                                public void onTabSelected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
+//                                    mViewPager.setCurrentItem(tab.getPosition());
+//                                }
+//
+//                                @Override
+//                                public void onTabUnselected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
+//
+//                                }
+//                            }));
+//        }
+//
+//        //Floating Action Button
+//        actionButtonPrevious.setType(ActionButton.Type.DEFAULT);
+//        actionButtonPrevious.setButtonColor(getResources().getColor(R.color.fab_material_white));
+//        actionButtonPrevious.setButtonColorPressed(getResources().getColor(R.color.fab_material_white));
+//        actionButtonPrevious.setImageResource(R.drawable.unnamed);
+//        actionButtonPrevious.cancelLongPress();
+//        actionButtonPrevious.setButtonColorRipple(getResources().getColor(R.color.fab_material_grey_500));
+//        actionButtonPrevious.setShadowResponsiveEffectEnabled(false);
+//        actionButtonPrevious.setRippleEffectEnabled(true);
 
 //         actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
 //             @Override
@@ -209,77 +246,84 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 //         });
     }
 
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
+//    public View getActionBarView(){
+//        Window window = getActivity().getWindow();
+//        View v = window.getDecorView();
+//        int resId = getResources().getIdentifier("action_bar_container","id","android");
+//        return v.findViewById(resId);
+//    }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
+//    @Override
+//    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+//    }
+//
+//    @Override
+//    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+//        // When the given tab is selected, switch to the corresponding page in the ViewPager.
+//        mViewPager.setCurrentItem(tab.getPosition());
+//    }
+//
+//    @Override
+//    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+//    }
 
      /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
      * sections of the app.
      */
-    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                    return new HomeFragment();
-                case 1:
-                    return new CategoriesFragment();
-                case 2:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new ShelfFragment();
-                case 3:
-                    return new ProfileFragment();
-
-                default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new CategoriesFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(CategoriesFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-
-            switch (position)
-            {
-                case 0:
-                    return getResources().getString(R.string.title_home);
-                case 1:
-                    return getResources().getString(R.string.title_categories);
-                case 2:
-                    return getResources().getString(R.string.title_shelf);
-                case 3:
-                    return getResources().getString(R.string.title_profile);
-            }
-
-            return "Section " + (position + 1);
-        }
-    }
+//    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
+//
+//        public AppSectionsPagerAdapter(FragmentManager fm) {
+//            super(fm);
+//        }
+//
+//        @Override
+//        public Fragment getItem(int i) {
+//            switch (i) {
+//                case 0:
+//                    return new HomeFragment();
+//                case 1:
+//                    return new CategoriesFragment();
+//                case 2:
+//                    // The first section of the app is the most interesting -- it offers
+//                    // a launchpad into the other demonstrations in this example application.
+//                    return new ShelfFragment();
+//                case 3:
+//                    return new ProfileFragment();
+//
+//                default:
+//                    // The other sections of the app are dummy placeholders.
+//                    Fragment fragment = new CategoriesFragment();
+//                    Bundle args = new Bundle();
+//                    args.putInt(CategoriesFragment.ARG_SECTION_NUMBER, i + 1);
+//                    fragment.setArguments(args);
+//                    return fragment;
+//            }
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return 4;
+//        }
+//
+//        @Override
+//        public CharSequence getPageTitle(int position) {
+//
+//            switch (position)
+//            {
+//                case 0:
+//                    return getResources().getString(R.string.title_home);
+//                case 1:
+//                    return getResources().getString(R.string.title_categories);
+//                case 2:
+//                    return getResources().getString(R.string.title_shelf);
+//                case 3:
+//                    return getResources().getString(R.string.title_profile);
+//            }
+//
+//            return "Section " + (position + 1);
+//        }
+//    }
 
     public static class HomeFragment extends Fragment implements AsyncResponse{
 
@@ -348,12 +392,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         private void LaunchCardView(String input, View view){
 
-//            view.setBackgroundColor(getResources().getColor(R.color.Gray200));
-
             Intent NewReleaseIntent = new Intent(getActivity(), CardListActivity.class);
             NewReleaseIntent.putExtra("TITLE",input);
-            startActivity(NewReleaseIntent);
-
+            NewReleaseIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivityForResult(NewReleaseIntent,0);
+//            overridePendingTransition(0,0);
         }
 
         private void showProgressDialog() {
@@ -452,16 +495,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                         continue;
 
                     CardView cardView = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
+//                    cardView.setCardElevation(0);     ////for disabling elevation from the cards.
                     LinearLayout viewItemlayout = (LinearLayout)cardView.findViewById(R.id.view_item_layout);
                     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
                     NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
                     RatingBar ratingBar = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
-                    TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
+//                    TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
                     if (obj.get("ratingCount").getAsLong() > 0) {
                         DecimalRating = ((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
                         ratingBar.setRating(DecimalRating);
-                        ratingNum.setText((String.valueOf("(" + (obj.get("ratingCount").getAsLong() + ")"))));
+//                        ratingNum.setText((String.valueOf("(" + (obj.get("ratingCount").getAsLong() + ")"))));
                     }
                     // Populate the image
                     imageView.setImageUrl("http:" + obj.get("coverImageUrl").getAsString(), imageLoader);
@@ -488,10 +532,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
                     NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
                     RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
-                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
+//                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
                     if(obj.get("ratingCount").getAsLong()> 0) {
                         ratingBar1.setRating((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
-                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
+//                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
                     }
                     // Populate the image
                     imageView1.setImageUrl("http:" +obj.get("coverImageUrl").getAsString(), imageLoader1);
@@ -517,10 +561,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
                     NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
                     RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
-                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
+//                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
                     if(obj.get("ratingCount").getAsLong()> 0) {
                         ratingBar1.setRating((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
-                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
+//                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
                     }
                     // Populate the image
                     imageView1.setImageUrl("http:" +obj.get("coverImageUrl").getAsString(), imageLoader1);
