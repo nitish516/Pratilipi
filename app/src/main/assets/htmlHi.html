@@ -1,4 +1,4 @@
-<head xmlns:margin="http://www.w3.org/1999/xhtml" xmlns:margin="http://www.w3.org/1999/xhtml">
+<head >
 
     <link rel="stylesheet" type="text/css" href="cssBinder.css">
 
@@ -46,12 +46,18 @@ function init(val) {
         };
 
         next = function() {
-            if (_column == _columnCount) return;
+            if (_column == _columnCount){
+             window.JSInterface.launchNextChapter();
+             return;
+             }
             setColumn(_column + 1);
         }
 
         previous = function() {
-            if (0 == _column) return;
+            if (0 == _column) {
+                window.JSInterface.launchPrevChapter();
+                return;
+            }
             setColumn(_column - 1);
         }
         setColumn(0);

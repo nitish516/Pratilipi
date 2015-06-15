@@ -1,5 +1,6 @@
 package com.pratilipi.pratilipi;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -215,59 +217,58 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
        webView.setGestureDetector(new GestureDetector(new CustomeGestureDetector()));
 
         webView.setOnTouchListener(new View.OnTouchListener() {
-           @Override
-           public boolean onTouch(View v, MotionEvent ev) {
-               final int action = ev.getAction();
-               float x = ev.getX();
-               float y = ev.getY();
-               switch (action & MotionEventCompat.ACTION_MASK) {
-                   case MotionEvent.ACTION_DOWN:
-                       mStartDragX = x;
-                       mStartDragY = y;
-                       break;
-                   case MotionEvent.ACTION_MOVE:
-                   break;
-                   case MotionEvent.ACTION_UP:
-                       if (x > mStartDragX) {
-//                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-//                               webView.scrollBy(0, -webView.getHeight());
-                               webView.loadUrl("javascript:previous()");
+            @Override
+            public boolean onTouch(View v, MotionEvent ev) {
+                final int action = ev.getAction();
+                float x = ev.getX();
+                float y = ev.getY();
+                switch (action & MotionEventCompat.ACTION_MASK) {
+                    case MotionEvent.ACTION_DOWN:
+                        mStartDragX = x;
+                        mStartDragY = y;
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (x > mStartDragX) {
+                            if (type.equalsIgnoreCase("PRATILIPI")) {
+                                webView.loadUrl("javascript:previous()");
+                            } else {
+                                if (!isLoading && webView.getScaleX() == 30) {
+                                    launchChapter(false);
+                                }
+                            }
+                        } else if (x < mStartDragX) {
+                            if (type.equalsIgnoreCase("PRATILIPI"))
+                                webView.loadUrl("javascript:next()");
 
-//                           else {
-//                               if (!isLoading && webView.getScaleX() == 30) {
-//                                   launchChapter(false);
-//                              }
-//                           }
-                       } else if (x < mStartDragX) {
-                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-//                               webView.scrollBy(0, webView.getHeight());
-                               webView.loadUrl("javascript:next()");
+                            else {
+                                if (!isLoading) {// && webView.getScaleX() == 30
+                                    launchChapter(true);
+                                }
+                            }
+                        } else if (x == mStartDragX) {
+                            int b = mDecorView.getSystemUiVisibility();
+                            int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
-                           else {
-                               if (!isLoading && webView.getScaleX() == 30) {
-                                   launchChapter(true);
-                               }
-                           }
-                       } else
-                           if (x == mStartDragX){
-                           int b = mDecorView.getSystemUiVisibility();
-                           int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+                            boolean visibility = (a & b) == 0;
+                            if (visibility) {
+                                hideSystemUI();
+                                if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
+                                    mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                            } else
+                                showSystemUI();
+                        }
+                        mStartDragX = 0;
+                        break;
+                }
+                return false;
+            }
+        });
 
-                           boolean visibility = (a & b) == 0;
-                           if(visibility) {
-                               hideSystemUI();
-                               if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
-                                   mDrawerLayout.closeDrawer(Gravity.RIGHT);
-                           }
-                           else
-                               showSystemUI();
-                       }
-                       mStartDragX = 0;
-                       break;
-               }
-               return false;
-           }
-       });
+        JavaScriptInterface jsInterface = new JavaScriptInterface(this);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(jsInterface, "JSInterface");
 
        launchChapter(1);
     }
@@ -515,9 +516,26 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         WebSettings settings = webView.getSettings();
         if(isIncrease){
                  settings.setTextZoom(settings.getTextZoom() + 5);
+
+            String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            if(lan.equalsIgnoreCase("hi"))
+                webView.loadUrl("file:///android_asset/htmlHi.html");
+            else if(lan.equalsIgnoreCase("ta"))
+                webView.loadUrl("file:///android_asset/htmlTa.html");
+            else if(lan.equalsIgnoreCase("gu"))
+                webView.loadUrl("file:///android_asset/htmlGu.html");
+
         }
         else if(!isIncrease){
                  settings.setTextZoom(settings.getTextZoom() - 5);
+
+            String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            if(lan.equalsIgnoreCase("hi"))
+                webView.loadUrl("file:///android_asset/htmlHi.html");
+            else if(lan.equalsIgnoreCase("ta"))
+                webView.loadUrl("file:///android_asset/htmlTa.html");
+            else if(lan.equalsIgnoreCase("gu"))
+                webView.loadUrl("file:///android_asset/htmlGu.html");
         }
     }
 
@@ -632,5 +650,24 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 //            }
 //            return true;
 //        }
+    }
+
+    public class JavaScriptInterface {
+        private Activity activity;
+
+        public JavaScriptInterface(Activity activity) {
+            this.activity = activity;
+        }
+
+        @JavascriptInterface
+        public void launchNextChapter(){
+            Log.d("launchNextChapter"," launchNextChapter");
+            makeRequest(++currentPage);
+        }
+        @JavascriptInterface
+        public void launchPrevChapter(){
+            Log.d("launchPrevChapter"," launchPrevChapter");
+            makeRequest(--currentPage);
+        }
     }
 }
