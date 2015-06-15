@@ -130,7 +130,7 @@ public void onClick(DialogInterface dialog, int which) {
         }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
+        public void onClick(DialogInterface dialog, int which) {
         return;
         }
         });

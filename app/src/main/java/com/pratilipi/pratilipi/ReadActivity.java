@@ -229,16 +229,20 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                    break;
                    case MotionEvent.ACTION_UP:
                        if (x > mStartDragX) {
-                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-                               webView.scrollBy(0, -webView.getHeight());
-                           else {
-                               if (!isLoading && webView.getScaleX() == 30) {
-                                   launchChapter(false);
-                              }
-                           }
+//                           if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
+//                               webView.scrollBy(0, -webView.getHeight());
+                               webView.loadUrl("javascript:previous()");
+
+//                           else {
+//                               if (!isLoading && webView.getScaleX() == 30) {
+//                                   launchChapter(false);
+//                              }
+//                           }
                        } else if (x < mStartDragX) {
                            if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-                               webView.scrollBy(0, webView.getHeight());
+//                               webView.scrollBy(0, webView.getHeight());
+                               webView.loadUrl("javascript:next()");
+
                            else {
                                if (!isLoading && webView.getScaleX() == 30) {
                                    launchChapter(true);
@@ -338,7 +342,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                isLoading = true;
 
                task = new RequestTask();
-               task.execute(url + pId + "&pageNo=" + pageNo);
+               task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
                task.delegate = this;
            } else if (type.equalsIgnoreCase("IMAGE")) {
                webView.setInitialScale(30);
@@ -383,6 +387,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             Spanned parsedPageContent = Html.fromHtml(jsonObject.getString("pageContent"));
 //                            Log.d("parsedPageContent",0+parsedPageContent);
 
+                            String htmlContent =  Html.toHtml(parsedPageContent);
+                            Log.d(("htmlContent"),htmlContent);
 
                             webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
                             if(scrollToLast) {

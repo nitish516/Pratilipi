@@ -16,20 +16,49 @@
 </head>
 <body>
 <div id="container">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <div id="content">
 
-        <span id="endMarker"></span>
     </div>
 </div>
 
 <script type="text/javascript">
-function init(val){
-document.getElementById('content').innerHTML=val;
+var previous, next;
+function init(val) {
+    $('#content').prepend(val);
+    var _column = 0;
+    var _columnCount = 0;
+    var _columnGap = 10;
+    var _columnWidth = $('#content').width();
+
+    $("#content").css({
+        "column-width": _columnWidth,
+        "height": window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+    });
+
+    $(function() {
+        _columnCount = Math.floor($('#content').children().last().position().left / (_columnWidth + _columnGap));
+
+        setColumn = function(i) {
+            _column = i;
+            document.getElementById('content').style.left = -1 * _column * (_columnWidth + _columnGap);
+            $('#page').html('Page ' + (_column + 1) + ' of ' + (_columnCount + 1));
+        };
+
+        next = function() {
+            if (_column == _columnCount) return;
+            setColumn(_column + 1);
+        }
+
+        previous = function() {
+            if (0 == _column) return;
+            setColumn(_column - 1);
+        }
+        setColumn(0);
+    });
 }
-window.addEventListener('load',function(){
-	console.log("Window Loader");
-	init();
-});
+
+//init();
 </script>
 </body>
 

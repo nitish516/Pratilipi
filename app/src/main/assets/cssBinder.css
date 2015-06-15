@@ -1,8 +1,18 @@
+#container {
+  /*  width: 450px; */
+    overflow: hidden;
+}
+
 #content {
-    background-color: white;
     position: relative;
-     width: 94%;
-     height: 94%;
-     padding: 3%;
-     line-height: 1.5em;
+    /*height: 30em;*/
+
+/*
+    -moz-column-width: 450px;
+    -webkit-column-width: 450px;
+    column-width: 450px;
+*/
+    -moz-column-gap: 10px;
+    -webkit-column-gap: 10px;
+    column-gap: 10px;
 }
