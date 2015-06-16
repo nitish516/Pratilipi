@@ -15,11 +15,11 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:width="120dp"
-        android:height="200dp"
+        android:height="177dp"
         android:text="More >>"
         android:scaleType="fitCenter"
         android:textStyle="bold"
         android:gravity="center"
-        android:id="@+id/more_btn_click"/>
+        android:id="@+id/more_btn_click" />
 
 </LinearLayout>
