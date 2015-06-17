@@ -9,30 +9,31 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.pratilipi.pratilipi.DataFiles.Metadata;
+import com.pratilipi.pratilipi.adapter.CardListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 //import android.support.v7.app.ActionBarActivity;
 
@@ -51,11 +52,20 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     String output ="";
     android.support.v7.app.ActionBar actionbar;
     Toolbar toolbar;
+    List<Metadata> metadata = new ArrayList<Metadata>();
+    CardListAdapter adapter;
+    RecyclerView mRecyclerView;
+    LinearLayoutManager mLayout;
 
     protected void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
+
+
+
+        progressBar = (ProgressBar)findViewById((R.id.progress_bar_more_featured));
+
 
         toolbar = (Toolbar)findViewById(R.id.tool_bar_card_activity);
         setSupportActionBar(toolbar);
@@ -63,8 +73,24 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        linearLayout = (LinearLayout)findViewById(R.id.linear_layout_more_featured);
-        progressBar = (ProgressBar)findViewById((R.id.progress_bar_more_featured));
+        progressBar.setVisibility(View.VISIBLE);
+
+        //Recycler View STARTS
+
+        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayout = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayout);
+
+        adapter = new CardListAdapter(metadata);
+        progressBar.setVisibility(View.GONE);
+        mRecyclerView.setAdapter(adapter);
+
+        //Recycler View END
+
+
+        linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);
 
 //        toolbar = getSupportActionBar();
         String title = getIntent().getStringExtra("TITLE");
@@ -78,8 +104,8 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         if (savedInstanceState != null) {
             try {
                 this.output = savedInstanceState.getString("Output");
-                parseJson(new JSONObject(output));
-            } catch (JSONException e) {
+               parseJson(new JSONObject(output));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
@@ -180,64 +206,20 @@ public void onCancel(DialogInterface dialog) {
             }
             if(pratilipiList != null) {
 
+                progressBar.setVisibility(View.GONE);
+
                 for (int i = 0; i < pratilipiList.length(); i++) {
                     final JSONObject obj = pratilipiList.getJSONObject(i);
                     if (obj.getLong("languageId") != lanId)
                         continue;
-                    final CardView cardView = (CardView) getLayoutInflater().inflate(R.layout.card_view, null);
-                    cardView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(linearLayout.getContext(), DetailPageActivity.class);
-                            i.putExtra(DetailPageActivity.JSON, obj.toString());
-                            startActivity(i);
-                        }
-                    });
-                    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-
-                    NetworkImageView imageView = (NetworkImageView) cardView.findViewById(R.id.detail_image);
-                    RatingBar ratingBar = (RatingBar) cardView.findViewById(R.id.averageRatingBarFeatured);
-                    TextView ratingNum = (TextView) cardView.findViewById(R.id.featuredPageRatingNumber);
-
-                    TextView title = (TextView) cardView.findViewById(R.id.titleTextViewMoreFeatured);
-                    title.setTypeface(typeFace);
-                    title.setText(Html.fromHtml(obj.getString("title")));
-
-                    TextView averageRatingTextView = (TextView) cardView.findViewById(R.id.averageRatingTextView);
-                    TextView detailPageRate = (TextView)cardView.findViewById(R.id.featuredPageRatingNumber);
-
-                    TextView author = (TextView) cardView.findViewById(R.id.authorTextViewMoreFeatured);
-                    author.setTypeface(typeFace);
-                    if (isSearch)
-                        author.setVisibility(View.GONE);
-                    else
-                        author.setText(Html.fromHtml(obj.getJSONObject("author").getString("name")));
-
-                    if (obj.getLong("ratingCount") > 0) {
-
-                        float val = (float) obj.getLong("starCount") / obj.getLong("ratingCount");
-                        if (val != 0.0) {
-                            ratingBar.setRating(val);
-
-                            NumberFormat numberformatter = NumberFormat.getNumberInstance();
-                            numberformatter.setMaximumFractionDigits(1);
-                            numberformatter.setMinimumFractionDigits(1);
-                            String rating = numberformatter.format(val);
-
-                            detailPageRate.setText(String.valueOf("(" + obj.getLong("ratingCount")) + " ratings)");
-                            averageRatingTextView.setText("Average rating: " + rating + "/5");
-
-                        }else{
-                            Log.d("Val is Null","");
-                        }
-                    }
-
-
-
-                    // Populate the image
-                    imageView.setImageUrl("http:" + obj.getString("coverImageUrl"), imageLoader);
-                    linearLayout.addView(cardView);
-
+                    Metadata m = new Metadata();
+                    m.set_title(obj.getString("title"));
+                    m.set_authorFullName(obj.getJSONObject("author").getString("name"));
+                    m.set_coverImageUrl(obj.getString("coverImageUrl"));
+                    m.set_ratingCount(obj.getLong("ratingCount"));
+                    m.set_starCount(obj.getLong("starCount"));
+                    metadata.add(m);
+                    adapter.notifyDataSetChanged();
                 }
                 if(linearLayout.getChildAt(0) == null){
                     TextView tv = new TextView(linearLayout.getContext());
@@ -278,8 +260,8 @@ public void onCancel(DialogInterface dialog) {
         else {
             try {
                 this.output = output;
-                parseJson(new JSONObject(output));
-            } catch (JSONException e) {
+               parseJson(new JSONObject(output));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -295,6 +277,14 @@ public void onCancel(DialogInterface dialog) {
             mi.inflate(R.menu.menu_main, menu);
 
             searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+            searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if(hasFocus){
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
+                }
+            });
             searchView.setIconified(true);
             searchView.setIconifiedByDefault(false);
             searchView.setActivated(true);
@@ -305,6 +295,7 @@ public void onCancel(DialogInterface dialog) {
             if(output.isEmpty()){
                 searchView.requestFocus();
             }
+
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
@@ -333,9 +324,10 @@ public void onCancel(DialogInterface dialog) {
             searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if(hasFocus) {
-                        linearLayout.removeAllViews();
-                        progressBar.setVisibility(View.INVISIBLE);
+                    if (hasFocus) {
+                        metadata.clear();
+                        adapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
                     }
                 }
             });

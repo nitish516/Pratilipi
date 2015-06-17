@@ -12,23 +12,13 @@ public class Metadata {
 	String _coverImageUrl;
 	String _pageUrl;
     String _index;
+	long _ratingCount;
+	long _starCount;
 
     public Metadata()
     {
 
     }
-	// constructor
-	public Metadata(String _pid, String _title, String _contentType, String _authorId, String _authorFullName, String _ch_count, String _index, String _coverImageUrl, String _pageUrl) {
-		this._pid = _pid;
-		this._title = _title;
-        this._contentType = _contentType;
-        this._authorId = _authorId;
-        this._authorFullName = _authorFullName;
-        this._ch_count = _ch_count;
-        this._index = _index;
-        this._coverImageUrl = _coverImageUrl;
-        this._pageUrl = _pageUrl;
-	}
 
 	public String get_pid() {
 		return _pid;
@@ -100,5 +90,21 @@ public class Metadata {
 
 	public void set_pageUrl(String _pageUrl) {
 		this._pageUrl = _pageUrl;
+	}
+
+	public long get_ratingCount() {
+		return _ratingCount;
+	}
+
+	public void set_ratingCount(long ratingCount) {
+		this._ratingCount = ratingCount;
+	}
+
+	public long get_starCount() {
+		return _starCount;
+	}
+
+	public void set_starCount(long starCount) {
+		this._starCount = starCount;
 	}
 }

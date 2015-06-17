@@ -5,12 +5,11 @@
     android:id="@+id/more_card_feature"
     android:layout_gravity="center"
     android:layout_width="fill_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     card_view:cardCornerRadius="1dp"
     android:layout_below="@+id/textView"
     android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true"
-    android:layout_marginTop="35dp">
+    android:layout_alignParentEnd="true">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -18,14 +17,13 @@
     android:layout_gravity="fill_horizontal">
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/detail_image"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:src="@drawable/splash"/>
+        android:layout_width="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_height="match_parent"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="6dp">
+        android:orientation="vertical">
         <TextView
             android:id="@+id/titleTextViewMoreFeatured"
             android:layout_width="match_parent"
@@ -58,15 +56,13 @@
                 android:id="@+id/featuredPageRatingNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@+id/averageRatingBar"
-                android:text="(124 rating)" />
+                android:layout_toLeftOf="@+id/averageRatingBar" />
         </LinearLayout>
         <TextView
             android:id="@+id/averageRatingTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Average rating: -/5"
             android:layout_margin="5dp"/>
     </LinearLayout>
 </LinearLayout>
