@@ -1,8 +1,11 @@
-package com.pratilipi.pratilipi;
+package com.pratilipi.pratilipi.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.pratilipi.pratilipi.MainActivity;
+import com.pratilipi.pratilipi.ProfileFragment;
 
 /**
  * Created by MOHIT KHAITAN on 12-06-2015.

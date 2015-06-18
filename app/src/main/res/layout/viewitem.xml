@@ -4,15 +4,16 @@
     android:layout_gravity="center"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     card_view:cardCornerRadius="1dp"
-    android:layout_marginRight="20dp">
+    android:layout_marginRight="20dp"
+    android:id="@+id/home_card_view">
 
     <LinearLayout
     android:id="@+id/view_item_layout"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:background="#EEEEEE">
 
     <com.android.volley.toolbox.NetworkImageView
@@ -30,12 +31,12 @@
         <RatingBar
             android:id="@+id/averageRatingRatingBar"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             style="@style/CustomRatingBar"
             android:numStars="5"
             android:stepSize="0.1"
             android:isIndicator="true"
-            android:layout_centerVertical="true"
+            android:paddingTop="3dp"
             />
 
         <TextView
@@ -46,7 +47,8 @@
             android:text="  FREE!"
             android:textColor="@color/Teal"
             android:gravity="right"
-            android:textSize="12dp" />
+            android:textSize="12dp"
+            android:paddingTop="2dp"/>
 
         </RelativeLayout>
 

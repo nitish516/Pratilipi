@@ -48,9 +48,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/list?state=PUBLISHED&languageId=";
     boolean isSearch = false;
     SearchView searchView;
-    android.support.v7.app.ActionBar actionBar;
     String output ="";
-    android.support.v7.app.ActionBar actionbar;
     Toolbar toolbar;
     List<Metadata> metadata = new ArrayList<Metadata>();
     CardListAdapter adapter;
@@ -62,10 +60,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_list);
 
-
-
         progressBar = (ProgressBar)findViewById((R.id.progress_bar_more_featured));
-
 
         toolbar = (Toolbar)findViewById(R.id.tool_bar_card_activity);
         setSupportActionBar(toolbar);
@@ -92,7 +87,6 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
 
         linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);
 
-//        toolbar = getSupportActionBar();
         String title = getIntent().getStringExtra("TITLE");
         toolbar_title.setText(title);
         if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases")|| title.equalsIgnoreCase("Top Reads")
@@ -230,14 +224,14 @@ public void onCancel(DialogInterface dialog) {
                     linearLayout.addView(tv);
                 }
 
-            }else
-            {
+            }else {
                 TextView tv = new TextView(linearLayout.getContext());
                 tv.setText("No results");
                 tv.setGravity(Gravity.CENTER);
                 tv.setTextSize(32);
                 linearLayout.setGravity(Gravity.CENTER);
                 linearLayout.addView(tv);
+
             }
             } catch (JSONException e1) {
             e1.printStackTrace();
@@ -256,6 +250,7 @@ public void onCancel(DialogInterface dialog) {
             tv.setGravity(Gravity.CENTER);
             linearLayout.setGravity(Gravity.CENTER);
             linearLayout.addView(tv);
+
         }
         else {
             try {

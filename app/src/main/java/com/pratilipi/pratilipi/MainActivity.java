@@ -16,6 +16,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,6 +28,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -45,6 +48,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
+import com.pratilipi.pratilipi.adapter.HomeAdapter;
+import com.pratilipi.pratilipi.adapter.ViewPagerAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 
 import org.json.JSONException;
@@ -119,22 +124,24 @@ public class MainActivity extends ActionBarActivity {
     int NumbOfTabs = 4;
 
     public void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar)findViewById(R.id.tool_bar_main_activity);
+
+        toolbar = (Toolbar) findViewById(R.id.tool_bar_main_activity);
         setSupportActionBar(toolbar);
-        TextView toolbar_title = (TextView)toolbar.findViewById(R.id.title_toolbar);
+        TextView toolbar_title = (TextView) toolbar.findViewById(R.id.title_toolbar);
         getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
         toolbar_title.setText("");
 
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(),Titles,NumbOfTabs);
+        adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, NumbOfTabs);
 
-        mViewPager = (ViewPager)findViewById(R.id.pager_main_activity);
+        mViewPager = (ViewPager) findViewById(R.id.pager_main_activity);
         mViewPager.setAdapter(adapter);
 
-        tabs = (SlidingTabLayout)findViewById(R.id.tabs_main_activity);
+        tabs = (SlidingTabLayout) findViewById(R.id.tabs_main_activity);
 //        tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -143,187 +150,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         tabs.setViewPager(mViewPager);
-
-
-//         // Create the adapter that will return a fragment for each of the three primary sections
-//        // of the app.
-//        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
-//
-//        // Set up the action bar.
-//
-//        toolbar = (Toolbar)findViewById(R.id.tool_bar);
-//        setSupportActionBar(toolbar);
-//
-//        final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-//
-//        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-//        // parent.
-//        actionBar.setDisplayUseLogoEnabled(true);
-//        actionBar.setHomeButtonEnabled(true);
-//        actionBar.setDisplayUseLogoEnabled(true);
-//
-//        tabs = (SlidingTabLayout)findViewById(R.id.tabs);
-//        tabs.setDistributeEvenly(true);
-//        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer(){
-//            @Override
-//            public int getIndicatorColor(int position) {
-//                return getResources().getColor(R.color.tabsScrollColor);
-//            }
-//        });
-//
-//        tabs.setViewPager(mViewPager);
-//
-//
-//        // Specify that we will be displaying tabs in the action bar.
-////        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-//
-//        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
-//        // user swipes between sections.
-//        mViewPager = (ViewPager) findViewById(R.id.pager);
-//        mViewPager.setAdapter(mAppSectionsPagerAdapter);
-//        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                // When swiping between different app sections, select the corresponding tab.
-//                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-//                // Tab.
-//                actionBar.setSelectedNavigationItem(position);
-//            }
-//        });
-//
-//        //Floating Action Button
-//        final ActionButton actionButtonPrevious = (ActionButton)findViewById(R.id.action_fab);
-//
-//        // For each of the sections in the app, add a tab to the action bar.
-//        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
-//            // Create a tab with text corresponding to the page title defined by the adapter.
-//            // Also specify this Activity object, which implements the TabListener interface, as the
-//            // listener for when this tab is selected.
-//            actionBar.addTab(
-//                    actionBar.newTab()
-//                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
-//                            .setTabListener(new android.support.v7.app.ActionBar.TabListener() {
-//                                @Override
-//                                public void onTabSelected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
-//                                    mViewPager.setCurrentItem(tab.getPosition());
-//                                }
-//
-//                                @Override
-//                                public void onTabUnselected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onTabReselected(android.support.v7.app.ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
-//
-//                                }
-//                            }));
-//        }
-//
-//        //Floating Action Button
-//        actionButtonPrevious.setType(ActionButton.Type.DEFAULT);
-//        actionButtonPrevious.setButtonColor(getResources().getColor(R.color.fab_material_white));
-//        actionButtonPrevious.setButtonColorPressed(getResources().getColor(R.color.fab_material_white));
-//        actionButtonPrevious.setImageResource(R.drawable.unnamed);
-//        actionButtonPrevious.cancelLongPress();
-//        actionButtonPrevious.setButtonColorRipple(getResources().getColor(R.color.fab_material_grey_500));
-//        actionButtonPrevious.setShadowResponsiveEffectEnabled(false);
-//        actionButtonPrevious.setRippleEffectEnabled(true);
-
-//         actionButtonPrevious.setOnClickListener(new View.OnClickListener() {
-//             @Override
-//             public void onClick(View view) {
-//                Intent nxt = new Intent(MainActivity.this, ReadPrevious.class);
-//                startActivity(nxt);
-//                 if (null != savedInstanceState) {
-//                     ReadActivity read = new ReadActivity();
-//                     read.onSaveInstanceState(savedInstanceState);
-//                     read.onRestoreInstanceState(savedInstanceState);
-//                 } else {
-//                     Toast.makeText(getApplicationContext(), "No Previous Book Read", Toast.LENGTH_SHORT).show();
-//                 }
-//             }
-//         });
     }
-
-//    public View getActionBarView(){
-//        Window window = getActivity().getWindow();
-//        View v = window.getDecorView();
-//        int resId = getResources().getIdentifier("action_bar_container","id","android");
-//        return v.findViewById(resId);
-//    }
-
-//    @Override
-//    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//    }
-//
-//    @Override
-//    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-//        mViewPager.setCurrentItem(tab.getPosition());
-//    }
-//
-//    @Override
-//    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-//    }
-
-     /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
-     * sections of the app.
-     */
-//    public class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-//
-//        public AppSectionsPagerAdapter(FragmentManager fm) {
-//            super(fm);
-//        }
-//
-//        @Override
-//        public Fragment getItem(int i) {
-//            switch (i) {
-//                case 0:
-//                    return new HomeFragment();
-//                case 1:
-//                    return new CategoriesFragment();
-//                case 2:
-//                    // The first section of the app is the most interesting -- it offers
-//                    // a launchpad into the other demonstrations in this example application.
-//                    return new ShelfFragment();
-//                case 3:
-//                    return new ProfileFragment();
-//
-//                default:
-//                    // The other sections of the app are dummy placeholders.
-//                    Fragment fragment = new CategoriesFragment();
-//                    Bundle args = new Bundle();
-//                    args.putInt(CategoriesFragment.ARG_SECTION_NUMBER, i + 1);
-//                    fragment.setArguments(args);
-//                    return fragment;
-//            }
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return 4;
-//        }
-//
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//
-//            switch (position)
-//            {
-//                case 0:
-//                    return getResources().getString(R.string.title_home);
-//                case 1:
-//                    return getResources().getString(R.string.title_categories);
-//                case 2:
-//                    return getResources().getString(R.string.title_shelf);
-//                case 3:
-//                    return getResources().getString(R.string.title_profile);
-//            }
-//
-//            return "Section " + (position + 1);
-//        }
-//    }
 
     public static class HomeFragment extends Fragment implements AsyncResponse{
 
@@ -334,6 +161,12 @@ public class MainActivity extends ActionBarActivity {
         private LinearLayout topReadsList;
         private ProgressDialog pDialog;
         private float DecimalRating;
+        RecyclerView mHomeFeaturedRecyclerView, mHomeNewReleasesRecyclerView, mHomeTopReadsRecyclerView;
+        LinearLayoutManager mHomeFeaturedLayoutManager, mHomeNewReleasesLayoutManager, mHomeTopReadsLayoutManager;
+        HomeAdapter mHomeFeaturedAdapter, mHomeNewReleasesAdapter, mHomeTopReadsAdapter;
+        List<Metadata> featured_metadata = new ArrayList<Metadata>();
+        List<Metadata> new_releases_metadata = new ArrayList<Metadata>();
+        List<Metadata> top_reads_metadata = new ArrayList<Metadata>();
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -343,9 +176,45 @@ public class MainActivity extends ActionBarActivity {
             rb.setChecked(true);
 
             pBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
-            featuredList = (LinearLayout) rootView.findViewById(R.id.linear_layout_featured);
-            newReleasesList = (LinearLayout)rootView.findViewById(R.id.linear_layout_new_releases);
-            topReadsList = (LinearLayout)rootView.findViewById(R.id.linear_layout_top);
+//            featuredList = (LinearLayout) rootView.findViewById(R.id.linear_layout_featured);
+//            newReleasesList = (LinearLayout)rootView.findViewById(R.id.linear_layout_new_releases);
+//            topReadsList = (LinearLayout)rootView.findViewById(R.id.linear_layout_top);
+
+            //Recycler View START
+
+            pBar.setVisibility(View.VISIBLE);
+
+            mHomeFeaturedRecyclerView = (RecyclerView)rootView.findViewById(R.id.featured_recycler_view);
+            mHomeNewReleasesRecyclerView = (RecyclerView)rootView.findViewById(R.id.new_releases_recycler_view);
+            mHomeTopReadsRecyclerView = (RecyclerView)rootView.findViewById(R.id.top_reads_recycler_view);
+
+            mHomeFeaturedRecyclerView.setHasFixedSize(true);
+            mHomeNewReleasesRecyclerView.setHasFixedSize(true);
+            mHomeTopReadsRecyclerView.setHasFixedSize(true);
+
+            mHomeFeaturedLayoutManager = new LinearLayoutManager(getActivity());
+            mHomeNewReleasesLayoutManager = new LinearLayoutManager((getActivity()));
+            mHomeTopReadsLayoutManager = new LinearLayoutManager(getActivity());
+
+            mHomeFeaturedRecyclerView.setLayoutManager(mHomeFeaturedLayoutManager);
+            mHomeFeaturedLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+            mHomeNewReleasesRecyclerView.setLayoutManager(mHomeNewReleasesLayoutManager);
+            mHomeNewReleasesLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+            mHomeTopReadsRecyclerView.setLayoutManager(mHomeTopReadsLayoutManager);
+            mHomeTopReadsLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+            mHomeFeaturedAdapter = new HomeAdapter(featured_metadata);
+            mHomeNewReleasesAdapter = new HomeAdapter(new_releases_metadata);
+            mHomeTopReadsAdapter = new HomeAdapter(top_reads_metadata);
+
+            mHomeFeaturedRecyclerView.setAdapter(mHomeFeaturedAdapter);
+            mHomeNewReleasesRecyclerView.setAdapter(mHomeNewReleasesAdapter);
+            mHomeTopReadsRecyclerView.setAdapter(mHomeTopReadsAdapter);
+
+
+
 
             if(isOnline())
                 makeJsonArryReq();
@@ -392,16 +261,16 @@ public class MainActivity extends ActionBarActivity {
 
         private void LaunchCardView(String input, View view){
 
-            Intent NewReleaseIntent = new Intent(getActivity(), CardListActivity.class);
-            NewReleaseIntent.putExtra("TITLE",input);
-            NewReleaseIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivityForResult(NewReleaseIntent,0);
+            Intent mIntent = new Intent(getActivity(), CardListActivity.class);
+            mIntent.putExtra("TITLE",input);
+            mIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivityForResult(mIntent,0);
 //            overridePendingTransition(0,0);
         }
 
-        private void showProgressDialog() {
-            pBar.setVisibility(View.VISIBLE);
-        }
+//        private void showProgressDialog() {
+//            pBar.setVisibility(View.VISIBLE);
+//        }
         private void hideProgressDialog() {
             pBar.setVisibility(View.GONE);
         }
@@ -494,31 +363,14 @@ public class MainActivity extends ActionBarActivity {
                     if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
                         continue;
 
-                    CardView cardView = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
-//                    cardView.setCardElevation(0);     ////for disabling elevation from the cards.
-                    LinearLayout viewItemlayout = (LinearLayout)cardView.findViewById(R.id.view_item_layout);
-                    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-
-                    NetworkImageView imageView = (NetworkImageView) viewItemlayout.findViewById(R.id.image);
-                    RatingBar ratingBar = (RatingBar) viewItemlayout.findViewById(R.id.averageRatingRatingBar);
-//                    TextView ratingNum = (TextView) viewItemlayout.findViewById(R.id.ratingNumber);
-                    if (obj.get("ratingCount").getAsLong() > 0) {
-                        DecimalRating = ((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
-                        ratingBar.setRating(DecimalRating);
-//                        ratingNum.setText((String.valueOf("(" + (obj.get("ratingCount").getAsLong() + ")"))));
-                    }
-                    // Populate the image
-                    imageView.setImageUrl("http:" + obj.get("coverImageUrl").getAsString(), imageLoader);
-                    featuredList.addView(cardView);
-
-                    viewItemlayout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                            i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                            getActivity().startActivity(i);
-                        }
-                    });
+                    Metadata m = new Metadata();
+                    m.set_title(obj.get("title").getAsString());
+                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
+                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
+                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
+                    m.set_starCount(obj.get("starCount").getAsLong());
+                    featured_metadata.add(m);
+                    mHomeFeaturedAdapter.notifyDataSetChanged();
                 }
 
 
@@ -527,28 +379,14 @@ public class MainActivity extends ActionBarActivity {
                     if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
                         continue;
 
-                    CardView cardView1 = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
-                    LinearLayout layout =  (LinearLayout) cardView1.findViewById(R.id.view_item_layout);
-                    ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
-                    NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
-                    RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
-//                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
-                    if(obj.get("ratingCount").getAsLong()> 0) {
-                        ratingBar1.setRating((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
-//                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
-                    }
-                    // Populate the image
-                    imageView1.setImageUrl("http:" +obj.get("coverImageUrl").getAsString(), imageLoader1);
-                    newReleasesList.addView((cardView1));
-
-                    layout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                            i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                            getActivity().startActivity(i);
-                        }
-                    });
+                    Metadata m = new Metadata();
+                    m.set_title(obj.get("title").getAsString());
+                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
+                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
+                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
+                    m.set_starCount(obj.get("starCount").getAsLong());
+                    new_releases_metadata.add(m);
+                    mHomeNewReleasesAdapter.notifyDataSetChanged();
                 }
 
                 for (int i = 0; i < topReadsPratilipiDataList.size(); i++) {
@@ -556,63 +394,49 @@ public class MainActivity extends ActionBarActivity {
                     if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
                         continue;
 
-                    CardView cardView1 = (CardView) getActivity().getLayoutInflater().inflate(R.layout.viewitem, null);
-                    LinearLayout layout =  (LinearLayout) cardView1.findViewById(R.id.view_item_layout);
-                    ImageLoader imageLoader1 = AppController.getInstance().getImageLoader();
-                    NetworkImageView imageView1 = (NetworkImageView) layout.findViewById(R.id.image);
-                    RatingBar ratingBar1  = (RatingBar) layout.findViewById(R.id.averageRatingRatingBar);
-//                    TextView ratingNum1 = (TextView)layout.findViewById(R.id.ratingNumber);
-                    if(obj.get("ratingCount").getAsLong()> 0) {
-                        ratingBar1.setRating((float) obj.get("starCount").getAsLong() / obj.get("ratingCount").getAsLong());
-//                        ratingNum1.setText((String.valueOf("("+(obj.get("ratingCount").getAsLong()+")"))));
-                    }
-                    // Populate the image
-                    imageView1.setImageUrl("http:" +obj.get("coverImageUrl").getAsString(), imageLoader1);
-                    topReadsList.addView((cardView1));
-
-                    layout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(getActivity(), DetailPageActivity.class);
-                            i.putExtra(DetailPageActivity.JSON,  obj.toString());
-                            getActivity().startActivity(i);
-                        }
-                    });
+                    Metadata m = new Metadata();
+                    m.set_title(obj.get("title").getAsString());
+                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
+                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
+                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
+                    m.set_starCount(obj.get("starCount").getAsLong());
+                    top_reads_metadata.add(m);
+                    mHomeTopReadsAdapter.notifyDataSetChanged();
                 }
 
-                LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-                featuredList.addView(morebtnlayout);
-
-                final View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
-
-                moreBttn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        LaunchCardView("Featured", moreBttn);
-                    }
-                });
-
-                LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-                newReleasesList.addView((morebtnlayout1));
-                View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
-
-                moreBttn1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        LaunchCardView("New Releases", moreBttn);
-                    }
-                });
-
-                LinearLayout morebtnlayout2 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-                topReadsList.addView((morebtnlayout2));
-                View moreBttn2 = morebtnlayout2.findViewById(R.id.more_btn_click);
-
-                moreBttn2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        LaunchCardView("Top Reads", moreBttn);
-                    }
-                });
+//                LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+//                featuredList.addView(morebtnlayout);
+//
+//                final View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
+//
+//                moreBttn.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        LaunchCardView("Featured", moreBttn);
+//                    }
+//                });
+//
+//                LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+//                newReleasesList.addView((morebtnlayout1));
+//                View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
+//
+//                moreBttn1.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        LaunchCardView("New Releases", moreBttn);
+//                    }
+//                });
+//
+//                LinearLayout morebtnlayout2 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
+//                topReadsList.addView((morebtnlayout2));
+//                View moreBttn2 = morebtnlayout2.findViewById(R.id.more_btn_click);
+//
+//                moreBttn2.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        LaunchCardView("Top Reads", moreBttn);
+//                    }
+//                });
 
             } catch (JSONException e) {
                 e.printStackTrace();
