@@ -136,6 +136,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
             avgeragerating = (TextView)itemView.findViewById(R.id.averageRatingTextView);
             freeButton = (TextView)itemView.findViewById(R.id.freeBtn);
 
+            bookTitle.setSelected(true);
+
         }
     }
 

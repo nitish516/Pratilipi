@@ -35,7 +35,12 @@
                 android:id="@+id/overlay_book_Title"
                 android:paddingLeft="5dp"
                 android:textSize="15dp"
-                android:paddingTop="3dp"/>
+                android:paddingTop="3dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:singleLine="true"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
