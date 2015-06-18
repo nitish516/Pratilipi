@@ -129,38 +129,12 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
                                                                      @Override
                                                                      public void onSystemUiVisibilityChange(int visibility) {
-                 boolean visible = (visibility & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0;
-                 controlsView.setVisibility(visible
-                         ? View.VISIBLE
-                         : View.GONE);
-             }
-         });
-
-        controlsView.setClickable(true);
-
-        final GestureDetector clickDetector = new GestureDetector( this,
-                new GestureDetector.SimpleOnGestureListener(){
-                    @Override
-                    public boolean onSingleTapUp(MotionEvent e) {
-                        boolean visibility = (mDecorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0;
-                        if(visibility) {
-                            hideSystemUI();
-                            if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
-                                mDrawerLayout.closeDrawer(Gravity.RIGHT);
-                        }
-                        else
-                            showSystemUI();
-                        return true;
-                    }
-                });
-
-        controlsView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return clickDetector.onTouchEvent(event);
-            }
-        });
-
+                                                                         boolean visible = (visibility & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0;
+                                                                         controlsView.setVisibility(visible
+                                                                                 ? View.VISIBLE
+                                                                                 : View.GONE);
+                                                                     }
+                                                                 });
 
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mTitles));
@@ -200,56 +174,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
        webView = (CustomWebView)findViewById(R.id.webView);
        webView.setVerticalScrollBarEnabled(false);
        webView.setGestureDetector(new GestureDetector(new CustomeGestureDetector()));
-
-        webView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent ev) {
-                final int action = ev.getAction();
-                float x = ev.getX();
-                float y = ev.getY();
-                switch (action & MotionEventCompat.ACTION_MASK) {
-                    case MotionEvent.ACTION_DOWN:
-                        mStartDragX = x;
-                        mStartDragY = y;
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (x > mStartDragX) {
-                            if (type.equalsIgnoreCase("PRATILIPI")) {
-                                webView.loadUrl("javascript:previous()");
-                            } else {
-                                if (!isLoading && webView.getScaleX() == 30) {
-                                    launchChapter(false);
-                                }
-                            }
-                        } else if (x < mStartDragX) {
-                            if (type.equalsIgnoreCase("PRATILIPI"))
-                                webView.loadUrl("javascript:next()");
-
-                            else {
-                                if (!isLoading) {// && webView.getScaleX() == 30
-                                    launchChapter(true);
-                                }
-                            }
-                        } else if (x == mStartDragX) {
-                            int b = mDecorView.getSystemUiVisibility();
-                            int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-                            boolean visibility = (a & b) == 0;
-                            if (visibility) {
-                                hideSystemUI();
-                                if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
-                                    mDrawerLayout.closeDrawer(Gravity.RIGHT);
-                            } else
-                                showSystemUI();
-                        }
-                        mStartDragX = 0;
-                        break;
-                }
-                return false;
-            }
-        });
 
         JavaScriptInterface jsInterface = new JavaScriptInterface(this);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -556,85 +480,47 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     private class CustomeGestureDetector   extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
-                return false;
+        public boolean onSingleTapUp(MotionEvent e) {
+            boolean visibility = (mDecorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0;
+            if (visibility) {
+                hideSystemUI();
+                if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
+                    mDrawerLayout.closeDrawer(Gravity.RIGHT);
+            } else
+                showSystemUI();
+            return true;
         }
 
         @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                                float distanceY) {
-//            if(distanceX > 0)
-//            {
-//                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-//                    webView.scrollBy(0, -webView.getHeight());
-//                else {
-//                    if (!isLoading) {
-//                        launchChapter(false);
-//                    }
-//                }
-//            }
-//            else if(distanceX < 0)
-//            {
-//                if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-//                    webView.scrollBy(0, webView.getHeight());
-//                else {
-//                    if (!isLoading) {
-//                        launchChapter(true);
-//                    }
-//                }
-//            }
-            return false;
-        }
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            try {
+                float diffY = e2.getY() - e1.getY();
+                float diffX = e2.getX() - e1.getX();
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX > 0) {
+                        if (type.equalsIgnoreCase("PRATILIPI")) {
+                            webView.loadUrl("javascript:previous()");
+                        } else {
+                            if (!isLoading && webView.getScaleX() == 30) {
+                                launchChapter(false);
+                            }
+                        }
+                    } else {
+                        if (type.equalsIgnoreCase("PRATILIPI"))
+                            webView.loadUrl("javascript:next()");
 
-//        @Override
-//        public boolean onTouch(View v, MotionEvent ev) {
-//            final int action = ev.getAction();
-//            float x = ev.getX();
-//            float y = ev.getY();
-//            switch (action & MotionEventCompat.ACTION_MASK) {
-//                case MotionEvent.ACTION_DOWN:
-//                    mStartDragX = x;
-//                    mStartDragY = y;
-//                    break;
-//                case MotionEvent.ACTION_MOVE:
-//                    break;
-//                case MotionEvent.ACTION_UP:
-//                   if (x > mStartDragX) {
-//                       if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() > 1))
-//                           webView.scrollBy(0, -webView.getHeight());
-//                       else {
-//                           if (!isLoading) {
-//                               launchChapter(false);
-//                           }
-//                       }
-//                   } else if (x < mStartDragX) {
-//                       if (type.equalsIgnoreCase("PRATILIPI") && (webView.getScrollY() < webView.getContentHeight()))
-//                           webView.scrollBy(0, webView.getHeight());
-//                       else {
-//                           if (!isLoading) {
-//                               launchChapter(true);
-//                           }
-//                       }
-//                   } else
-//                    if (x == mStartDragX){
-//                        int b = mDecorView.getSystemUiVisibility();
-//                        int a = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-//
-//                        boolean visibility = (a & b) == 0;
-//                        if(visibility) {
-//                            hideSystemUI();
-//                            if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
-//                                mDrawerLayout.closeDrawer(Gravity.RIGHT);
-//                        }
-//                        else
-//                            showSystemUI();
-//                    }
-//                    mStartDragX = 0;
-//                    break;
-//            }
-//            return true;
-//        }
+                        else {
+                            if (!isLoading) {// && webView.getScaleX() == 30
+                                launchChapter(true);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
     }
 
     public class JavaScriptInterface {
