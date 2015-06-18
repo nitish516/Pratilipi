@@ -116,7 +116,5 @@ public class Metadata implements Serializable{
 		return _starCount;
 	}
 
-	public void set_starCount(long starCount) {
-		this._starCount = starCount;
-	}
+	public void set_starCount(long starCount) { this._starCount = starCount; }
 }
