@@ -16,7 +16,7 @@
         android:layout_height="fill_parent"
         android:width="120dp"
         android:height="177dp"
-        android:text="More >>"
+        android:text="More >"
         android:scaleType="fitCenter"
         android:textStyle="bold"
         android:gravity="center"

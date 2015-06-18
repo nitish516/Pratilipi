@@ -212,6 +212,15 @@ public void onCancel(DialogInterface dialog) {
                     m.set_coverImageUrl(obj.getString("coverImageUrl"));
                     m.set_ratingCount(obj.getLong("ratingCount"));
                     m.set_starCount(obj.getLong("starCount"));
+                    m.set_authorId(obj.getString("authorId"));
+                    m.set_pageUrl(obj.getString("pageUrl"));
+                    if(obj.has("summary"))
+                        m.set_summary(obj.getString("summary"));
+                    if(obj.has("index"))
+                        m.set_index(obj.getString("index"));
+                    m.set_contentType(obj.getString("contentType"));
+                    m.set_pid(obj.getLong("id")+"");
+
                     metadata.add(m);
                     adapter.notifyDataSetChanged();
                 }

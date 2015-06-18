@@ -1,17 +1,10 @@
 #container {
-  /*  width: 450px; */
     overflow: hidden;
 }
 
 #content {
     position: relative;
-    /*height: 30em;*/
 
-/*
-    -moz-column-width: 450px;
-    -webkit-column-width: 450px;
-    column-width: 450px;
-*/
     -moz-column-gap: 10px;
     -webkit-column-gap: 10px;
     column-gap: 10px;

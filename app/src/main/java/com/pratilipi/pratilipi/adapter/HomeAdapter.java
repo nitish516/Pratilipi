@@ -18,6 +18,7 @@ import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DetailPageActivity;
 import com.pratilipi.pratilipi.R;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(context, DetailPageActivity.class);
-                i.putExtra(DetailPageActivity.JSON,metadataObj.toString());
+                i.putExtra(DetailPageActivity.METADATA, (Serializable) metadataObj);
                 context.startActivity(i);
             }
         });

@@ -41,6 +41,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.pratilipi.pratilipi.DataFiles.Metadata;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,8 +64,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private ArrayList<Integer> mTitleChapters;
     private ArrayList<String> mContents;
     private static final String ARG_SECTION_NUMBER = "section_number";
-    public static final String JSON = "JSON";
-    private JSONObject obj;
+    public static final String JSON = "METADATA";
+    private Metadata metadata;
     private static String TAG = MainActivity.class.getSimpleName();
     private String content;
     private Matcher matcher;
@@ -91,14 +92,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         mTitles = new ArrayList<>();
         mTitleChapters = new ArrayList<>();
         try {
-            obj = new JSONObject(getIntent().getStringExtra(JSON));
-            title = obj.getString("title");
-            pId = obj.getLong("id");
-            type = obj.getString("contentType");
-            pageCount = obj.getInt("pageCount");
+            metadata = (Metadata) getIntent().getSerializableExtra(DetailPageActivity.METADATA);
+            title = metadata.get_title();
+            String id = metadata.get_pid();
+            pId = Long.parseLong(id);
+            type = metadata.get_contentType();
+            pageCount = metadata.get_page_count();
 
             Gson gson = new GsonBuilder().create();
-            JsonArray indexArr = gson.fromJson( obj.getString("index"), JsonElement.class ).getAsJsonArray();
+            JsonArray indexArr = gson.fromJson( metadata.get_index(), JsonElement.class ).getAsJsonArray();
             if(null != indexArr) {
                 indexSize = indexArr.size();
                 for (int i = 0; i < indexSize; i++) {
@@ -110,9 +112,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 }
             }
 
-        }catch (JSONException e) {
-            e.getCause();
-            e.printStackTrace();
         }catch (Exception e){
             e.printStackTrace();
         }

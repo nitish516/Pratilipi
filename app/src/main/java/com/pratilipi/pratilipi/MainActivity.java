@@ -369,6 +369,15 @@ public class MainActivity extends ActionBarActivity {
                     m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
                     m.set_ratingCount(obj.get("ratingCount").getAsLong());
                     m.set_starCount(obj.get("starCount").getAsLong());
+                    m.set_authorId(obj.get("authorId").getAsString());
+                    m.set_pageUrl(obj.get("pageUrl").getAsString());
+                    if(null!=obj.get("summary"))
+                        m.set_summary(obj.get("summary").getAsString());
+                    if(null!=obj.get("index"))
+                        m.set_index(obj.get("index").getAsString());
+                    m.set_contentType(obj.get("contentType").getAsString());
+                    m.set_pid(obj.get("id").getAsLong()+"");
+
                     featured_metadata.add(m);
                     mHomeFeaturedAdapter.notifyDataSetChanged();
                 }
@@ -385,6 +394,15 @@ public class MainActivity extends ActionBarActivity {
                     m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
                     m.set_ratingCount(obj.get("ratingCount").getAsLong());
                     m.set_starCount(obj.get("starCount").getAsLong());
+                    m.set_authorId(obj.get("authorId").getAsString());
+                    m.set_pageUrl(obj.get("pageUrl").getAsString());
+                    if(null != obj.get("summary"))
+                        m.set_summary(obj.get("summary").getAsString());
+                    if(null != obj.get("index"))
+                        m.set_index(obj.get("index").getAsString());
+                    m.set_contentType(obj.get("contentType").getAsString());
+                    m.set_pid(obj.get("id").getAsLong()+"");
+
                     new_releases_metadata.add(m);
                     mHomeNewReleasesAdapter.notifyDataSetChanged();
                 }
@@ -400,43 +418,18 @@ public class MainActivity extends ActionBarActivity {
                     m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
                     m.set_ratingCount(obj.get("ratingCount").getAsLong());
                     m.set_starCount(obj.get("starCount").getAsLong());
+                    m.set_authorId(obj.get("authorId").getAsString());
+                    m.set_pageUrl(obj.get("pageUrl").getAsString());
+                    if(null != obj.get("summary"))
+                        m.set_summary(obj.get("summary").getAsString());
+                    if(null != obj.get("index"))
+                        m.set_index(obj.get("index").getAsString());
+                    m.set_contentType(obj.get("contentType").getAsString());
+                    m.set_pid(obj.get("id").getAsLong()+"");
+
                     top_reads_metadata.add(m);
                     mHomeTopReadsAdapter.notifyDataSetChanged();
                 }
-
-//                LinearLayout morebtnlayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-//                featuredList.addView(morebtnlayout);
-//
-//                final View moreBttn = morebtnlayout.findViewById(R.id.more_btn_click);
-//
-//                moreBttn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        LaunchCardView("Featured", moreBttn);
-//                    }
-//                });
-//
-//                LinearLayout morebtnlayout1 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-//                newReleasesList.addView((morebtnlayout1));
-//                View moreBttn1 = morebtnlayout1.findViewById(R.id.more_btn_click);
-//
-//                moreBttn1.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        LaunchCardView("New Releases", moreBttn);
-//                    }
-//                });
-//
-//                LinearLayout morebtnlayout2 = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.more_btn_layout, null);
-//                topReadsList.addView((morebtnlayout2));
-//                View moreBttn2 = morebtnlayout2.findViewById(R.id.more_btn_click);
-//
-//                moreBttn2.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        LaunchCardView("Top Reads", moreBttn);
-//                    }
-//                });
 
             } catch (JSONException e) {
                 e.printStackTrace();

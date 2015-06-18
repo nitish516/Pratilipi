@@ -1,17 +1,21 @@
 package com.pratilipi.pratilipi.DataFiles;
 
-public class Metadata {
+import java.io.Serializable;
+
+public class Metadata implements Serializable{
 
 	// private variables
-	String _pid; // Pratilipi id
+    private static final long serialVersionUID = -7060210544600464481L;
+    String _pid; // Pratilipi id
 	String _title; // content title
 	String _contentType; // PRATILIPI,IMAGE
 	String _authorId;
 	String _authorFullName;
-    String _ch_count;
+    int _page_count;
 	String _coverImageUrl;
 	String _pageUrl;
     String _index;
+	String _summary;
 	long _ratingCount;
 	long _starCount;
 
@@ -52,12 +56,12 @@ public class Metadata {
 		this._authorId = _authorId;
 	}
 
-	public String get_ch_count() {
-		return _ch_count;
+	public int get_page_count() {
+		return _page_count;
 	}
 
-	public void set_ch_count(String _ch_count) {
-		this._ch_count = _ch_count;
+	public void set_page_count(int _page_count) {
+		this._page_count = _page_count;
 	}
 
     public String get_authorFullName() {
@@ -90,6 +94,14 @@ public class Metadata {
 
 	public void set_pageUrl(String _pageUrl) {
 		this._pageUrl = _pageUrl;
+	}
+
+	public String get_summary() {
+		return _summary;
+	}
+
+	public void set_summary(String _summary) {
+		this._summary = _summary;
 	}
 
 	public long get_ratingCount() {

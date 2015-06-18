@@ -23,11 +23,13 @@ import android.support.v7.widget.Toolbar;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.text.NumberFormat;
 
@@ -35,11 +37,10 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
     public static final String PID = "PId";
     public static final String POSITION = "Position";
-    public static final String JSON = "JSON";
-    private JSONObject obj;
+    public static final String METADATA = "METADATA";
+    private Metadata metadata;
     URI mUri;
 
-    String title1;
     Toolbar toolbar;
 
     @Override
@@ -65,8 +66,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             }
         });
         try{
-            obj = new JSONObject(getIntent().getStringExtra(JSON));
-            title1 = obj.getString("title");
+            metadata = (Metadata) getIntent().getSerializableExtra(METADATA);
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
 
@@ -94,17 +94,17 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
             title.setTypeface(typeFace);
 
-            title.setText(Html.fromHtml(obj.getString("title")));
+            title.setText(Html.fromHtml(metadata.get_title()));
 
             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
             NetworkImageView imageView = (NetworkImageView) findViewById(R.id.detail_page_image);
-            imageView.setImageUrl("http:" +obj.getString("coverImageUrl"), imageLoader);
+            imageView.setImageUrl("http:" +metadata.get_coverImageUrl(), imageLoader);
 
             RatingBar ratingBar  = (RatingBar) findViewById(R.id.averageRatingBar);
             TextView averageRatingTextView = (TextView) findViewById(R.id.averageRatingTextView);
             TextView detailPageRate = (TextView)findViewById(R.id.detailPageRatingNumber);
-            if(obj.getLong("ratingCount")> 0) {
-                float val = (float)obj.getLong("starCount")/obj.getLong("ratingCount");
+            if(metadata.get_ratingCount()> 0) {
+                float val = (float)metadata.get_starCount()/metadata.get_ratingCount();
                 ratingBar.setRating(val);
 
                 NumberFormat numberformatter = NumberFormat.getNumberInstance();
@@ -113,10 +113,10 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                 String rating = numberformatter.format(val);
 
                 averageRatingTextView.setText("Average rating: " + String.valueOf(rating) + "/5");
-                detailPageRate.setText(String.valueOf("("+obj.getLong("ratingCount"))+" rating)");
+                detailPageRate.setText(String.valueOf("("+metadata.get_ratingCount())+" rating)");
             }
 
-            String summaryString = obj.getString("summary");
+            String summaryString = metadata.get_summary();
             if(null!= summaryString) {
                 Spanned summary = Html.fromHtml(summaryString);
                 if (null != summary) {
@@ -126,23 +126,10 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                 }
             }
             TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
-            JSONObject authorObj = obj.getJSONObject("author");
-            if(null != authorObj){
-                String name = authorObj.getString("name");
-                if(null!= name) {
-                    Spanned author = Html.fromHtml(name);
-                   if (null != author) {
-                       authorTextView.setText(author);
-                        authorTextView.setTypeface(typeFace);
-                    }
-                    else
-                        authorTextView.setVisibility(View.GONE);
-                }
-                else
-                    authorTextView.setVisibility(View.GONE);
-            }
-            else
-                authorTextView.setVisibility(View.GONE);
+
+            authorTextView.setText(metadata.get_authorFullName());
+            authorTextView.setTypeface(typeFace);
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -165,7 +152,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     public void launchReader(View view)
     {
         Intent i = new Intent(this, ReadActivity.class);
-        i.putExtra(DetailPageActivity.JSON,  obj.toString());
+        i.putExtra(DetailPageActivity.METADATA, (Serializable) metadata);
         startActivity(i);
     }
 
@@ -176,18 +163,16 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         String contentType = "";
         Long pId = 0l;
         try {
-            pageCount = obj.getInt("pageCount");
-            contentType = obj.getString("contentType");
-            pId = obj.getLong("id");
-            values.put(PratilipiProvider.PID , String.valueOf(pId));
-            values.put(PratilipiProvider.TITLE , obj.getString("title"));
+            contentType = metadata.get_contentType();
+            values.put(PratilipiProvider.PID , metadata.get_pid());
+            values.put(PratilipiProvider.TITLE , metadata.get_title());
             values.put(PratilipiProvider.CONTENT_TYPE ,contentType);
-            values.put(PratilipiProvider.AUTHOR_ID , String.valueOf(obj.getLong("authorId")));
-            values.put(PratilipiProvider.AUTHOR_NAME , obj.getJSONObject("author").getString("name"));
-            values.put(PratilipiProvider.CH_COUNT , String.valueOf(pageCount));
-            values.put(PratilipiProvider.IMG_URL , obj.getString("coverImgUrl"));
-            values.put(PratilipiProvider.PG_URL , obj.getString("pageUrl"));
-            values.put(PratilipiProvider.INDEX , obj.getString("index"));
+            values.put(PratilipiProvider.AUTHOR_ID , String.valueOf(metadata.get_authorId()));
+            values.put(PratilipiProvider.AUTHOR_NAME , metadata.get_authorFullName());
+            values.put(PratilipiProvider.CH_COUNT , metadata.get_page_count());
+            values.put(PratilipiProvider.IMG_URL , metadata.get_coverImageUrl());
+            values.put(PratilipiProvider.PG_URL , metadata.get_pageUrl());
+            values.put(PratilipiProvider.INDEX , metadata.get_index());
 
 
             ContentResolver cv = getContentResolver();
@@ -197,8 +182,6 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             for(int i=1;i<=pageCount;i++){
     //            makeRequest(i,contentType,pId);
         }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }catch (Exception e){
             e.printStackTrace();
         }
