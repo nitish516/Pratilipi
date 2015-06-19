@@ -8,14 +8,15 @@
     card_view:cardCornerRadius="1dp"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
-    android:id="@+id/home_card_view">
+    android:id="@+id/home_card_view"
+    card_view:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
     android:id="@+id/view_item_layout"
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#EEEEEE">
+    android:background="#FFFFFF">
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -69,13 +70,14 @@
         <TextView
             android:id="@+id/freeBtn"
             android:layout_toRightOf="@id/averageRatingRatingBar"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  FREE!"
+            android:text=" FREE!"
             android:textColor="@color/Teal"
             android:gravity="right"
             android:textSize="12dp"
-            android:paddingTop="2dp"/>
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"/>
 
         </RelativeLayout>
 
