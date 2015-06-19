@@ -85,8 +85,8 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.DataVi
                 numberformatter.setMinimumFractionDigits(1);
                 String rating = numberformatter.format(val);
 
-                holder.ratingCount.setText(String.valueOf("("+metadataObj.get_ratingCount() + " ratings)"));
-                holder.avgeragerating.setText("Average rating: " + rating + "/5");
+//                holder.ratingCount.setText(String.valueOf("("+metadataObj.get_ratingCount() + " ratings)"));
+//                holder.avgeragerating.setText("Average rating: " + rating + "/5");
 
             }else{
                 Log.d("Val is Null", "");

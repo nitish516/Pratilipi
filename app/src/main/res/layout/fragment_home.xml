@@ -101,7 +101,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/view_more_newrelease_layout"
                 android:layout_width="match_parent"
-                android:layout_height="190dp"
+                android:layout_height="200dp"
                 android:id="@+id/new_releases_recycler_view" />
     </RelativeLayout>
         <RelativeLayout
@@ -145,7 +145,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/view_more_top_layout"
                 android:layout_width="match_parent"
-                android:layout_height="190dp"
+                android:layout_height="200dp"
                 android:id="@+id/top_reads_recycler_view" />
         </RelativeLayout>
     </LinearLayout>

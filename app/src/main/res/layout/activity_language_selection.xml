@@ -29,7 +29,8 @@
             android:onClick="onRadioButtonClicked"
             android:textAlignment="center"
             android:gravity="center"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:elevation="3dp"/>
         <RadioButton android:id="@+id/radio_hindi"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -39,7 +40,8 @@
             android:textColor="#fff"
             android:onClick="onRadioButtonClicked"
             android:gravity="center"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:elevation="3dp"/>
         <RadioButton android:id="@+id/radio_gujrati"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -49,7 +51,8 @@
             android:textColor="#fff"
             android:onClick="onRadioButtonClicked"
             android:gravity="center"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:elevation="3dp"/>
     </RadioGroup>
 
     <Button
