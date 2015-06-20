@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -19,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -130,6 +130,9 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             authorTextView.setText(metadata.get_authorFullName());
             authorTextView.setTypeface(typeFace);
 
+            makeRequest(1,metadata.get_contentType(),metadata.get_pid());
+
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -156,7 +159,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         startActivity(i);
     }
 
-    public void addData(View view) {
+    public void addMetaData(View view) {
         ContentValues values = new ContentValues();
 
         int pageCount = 0;
@@ -195,7 +198,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void makeRequest(int pageNo,String type,Long pId) {
+    private void makeRequest(int pageNo,String type,String pId) {
         if(isOnline()) {
             if (type.equalsIgnoreCase("PRATILIPI")) {
                 RequestTask task = new RequestTask();

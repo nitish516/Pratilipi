@@ -6,14 +6,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PersistableBundle;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
@@ -35,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
+import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -244,7 +247,25 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     }
 
     private void makeRequest(int pageNo) {
-       if(isOnline()) {
+
+        String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
+        Uri pid =  Uri.parse(URL);
+
+        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
+                                      new String[] { pId+"", 1+"" }, PratilipiProvider.PID);
+
+        String result = "Results:";
+
+        if (!c.moveToFirst()) {
+            Toast.makeText(this, result + " no content yet!", Toast.LENGTH_LONG).show();
+        }else{
+            do{
+                result = result + "\n" + c.getString(c.getColumnIndex(PratilipiProvider.PID));
+            } while (c.moveToNext());
+            Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+        }
+
+        if(isOnline()) {
            if (type.equalsIgnoreCase("PRATILIPI")) {
                progressDialog = new ProgressDialog(webView.getContext());
                progressDialog.setMessage("Loading...");
