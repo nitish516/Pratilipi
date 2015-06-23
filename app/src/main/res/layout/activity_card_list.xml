@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/tool_bar_card_activity"
-        layout="@layout/custom_action_bar" >
+        layout="@layout/custom_action_bar_card_view" >
     </include>
 
     <ProgressBar
