@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -137,6 +138,16 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        ImageView home_direct = (ImageView)findViewById(R.id.home_img_button);
+
+        home_direct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent direct = new Intent(DetailPageActivity.this, MainActivity.class);
+                startActivity(direct);
+            }
+        });
 
 
 
