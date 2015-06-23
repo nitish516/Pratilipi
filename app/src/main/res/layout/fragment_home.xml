@@ -35,17 +35,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_featured_books"
                 android:textColor="#C1272D"
-                android:textSize="16dp"
-                android:gravity="center"
-                android:textStyle="bold"/>
+                android:textSize="18dp"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:paddingLeft="7dp"/>
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="13dp"
                 android:paddingRight="20dp"
                 android:gravity="right"
-                android:textColor="@color/button_material_dark"/>
+                android:textColor="#FFFFFF"
+                android:background="@drawable/custom_button_design"
+                android:layout_alignTop="@+id/fetures_tv"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:padding="6dp"/>
             </RelativeLayout>
             <ProgressBar
                 android:layout_below="@id/view_more_featured_layout"
@@ -78,17 +84,23 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_new_releases"
                 android:textColor="#C1272D"
-                android:textSize="16dp"
-                android:gravity="center"
-                android:textStyle="bold"/>
+                android:textSize="18dp"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:paddingLeft="7dp"/>
             <TextView
-                android:gravity="right"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/view_all"
                 android:textSize="13dp"
                 android:paddingRight="20dp"
-                android:textColor="@color/button_material_dark"/>
+                android:gravity="right"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/custom_button_design"
+                android:layout_alignTop="@+id/release_tv"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:padding="6dp"/>
         </RelativeLayout>
 
         <ProgressBar
@@ -123,17 +135,23 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title_top_reads"
                     android:textColor="#C1272D"
-                    android:textSize="16dp"
-                    android:gravity="center"
-                    android:textStyle="bold"/>
+                    android:textSize="18dp"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:paddingLeft="7dp"/>
                 <TextView
-                    android:gravity="right"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/view_all"
                     android:textSize="13dp"
                     android:paddingRight="20dp"
-                    android:textColor="@color/button_material_dark"/>
+                    android:gravity="right"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/custom_button_design"
+                    android:layout_alignTop="@+id/top_tv"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:padding="6dp"/>
             </RelativeLayout>
             <ProgressBar
                 android:layout_below="@id/view_more_top_layout"

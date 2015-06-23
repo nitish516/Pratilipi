@@ -112,8 +112,8 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                 numberformatter.setMinimumFractionDigits(1);
                 String rating = numberformatter.format(val);
 
-                averageRatingTextView.setText("Average rating: " + String.valueOf(rating) + "/5");
-                detailPageRate.setText(String.valueOf("("+metadata.get_ratingCount())+" rating)");
+//                averageRatingTextView.setText("Average rating: " + String.valueOf(rating) + "/5");
+//                detailPageRate.setText(String.valueOf("("+metadata.get_ratingCount())+" rating)");
             }
 
             String summaryString = metadata.get_summary();
