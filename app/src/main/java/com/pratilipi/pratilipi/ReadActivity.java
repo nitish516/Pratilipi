@@ -286,12 +286,12 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             } else if (type.equalsIgnoreCase("IMAGE")) {
                 webView.setInitialScale(30);
                 WebSettings webSettings = webView.getSettings();
-                webSettings.setUseWideViewPort(true);
                 webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
                         + pId + "&pageNo=" + pageNo);
 //               webSettings.setSupportZoom(true);
                 webSettings.setJavaScriptEnabled(true);
-                webSettings.setBuiltInZoomControls(false);
+                webSettings.setBuiltInZoomControls(true);
+                webSettings.setUseWideViewPort(true);
             }
         }
         else {
