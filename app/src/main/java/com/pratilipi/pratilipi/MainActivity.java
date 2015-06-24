@@ -376,8 +376,8 @@ public class MainActivity extends ActionBarActivity {
                     if(null!=obj.get("index"))
                         m.set_index(obj.get("index").getAsString());
                     m.set_contentType(obj.get("contentType").getAsString());
-                    m.set_pid(obj.get("id").getAsLong()+"");
-
+                    m.set_pid(obj.get("id").getAsLong() + "");
+                    m.set_page_count(obj.get("pageCount").getAsInt());
                     featured_metadata.add(m);
                     mHomeFeaturedAdapter.notifyDataSetChanged();
                 }
@@ -401,7 +401,8 @@ public class MainActivity extends ActionBarActivity {
                     if(null != obj.get("index"))
                         m.set_index(obj.get("index").getAsString());
                     m.set_contentType(obj.get("contentType").getAsString());
-                    m.set_pid(obj.get("id").getAsLong()+"");
+                    m.set_pid(obj.get("id").getAsLong() + "");
+                    m.set_page_count(obj.get("pageCount").getAsInt());
 
                     new_releases_metadata.add(m);
                     mHomeNewReleasesAdapter.notifyDataSetChanged();
@@ -426,6 +427,7 @@ public class MainActivity extends ActionBarActivity {
                         m.set_index(obj.get("index").getAsString());
                     m.set_contentType(obj.get("contentType").getAsString());
                     m.set_pid(obj.get("id").getAsLong()+"");
+                    m.set_page_count(obj.get("pageCount").getAsInt());
 
                     top_reads_metadata.add(m);
                     mHomeTopReadsAdapter.notifyDataSetChanged();

@@ -3,6 +3,8 @@ package com.pratilipi.pratilipi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +19,6 @@ import android.os.Message;
 import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -50,7 +50,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
@@ -61,21 +60,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
 
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
     private ArrayList<String> mTitles;
     private ArrayList<Integer> mTitleChapters;
-    private ArrayList<String> mContents;
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    public static final String JSON = "METADATA";
     private Metadata metadata;
-    private static String TAG = MainActivity.class.getSimpleName();
-    private String content;
-    private Matcher matcher;
-    private static final Gson gson = new GsonBuilder().create();
     CustomWebView webView;
-    float mStartDragX = 0;
-    float mStartDragY = 0;
     private int indexSize = 0;
     private int pageCount = 0;
     private int currentPage = 1;
@@ -88,6 +76,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     ProgressDialog progressDialog;
     RequestTask task;
     String title;
+    String pageContent;
+    String lan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,11 +127,12 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                                                                  ? View.VISIBLE
                                                                                  : View.GONE);
                                                                      }
+
                                                                  });
 
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mTitles));
-        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+        lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
         Typeface typeFace = null;
         if(lan.equalsIgnoreCase("hi"))
             typeFace= Typeface.createFromAsset(getAssets(), "fonts/devanagari.ttf");
@@ -174,15 +165,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
         getSupportActionBar().setCustomView(v);
 
-       webView = (CustomWebView)findViewById(R.id.webView);
-       webView.setVerticalScrollBarEnabled(false);
-       webView.setGestureDetector(new GestureDetector(new CustomeGestureDetector()));
+        webView = (CustomWebView)findViewById(R.id.webView);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setGestureDetector(new GestureDetector(new CustomeGestureDetector()));
 
         JavaScriptInterface jsInterface = new JavaScriptInterface(this);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(jsInterface, "JSInterface");
 
-       launchChapter(1);
+        launchChapter(1);
     }
 
     protected void onSaveInstanceState(Bundle outState){
@@ -252,43 +243,60 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         Uri pid =  Uri.parse(URL);
 
         Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
-                                      new String[] { pId+"", 1+"" }, PratilipiProvider.PID);
+                new String[] { pId+"",pageNo+"" }, PratilipiProvider.PID);
 
-        String result = "Results:";
 
         if (!c.moveToFirst()) {
-            Toast.makeText(this, result + " no content yet!", Toast.LENGTH_LONG).show();
+            makeNetworkRequest(pageNo);
         }else{
-            do{
-                result = result + "\n" + c.getString(c.getColumnIndex(PratilipiProvider.PID));
-            } while (c.moveToNext());
-            Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+            pageContent = c.getString(c.getColumnIndex(PratilipiProvider.CONTENT));
+            parseJson();
+            makeNetworkRequestWithCheck(pageNo + 1);
+            makeNetworkRequestWithCheck(pageNo - 1);
         }
+    }
 
+    private void makeNetworkRequestWithCheck(int pageNo) {
+        if(pageNo > 1 && pageNo <= pageCount && isOnline()){
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
+            Uri pid =  Uri.parse(URL);
+
+            Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
+                    new String[] { pId+"",pageNo+"" }, PratilipiProvider.PID);
+
+            if (!c.moveToFirst()) {
+                task = new RequestTask();
+                task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
+                task.delegate = this;
+            }
+        }
+    }
+
+    void makeNetworkRequest(int pageNo){
         if(isOnline()) {
-           if (type.equalsIgnoreCase("PRATILIPI")) {
-               progressDialog = new ProgressDialog(webView.getContext());
-               progressDialog.setMessage("Loading...");
-               progressDialog.show();
-               isLoading = true;
+            if (type.equalsIgnoreCase("PRATILIPI")) {
+                progressDialog = new ProgressDialog(webView.getContext());
+                progressDialog.setMessage("Loading...");
+                progressDialog.show();
+                isLoading = true;
 
-               task = new RequestTask();
-               task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
-               task.delegate = this;
-           } else if (type.equalsIgnoreCase("IMAGE")) {
-               webView.setInitialScale(30);
-               WebSettings webSettings = webView.getSettings();
-               webSettings.setUseWideViewPort(true);
-               webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
-                       + pId + "&pageNo=" + pageNo);
+                task = new RequestTask();
+                task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
+                task.delegate = this;
+            } else if (type.equalsIgnoreCase("IMAGE")) {
+                webView.setInitialScale(30);
+                WebSettings webSettings = webView.getSettings();
+                webSettings.setUseWideViewPort(true);
+                webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
+                        + pId + "&pageNo=" + pageNo);
 //               webSettings.setSupportZoom(true);
-               webSettings.setJavaScriptEnabled(true);
-               webSettings.setBuiltInZoomControls(false);
-           }
-       }
-       else {
+                webSettings.setJavaScriptEnabled(true);
+                webSettings.setBuiltInZoomControls(false);
+            }
+        }
+        else {
             showNoConnectionDialog(this);
-       }
+        }
         int index = mTitleChapters.indexOf(pageNo);
         if(index >= 0 ) {
             mDrawerList.setItemChecked(index, true);
@@ -296,52 +304,45 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             mDrawerList.setSelection(index);
         }
     }
-
     void parseJson() {
         try {
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+//            WebView methods must be called on the same thread.
+            webView.post(new Runnable() {
+                @Override
+                public void run() {
+                    webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
 
-                String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-                if(lan.equalsIgnoreCase("hi"))
-                    webView.loadUrl("file:///android_asset/htmlHi.html");
-                else if(lan.equalsIgnoreCase("ta"))
-                    webView.loadUrl("file:///android_asset/htmlTa.html");
-                else if(lan.equalsIgnoreCase("gu"))
-                    webView.loadUrl("file:///android_asset/htmlGu.html");
+                    if (lan.equalsIgnoreCase("hi"))
+                        webView.loadUrl("file:///android_asset/htmlHi.html");
+                    else if (lan.equalsIgnoreCase("ta"))
+                        webView.loadUrl("file:///android_asset/htmlTa.html");
+                    else if (lan.equalsIgnoreCase("gu"))
+                        webView.loadUrl("file:///android_asset/htmlGu.html");
 
-                webView.setWebViewClient(new WebViewClient() {
-
-                    public void onPageFinished(WebView view, String url) {
-                        try {
-                            String pageContent = jsonObject.getString("pageContent");
-                            Spanned parsedPageContent = Html.fromHtml(jsonObject.getString("pageContent"));
-//                            Log.d("parsedPageContent",0+parsedPageContent);
-
-                            String htmlContent =  Html.toHtml(parsedPageContent);
-                            Log.d(("htmlContent"),htmlContent);
-
-                            webView.loadUrl("javascript:init('" + jsonObject.getString("pageContent") + "')");
-                            if(scrollToLast) {
-                                webView.postDelayed(new Runnable() {
-                                    public void run() {
-                                        if (webView.getProgress() == 100) {
-                                            webView.postDelayed(new Runnable() {
-                                                public void run() {
-                                                    webView.scrollTo(0, webView.getBottom());
-                                                }
-                                            }, 10);
-                                        }
-                                    }
-                                }, 10);
-                            }
-                            progressDialog.dismiss();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    webView.setWebViewClient(new WebViewClient() {
+                        public void onPageFinished(WebView view, String url) {
+                            webView.loadUrl("javascript:init('" + pageContent + "')");
+//                        if(scrollToLast) {
+//                            webView.postDelayed(new Runnable() {
+//                                public void run() {
+//                                    if (webView.getProgress() == 100) {
+//                                        webView.postDelayed(new Runnable() {
+//                                            public void run() {
+//                                                webView.scrollTo(0, webView.getBottom());
+//                                            }
+//                                        }, 1);
+//                                    }
+//                                }
+//                            }, 1);
+//                        }
+                            if (null != progressDialog)
+                                progressDialog.dismiss();
                         }
-                    }
-                });
-                isLoading  = false;
+                    });
+                }
+            });
+
+            isLoading  = false;
 
         }catch (Exception e){
             e.printStackTrace();
@@ -397,11 +398,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-           getMenuInflater().inflate(R.menu.menu_read, menu);
+        getMenuInflater().inflate(R.menu.menu_read, menu);
 //           final MenuItem mItem = (MenuItem) menu.findItem(R.id.action_font);
 //                mItem.getActionView();
 
-       if(indexSize<1){
+        if(indexSize<1){
             menu.findItem(R.id.action_index).setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -445,7 +446,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     {
         WebSettings settings = webView.getSettings();
         if(isIncrease){
-                 settings.setTextZoom(settings.getTextZoom() + 5);
+            settings.setTextZoom(settings.getTextZoom() + 5);
 
             String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
             if(lan.equalsIgnoreCase("hi"))
@@ -457,7 +458,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
         }
         else if(!isIncrease){
-                 settings.setTextZoom(settings.getTextZoom() - 5);
+            settings.setTextZoom(settings.getTextZoom() - 5);
 
             String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
             if(lan.equalsIgnoreCase("hi"))
@@ -475,7 +476,18 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             Log.d("Output", output);
             try {
                 jsonObject = new JSONObject(output);
-                parseJson();
+                pageContent = jsonObject.getString("pageContent");
+                if(isLoading)
+                    parseJson();
+
+                int ch_no = jsonObject.getInt("pageNo");
+                ContentValues values = new ContentValues();
+                values.put(PratilipiProvider.PID , pId);
+                values.put(PratilipiProvider.CONTENT ,pageContent);
+                values.put(PratilipiProvider.CH_NO, ch_no);
+                ContentResolver cv = getContentResolver();
+                Uri uri = cv.insert(
+                        PratilipiProvider.CONTENT_URI, values);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -495,7 +507,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             launchChapter(mTitleChapters.get(position));
             hideSystemUI();
 //        setTitle(mTitles[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);
+            mDrawerLayout.closeDrawer(mDrawerList);
         }
     }
 
@@ -554,12 +566,23 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         @JavascriptInterface
         public void launchNextChapter(){
             Log.d("launchNextChapter"," launchNextChapter");
-            makeRequest(++currentPage);
+            if(currentPage < pageCount)
+                makeRequest(++currentPage);
+            else {
+                Toast toast = Toast.makeText(getApplicationContext(), "Last Page!",Toast.LENGTH_SHORT );
+                toast.show();
+            }
         }
         @JavascriptInterface
         public void launchPrevChapter(){
             Log.d("launchPrevChapter"," launchPrevChapter");
-            makeRequest(--currentPage);
+            if(currentPage > 1)
+                makeRequest(--currentPage);
+            else{
+                Toast toast = Toast.makeText(getApplicationContext(), "First Page!",Toast.LENGTH_SHORT );
+                toast.show();
+            }
+
         }
     }
 }

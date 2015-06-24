@@ -219,7 +219,8 @@ public void onCancel(DialogInterface dialog) {
                     if(obj.has("index"))
                         m.set_index(obj.getString("index"));
                     m.set_contentType(obj.getString("contentType"));
-                    m.set_pid(obj.getLong("id")+"");
+                    m.set_pid(obj.getLong("id") + "");
+                    m.set_page_count(obj.getInt("pageCount"));
 
                     metadata.add(m);
                     adapter.notifyDataSetChanged();

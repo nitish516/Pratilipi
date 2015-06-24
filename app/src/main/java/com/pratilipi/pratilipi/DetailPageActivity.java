@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -41,7 +42,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     public static final String METADATA = "METADATA";
     private Metadata metadata;
     URI mUri;
-
+private String pId;
     Toolbar toolbar;
 
     @Override
@@ -93,8 +94,8 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
             getSupportActionBar().setCustomView(v);
 
+            pId = metadata.get_pid();
             title.setTypeface(typeFace);
-
             title.setText(Html.fromHtml(metadata.get_title()));
 
             ImageLoader imageLoader = AppController.getInstance().getImageLoader();
@@ -131,8 +132,16 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             authorTextView.setText(metadata.get_authorFullName());
             authorTextView.setTypeface(typeFace);
 
-            makeRequest(1,metadata.get_contentType(),metadata.get_pid());
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
+            Uri pid =  Uri.parse(URL);
 
+            Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
+                    new String[] { pId+"", 1+"" }, PratilipiProvider.PID);
+
+            if (!c.moveToFirst()) {
+
+                makeRequest(1, metadata.get_contentType(), pId);
+            }
 
 
         }catch (Exception e){
@@ -210,7 +219,13 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     }
 
     private void makeRequest(int pageNo,String type,String pId) {
-        if(isOnline()) {
+        String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
+        Uri pid =  Uri.parse(URL);
+        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
+                new String[] { pId+"", 1+"" }, PratilipiProvider.PID);
+
+
+        if (!c.moveToFirst() && isOnline()) {
             if (type.equalsIgnoreCase("PRATILIPI")) {
                 RequestTask task = new RequestTask();
                 String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
@@ -221,13 +236,13 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             }
         }
     }
-
-    void parseJson(JSONObject obj) {
+    
+        void parseJson(JSONObject obj) {
         ContentValues values = new ContentValues();
         try {
             values.put(PratilipiProvider.PID , String.valueOf(obj.getLong("pratilipiId")));
             values.put(PratilipiProvider.CONTENT , obj.getString("pageContent"));
-            values.put(PratilipiProvider.CH_NO, String.valueOf(obj.getInt("pageNo")));
+            values.put(PratilipiProvider.CH_NO, 1);
 
         } catch (JSONException e) {
             e.printStackTrace();
