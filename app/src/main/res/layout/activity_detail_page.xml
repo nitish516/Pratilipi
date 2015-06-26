@@ -80,7 +80,7 @@
             android:layout_margin="5dp"
             android:text="FREE!"
             android:textStyle="bold"
-            android:textColor="@color/Teal"/>
+            android:textColor="#009245"/>
             <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="20dp"-->

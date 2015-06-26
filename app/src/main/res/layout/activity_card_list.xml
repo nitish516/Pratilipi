@@ -5,11 +5,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:id="@+id/card_activity_linear_layout">
+    android:id="@+id/card_activity_linear_layout" >
 
     <include
         android:id="@+id/tool_bar_card_activity"
-        layout="@layout/custom_action_bar_card_view" >
+        layout="@layout/custom_action_bar_card_view"
+        android:background="?attr/selectableItemBackground">
     </include>
 
     <ProgressBar

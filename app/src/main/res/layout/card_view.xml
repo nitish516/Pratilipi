@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<card_view:android.support.v7.widget.CardView
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/more_card_feature"
@@ -21,7 +21,7 @@
         android:layout_margin="10dp"
         android:layout_height="match_parent"/>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
@@ -30,18 +30,20 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:paddingTop="10dp"
-            android:paddingLeft="5dp"/>
+            android:paddingLeft="5dp"
+            android:textSize="20dp"/>
         <TextView
             android:id="@+id/authorTextViewMoreFeatured"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:padding="5dp"/>
+            android:padding="5dp"
+            android:textSize="14dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
             android:orientation="horizontal">
             <RatingBar
                 android:id="@+id/averageRatingBarFeatured"
@@ -59,12 +61,32 @@
                 android:layout_height="match_parent"
                 android:layout_toLeftOf="@+id/averageRatingBar" />
         </LinearLayout>
-        <TextView
-            android:id="@+id/averageRatingTextView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_margin="5dp"/>
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/genreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_margin="5dp"
+                android:textColor="#666666"
+                android:background="@drawable/custom_button_design_genre"
+                android:gravity="left"
+                android:text="Genre"
+                android:textSize="15dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"/>
+            <TextView
+                android:id="@+id/averageRatingTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_margin="5dp"
+                android:textColor="#009245"
+                android:gravity="right"
+                android:padding="5dp"/>
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
-</card_view:android.support.v7.widget.CardView>
+</android.support.v7.widget.CardView>
