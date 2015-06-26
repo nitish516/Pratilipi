@@ -6,18 +6,12 @@ public class Content {
 	String _pid;
 	int _ch_no;
 	String _content;
+	byte[] _img;
 
 	// Empty constructor
 	public Content() {
 
 	}
-
-	// constructor
-	public Content(String _pid, int _ch_no, String _content) {
-        this._pid = _pid;
-        this._ch_no = _ch_no;
-        this._content = _content;
-    }
 
 	public String get_pid() {
 		return this._pid;
@@ -41,6 +35,14 @@ public class Content {
 
 	public void set_content(String _content) {
 		this._content = _content;
+	}
+
+	public byte[] get_img() {
+		return _img;
+	}
+
+	public void set_img(byte[] _img) {
+		this._img = _img;
 	}
 
 }

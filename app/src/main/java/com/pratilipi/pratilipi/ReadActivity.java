@@ -19,6 +19,7 @@ import android.os.Message;
 import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -46,9 +47,14 @@ import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
+import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class ReadActivity extends ActionBarActivity implements AsyncResponse {
@@ -68,6 +74,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private int pageCount = 0;
     private int currentPage = 1;
     String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
+    private static final String HTML_FORMAT = "<img src=\"data:image/jpeg;base64,%1$s\" />";
     Long pId;
     boolean scrollToLast;
     JSONObject jsonObject;
@@ -77,7 +84,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     RequestTask task;
     String title;
     String pageContent;
+    byte[] image;
     String lan;
+    int zoom;
+    boolean isZoom = false;
+    int initialScale = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +133,13 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
                                                                      @Override
                                                                      public void onSystemUiVisibilityChange(int visibility) {
-                                                                         boolean visible = (visibility & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0;
-                                                                         controlsView.setVisibility(visible
-                                                                                 ? View.VISIBLE
-                                                                                 : View.GONE);
-                                                                     }
+             boolean visible = (visibility & View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION) == 0;
+             controlsView.setVisibility(visible
+                     ? View.VISIBLE
+                     : View.GONE);
+         }
 
-                                                                 });
+     });
 
         mDrawerList.setAdapter(new ArrayAdapter<String>(this,
                 R.layout.drawer_list_item, mTitles));
@@ -250,6 +261,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             makeNetworkRequest(pageNo);
         }else{
             pageContent = c.getString(c.getColumnIndex(PratilipiProvider.CONTENT));
+            if(type.equalsIgnoreCase("IMAGE")) {
+                try {
+                    image = c.getBlob(c.getColumnIndex(PratilipiProvider.IMAGE));
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
             parseJson();
             makeNetworkRequestWithCheck(pageNo + 1);
             makeNetworkRequestWithCheck(pageNo - 1);
@@ -259,15 +278,42 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private void makeNetworkRequestWithCheck(int pageNo) {
         if(pageNo > 1 && pageNo <= pageCount && isOnline()){
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
-            Uri pid =  Uri.parse(URL);
+            Uri pid = Uri.parse(URL);
 
-            Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
-                    new String[] { pId+"",pageNo+"" }, PratilipiProvider.PID);
+            Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=? and " + PratilipiProvider.CH_NO + "=?",
+                    new String[]{pId + "", pageNo + ""}, PratilipiProvider.PID);
 
             if (!c.moveToFirst()) {
-                task = new RequestTask();
-                task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
-                task.delegate = this;
+                if (type.equalsIgnoreCase("PRATILIPI")) {
+
+                    task = new RequestTask();
+                    task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
+                    task.delegate = this;
+                } else if (type.equalsIgnoreCase("IMAGE")) {
+                    ContentValues values = new ContentValues();
+                    try {
+                        URL imageUrl = new URL("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
+                                + pId + "&pageNo=" + pageNo);
+                        URLConnection ucon = imageUrl.openConnection();
+
+                        InputStream is = ucon.getInputStream();
+                        BufferedInputStream bis = new BufferedInputStream(is);
+
+                        ByteArrayBuffer baf = new ByteArrayBuffer(500);
+                        int current = 0;
+                        while ((current = bis.read()) != -1) {
+                            baf.append((byte) current);
+                        }
+                        values.put(PratilipiProvider.PID, pId);
+                        values.put(PratilipiProvider.IMAGE, baf.toByteArray());
+                        values.put(PratilipiProvider.CH_NO, 1);
+                    } catch (Exception e) {
+                        Log.d("ImageManager", "Error: " + e.toString());
+                    }
+                    ContentResolver cv = getContentResolver();
+                    Uri uri = cv.insert(
+                            PratilipiProvider.CONTENT_URI, values);
+                }
             }
         }
     }
@@ -288,9 +334,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 WebSettings webSettings = webView.getSettings();
                 webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
                         + pId + "&pageNo=" + pageNo);
-//               webSettings.setSupportZoom(true);
-                webSettings.setJavaScriptEnabled(true);
-                webSettings.setBuiltInZoomControls(true);
+//                webSettings.setBuiltInZoomControls(false);
+//                webSettings.setDisplayZoomControls(false);
                 webSettings.setUseWideViewPort(true);
             }
         }
@@ -306,22 +351,23 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     }
     void parseJson() {
         try {
+            if(type.equalsIgnoreCase("PRATILIPI")) {
 //            WebView methods must be called on the same thread.
-            webView.post(new Runnable() {
-                @Override
-                public void run() {
-                    webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
 
-                    if (lan.equalsIgnoreCase("hi"))
-                        webView.loadUrl("file:///android_asset/htmlHi.html");
-                    else if (lan.equalsIgnoreCase("ta"))
-                        webView.loadUrl("file:///android_asset/htmlTa.html");
-                    else if (lan.equalsIgnoreCase("gu"))
-                        webView.loadUrl("file:///android_asset/htmlGu.html");
+                        if (lan.equalsIgnoreCase("hi"))
+                            webView.loadUrl("file:///android_asset/htmlHi.html");
+                        else if (lan.equalsIgnoreCase("ta"))
+                            webView.loadUrl("file:///android_asset/htmlTa.html");
+                        else if (lan.equalsIgnoreCase("gu"))
+                            webView.loadUrl("file:///android_asset/htmlGu.html");
 
-                    webView.setWebViewClient(new WebViewClient() {
-                        public void onPageFinished(WebView view, String url) {
-                            webView.loadUrl("javascript:init('" + pageContent + "')");
+                        webView.setWebViewClient(new WebViewClient() {
+                            public void onPageFinished(WebView view, String url) {
+                                webView.loadUrl("javascript:init('" + pageContent + "')");
 //                        if(scrollToLast) {
 //                            webView.postDelayed(new Runnable() {
 //                                public void run() {
@@ -335,18 +381,31 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 //                                }
 //                            }, 1);
 //                        }
-                            if (null != progressDialog)
-                                progressDialog.dismiss();
-                        }
-                    });
-                }
-            });
+                                if (null != progressDialog)
+                                    progressDialog.dismiss();
+                            }
+                        });
+                    }
+                });
 
-            isLoading  = false;
-
+                isLoading = false;
+            }
+            else if(type.equalsIgnoreCase("IMAGE")){
+                openJpeg(webView,image);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private static void openJpeg(WebView web, byte[] image)
+    {
+        String b64Image = Base64.encodeToString(image, Base64.DEFAULT);
+        web.loadData(b64Image, "image/jpeg", "base64");
+    }
+
+    private static void openHtml(WebView web, String content)
+    {
     }
 
     private void hideSystemUI(){
@@ -445,28 +504,39 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     public void changeFont(boolean isIncrease)
     {
         WebSettings settings = webView.getSettings();
-        if(isIncrease){
-            settings.setTextZoom(settings.getTextZoom() + 5);
+        if(type.equalsIgnoreCase("PRATILIPI")) {
+            if (isIncrease) {
+                settings.setTextZoom(settings.getTextZoom() + 5);
 
-            String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-            if(lan.equalsIgnoreCase("hi"))
-                webView.loadUrl("file:///android_asset/htmlHi.html");
-            else if(lan.equalsIgnoreCase("ta"))
-                webView.loadUrl("file:///android_asset/htmlTa.html");
-            else if(lan.equalsIgnoreCase("gu"))
-                webView.loadUrl("file:///android_asset/htmlGu.html");
+                String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+                if (lan.equalsIgnoreCase("hi"))
+                    webView.loadUrl("file:///android_asset/htmlHi.html");
+                else if (lan.equalsIgnoreCase("ta"))
+                    webView.loadUrl("file:///android_asset/htmlTa.html");
+                else if (lan.equalsIgnoreCase("gu"))
+                    webView.loadUrl("file:///android_asset/htmlGu.html");
 
+            } else if (!isIncrease) {
+                settings.setTextZoom(settings.getTextZoom() - 5);
+
+                String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+                if (lan.equalsIgnoreCase("hi"))
+                    webView.loadUrl("file:///android_asset/htmlHi.html");
+                else if (lan.equalsIgnoreCase("ta"))
+                    webView.loadUrl("file:///android_asset/htmlTa.html");
+                else if (lan.equalsIgnoreCase("gu"))
+                    webView.loadUrl("file:///android_asset/htmlGu.html");
+            }
         }
-        else if(!isIncrease){
-            settings.setTextZoom(settings.getTextZoom() - 5);
+        else {
+            if (isIncrease && initialScale < 100) {
+                initialScale +=10;
+                webView.setInitialScale(initialScale);
 
-            String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-            if(lan.equalsIgnoreCase("hi"))
-                webView.loadUrl("file:///android_asset/htmlHi.html");
-            else if(lan.equalsIgnoreCase("ta"))
-                webView.loadUrl("file:///android_asset/htmlTa.html");
-            else if(lan.equalsIgnoreCase("gu"))
-                webView.loadUrl("file:///android_asset/htmlGu.html");
+            } else if (!isIncrease && initialScale > 30) {
+                initialScale-=10;
+                webView.setInitialScale(initialScale);
+            }
         }
     }
 
@@ -534,7 +604,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:previous()");
                         } else {
-                            if (!isLoading && webView.getScaleX() == 30) {
+                            if (currentPage == 1) {
+                                Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }else if(initialScale <= 30){
                                 launchChapter(false);
                             }
                         }
@@ -543,7 +616,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             webView.loadUrl("javascript:next()");
 
                         else {
-                            if (!isLoading) {// && webView.getScaleX() == 30
+                            if (pageCount == currentPage) {
+                                Toast toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
+                                toast.show();
+                                zoom = webView.getSettings().getTextZoom();
+                            }else if(initialScale <= 30){
                                 launchChapter(true);
                             }
                         }
@@ -578,7 +655,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             Log.d("launchPrevChapter"," launchPrevChapter");
             if(currentPage > 1)
                 makeRequest(--currentPage);
-            else{
+            else if (initialScale <=30){
                 Toast toast = Toast.makeText(getApplicationContext(), "First Page!",Toast.LENGTH_SHORT );
                 toast.show();
             }

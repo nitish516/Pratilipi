@@ -39,6 +39,7 @@ public class PratilipiProvider extends ContentProvider {
     public static final String INDEX = "_index";
     public static final String IMG_URL = "_coverImageUrl";
     public static final String PG_URL = "_pageUrl";
+    public static final String IMAGE = "_img";
 
     // integer values used in content URI
     static final int uriContent = 1;
@@ -65,6 +66,7 @@ public class PratilipiProvider extends ContentProvider {
                     " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     " _pid TEXT NOT NULL, " +
                     " _content TEXT , " +
+                    " _img BLOB , " +
                     " _ch_no TEXT );";
 
     static final String CREATE_METADATA_TABLE = " CREATE TABLE IF NOT EXISTS " + TABLE_METADATA

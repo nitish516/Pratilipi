@@ -28,11 +28,16 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
+import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.NumberFormat;
 
 public class DetailPageActivity extends ActionBarActivity implements AsyncResponse{
@@ -48,7 +53,7 @@ private String pId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_detail_page);
+        setContentView(R.layout.activity_detail_page);
 
         toolbar = (Toolbar)findViewById(R.id.tool_bar_detailpage_activity);
         setSupportActionBar(toolbar);
@@ -140,9 +145,8 @@ private String pId;
 
             if (!c.moveToFirst()) {
 
-                makeRequest(1, metadata.get_contentType(), pId);
+                makeRequest( metadata.get_contentType(), pId);
             }
-
 
         }catch (Exception e){
             e.printStackTrace();
@@ -201,10 +205,6 @@ private String pId;
             ContentResolver cv = getContentResolver();
             Uri uri = cv.insert(
                     PratilipiProvider.METADATA_URI, values);
-
-            for(int i=1;i<=pageCount;i++){
-    //            makeRequest(i,contentType,pId);
-        }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -218,7 +218,7 @@ private String pId;
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void makeRequest(int pageNo,String type,String pId) {
+    private void makeRequest(String type,String pId) {
         String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
         Uri pid =  Uri.parse(URL);
         Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
@@ -229,15 +229,41 @@ private String pId;
             if (type.equalsIgnoreCase("PRATILIPI")) {
                 RequestTask task = new RequestTask();
                 String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
-                task.execute(url + pId + "&pageNo=" + pageNo);
+                task.execute(url + pId + "&pageNo=" + 1);
                 task.delegate = this;
             } else if (type.equalsIgnoreCase("IMAGE")) {
-
+                insertImageToDb(pId);
             }
         }
     }
-    
-        void parseJson(JSONObject obj) {
+
+    private void insertImageToDb(String pId) {
+        ContentValues values = new ContentValues();
+        try {
+            URL imageUrl = new URL("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
+                    + pId+"&pageNo=1");
+            URLConnection ucon = imageUrl.openConnection();
+
+            InputStream is = ucon.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+
+            ByteArrayBuffer baf = new ByteArrayBuffer(500);
+            int current = 0;
+            while ((current = bis.read()) != -1) {
+                baf.append((byte) current);
+            }
+            values.put(PratilipiProvider.PID , pId);
+            values.put(PratilipiProvider.IMAGE ,baf.toByteArray());
+            values.put(PratilipiProvider.CH_NO, 1);
+        } catch (Exception e) {
+            Log.d("ImageManager", "Error: " + e.toString());
+        }
+        ContentResolver cv = getContentResolver();
+        Uri uri = cv.insert(
+                PratilipiProvider.CONTENT_URI, values);
+    }
+
+    void parseJson(JSONObject obj) {
         ContentValues values = new ContentValues();
         try {
             values.put(PratilipiProvider.PID , String.valueOf(obj.getLong("pratilipiId")));
@@ -251,8 +277,6 @@ private String pId;
         ContentResolver cv = getContentResolver();
         Uri uri = cv.insert(
                 PratilipiProvider.CONTENT_URI, values);
-
-
     }
 
     @Override
