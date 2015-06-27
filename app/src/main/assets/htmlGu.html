@@ -38,6 +38,7 @@ function init(val) {
 
     $(function() {
         _columnCount = Math.floor($('#content').children().last().position().left / (_columnWidth + _columnGap));
+        window.JSInterface.fetchPageCount(_columnCount);
 
         setColumn = function(i) {
             _column = i;
@@ -54,6 +55,15 @@ function init(val) {
             if (0 == _column) return;
             setColumn(_column - 1);
         }
+
+        last = function() {
+            setColumn(_columnCount);
+        }
+
+        gotoPage = function(value) {
+            setColumn(value);
+        }
+
         setColumn(0);
     });
 }
