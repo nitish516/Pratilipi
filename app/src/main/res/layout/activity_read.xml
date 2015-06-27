@@ -20,6 +20,14 @@ tools:context=".MainActivity">
     android:layout_height="match_parent"
     android:scrollbars="none"
     />
+    <SeekBar
+        android:id="@+id/reader_seek_bar"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="30dp"
+        android:background="@color/White"/>
 </FrameLayout>
 
 <ListView

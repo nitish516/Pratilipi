@@ -35,6 +35,7 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,13 +71,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private ArrayList<Integer> mTitleChapters;
     private Metadata metadata;
     CustomWebView webView;
+    SeekBar seekBar;
     private int indexSize = 0;
     private int pageCount = 0;
     private int currentPage = 1;
     String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
     private static final String HTML_FORMAT = "<img src=\"data:image/jpeg;base64,%1$s\" />";
     Long pId;
-    boolean scrollToLast;
+    boolean scrollToLast = false;
     JSONObject jsonObject;
     String type;
     boolean isLoading = false;
@@ -86,9 +88,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     String pageContent;
     byte[] image;
     String lan;
-    int zoom;
-    boolean isZoom = false;
     int initialScale = 30;
+    int maxProgress = 0;
+    int currentChapterPageCount = 0;
+    int getCurrentChapterCurrentPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +170,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
         getSupportActionBar().setIcon(R.drawable.pratilipi_logo_vector);
 
-        LayoutInflater layoutInflate = LayoutInflater.from(this);
+        final LayoutInflater layoutInflate = LayoutInflater.from(this);
         View v = layoutInflate.inflate(R.layout.actionbar_custom_title, null);
         TextView actionBarTitleTextView = (TextView)v.findViewById(R.id.actionBarTitle);
         actionBarTitleTextView.setTextColor(getResources().getColor(R.color.fab_material_black));
@@ -184,6 +187,40 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(jsInterface, "JSInterface");
 
+        seekBar = (SeekBar)findViewById(R.id.reader_seek_bar);
+        if(type.equalsIgnoreCase("IMAGE"))
+            maxProgress = pageCount-1;
+        else if(type.equalsIgnoreCase("PRATILIPI")){
+            if(pageCount <= 1)
+                maxProgress = 1000;
+            else
+                maxProgress = (pageCount)*1000;
+        }
+        seekBar.setMax(maxProgress);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int currentProgress = seekBar.getProgress();
+                if(type.equalsIgnoreCase("IMAGE"))
+                    launchChapter(currentProgress+1);
+                else if(pageCount <= 1){
+                    launchChapter((int)((float)currentProgress/(float)1000)*pageCount);
+                    // To do go to page within chapter
+                }
+
+                else
+                    launchChapter(currentProgress/100 + 1);
+            }
+        });
         launchChapter(1);
     }
 
@@ -233,28 +270,57 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
     private void launchChapter(boolean isNext) {
         if(isNext && currentPage < pageCount) {
-            makeRequest(++currentPage);
             scrollToLast = false;
+            makeRequest(++currentPage);
         }
         else if (!isNext && currentPage > 1) {
-            makeRequest(--currentPage);
             scrollToLast = true;
+            makeRequest(--currentPage);
         }
     }
 
     private void launchChapter(int chapterNo) {
         currentPage = chapterNo;
-        makeRequest(chapterNo);
         scrollToLast = false;
+        makeRequest(chapterNo);
     }
 
-    private void makeRequest(int pageNo) {
+    private void makeRequest(final int pageNo) {
+
+        //Set seek bar
+        if(type.equalsIgnoreCase("IMAGE"))
+        seekBar.setProgress(pageNo-1);
+        else{
+            if(pageNo <=1)
+                seekBar.setProgress(0);
+            else
+                seekBar.setProgress((pageNo-1)*1000);
+
+        }
+        // Set index
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int index = mTitleChapters.indexOf(pageNo);
+                    if (index >= 0) {
+                        mDrawerList.setItemChecked(index, true);
+                        mDrawerList.setSelector(R.drawable.drawer_select);
+                        mDrawerList.setSelection(index);
+                        mDrawerList.smoothScrollToPosition(index);
+                        mDrawerList.setFastScrollEnabled(true);
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
         Uri pid =  Uri.parse(URL);
 
-        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
-                new String[] { pId+"",pageNo+"" }, PratilipiProvider.PID);
+        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=? and " + PratilipiProvider.CH_NO + "=?",
+                new String[]{pId + "", pageNo + ""}, PratilipiProvider.PID);
 
 
         if (!c.moveToFirst()) {
@@ -342,12 +408,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         else {
             showNoConnectionDialog(this);
         }
-        int index = mTitleChapters.indexOf(pageNo);
-        if(index >= 0 ) {
-            mDrawerList.setItemChecked(index, true);
-            mDrawerList.setSelector(R.drawable.drawer_select);
-            mDrawerList.setSelection(index);
-        }
     }
     void parseJson() {
         try {
@@ -368,7 +428,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         webView.setWebViewClient(new WebViewClient() {
                             public void onPageFinished(WebView view, String url) {
                                 webView.loadUrl("javascript:init('" + pageContent + "')");
-//                        if(scrollToLast) {
+                        if(scrollToLast) {
+                            webView.loadUrl("javascript:last()");
+                        }
 //                            webView.postDelayed(new Runnable() {
 //                                public void run() {
 //                                    if (webView.getProgress() == 100) {
@@ -416,6 +478,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        seekBar.setVisibility(View.GONE);
     }
 
     private void showSystemUI() {
@@ -423,6 +486,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        seekBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -582,6 +646,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     }
 
     private class CustomeGestureDetector   extends GestureDetector.SimpleOnGestureListener {
+
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             boolean visibility = (mDecorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0;
@@ -603,6 +668,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     if (diffX > 0) {
                         if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:previous()");
+//                            seekBar.setProgress((currentPage-1)*100 + ((int)((float)getCurrentChapterCurrentPage/(float)currentChapterPageCount)*100));
                         } else {
                             if (currentPage == 1) {
                                 Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
@@ -619,7 +685,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             if (pageCount == currentPage) {
                                 Toast toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
                                 toast.show();
-                                zoom = webView.getSettings().getTextZoom();
                             }else if(initialScale <= 30){
                                 launchChapter(true);
                             }
@@ -641,25 +706,37 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         }
 
         @JavascriptInterface
-        public void launchNextChapter(){
-            Log.d("launchNextChapter"," launchNextChapter");
-            if(currentPage < pageCount)
+        public void launchNextChapter() {
+            Log.d("launchNextChapter", " launchNextChapter");
+            if (currentPage < pageCount) {
+                scrollToLast = false;
                 makeRequest(++currentPage);
+            }
             else {
-                Toast toast = Toast.makeText(getApplicationContext(), "Last Page!",Toast.LENGTH_SHORT );
+                Toast toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }
+
         @JavascriptInterface
-        public void launchPrevChapter(){
-            Log.d("launchPrevChapter"," launchPrevChapter");
-            if(currentPage > 1)
+        public void launchPrevChapter() {
+            Log.d("launchPrevChapter", " launchPrevChapter");
+            if (currentPage > 1){
+                scrollToLast = true;
                 makeRequest(--currentPage);
-            else if (initialScale <=30){
-                Toast toast = Toast.makeText(getApplicationContext(), "First Page!",Toast.LENGTH_SHORT );
+            }
+            else if (initialScale <= 30) {
+                Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
                 toast.show();
             }
 
+        }
+
+        @JavascriptInterface
+        public void fetchPageCount(int pages) {
+            Log.d("Pages in capter " + currentPage + " = ", pages + "");
+            currentChapterPageCount = pages;
+            getCurrentChapterCurrentPage = 1;
         }
     }
 }

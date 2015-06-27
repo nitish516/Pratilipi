@@ -132,6 +132,7 @@ private String pId;
                     summaryTextView.setTypeface(typeFace);
                 }
             }
+            
             TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
 
             authorTextView.setText(metadata.get_authorFullName());

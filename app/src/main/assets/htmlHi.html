@@ -38,6 +38,7 @@ function init(val) {
 
     $(function() {
         _columnCount = Math.floor($('#content').children().last().position().left / (_columnWidth + _columnGap));
+        window.JSInterface.fetchPageCount(_columnCount);
 
         setColumn = function(i) {
             _column = i;
@@ -46,7 +47,7 @@ function init(val) {
         };
 
         next = function() {
-            if (_column == _columnCount){
+            if (_column == _columnCount ){
              window.JSInterface.launchNextChapter();
              return;
              }
@@ -60,6 +61,12 @@ function init(val) {
             }
             setColumn(_column - 1);
         }
+
+        last = function() {
+            setColumn(_columnCount);
+        }
+
+
         setColumn(0);
     });
 }
