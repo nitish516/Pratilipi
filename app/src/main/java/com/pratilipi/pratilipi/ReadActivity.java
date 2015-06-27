@@ -212,13 +212,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 int currentProgress = seekBar.getProgress();
                 if(type.equalsIgnoreCase("IMAGE"))
                     launchChapter(currentProgress+1);
-                else if(pageCount <= 1){
-                    launchChapter((int)((float)currentProgress/(float)1000)*pageCount);
-                    // To do go to page within chapter
-                }
+                else {
+                    int base  = currentProgress/1000;
+                    int factorVal = currentProgress-base*1000;
+                    int currentPageInChapter = factorVal/100;
 
-                else
-                    launchChapter(currentProgress/100 + 1);
+                    launchChapter(base+1);
+                    webView.loadUrl("javascript:gotoPage(\""+currentPageInChapter+"\")");
+                }
             }
         });
         launchChapter(1);
@@ -428,23 +429,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         webView.setWebViewClient(new WebViewClient() {
                             public void onPageFinished(WebView view, String url) {
                                 webView.loadUrl("javascript:init('" + pageContent + "')");
-                        if(scrollToLast) {
-                            webView.loadUrl("javascript:last()");
-                        }
-//                            webView.postDelayed(new Runnable() {
-//                                public void run() {
-//                                    if (webView.getProgress() == 100) {
-//                                        webView.postDelayed(new Runnable() {
-//                                            public void run() {
-//                                                webView.scrollTo(0, webView.getBottom());
-//                                            }
-//                                        }, 1);
-//                                    }
-//                                }
-//                            }, 1);
-//                        }
-                                if (null != progressDialog)
-                                    progressDialog.dismiss();
+                            if(scrollToLast) {
+                                webView.loadUrl("javascript:last()");
+                            }
+                            if (null != progressDialog)
+                                progressDialog.dismiss();
                             }
                         });
                     }
@@ -464,10 +453,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     {
         String b64Image = Base64.encodeToString(image, Base64.DEFAULT);
         web.loadData(b64Image, "image/jpeg", "base64");
-    }
-
-    private static void openHtml(WebView web, String content)
-    {
     }
 
     private void hideSystemUI(){
