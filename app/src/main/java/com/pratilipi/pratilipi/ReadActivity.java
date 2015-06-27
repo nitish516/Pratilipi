@@ -91,7 +91,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     int initialScale = 30;
     int maxProgress = 0;
     int currentChapterPageCount = 0;
-    int getCurrentChapterCurrentPage = 0;
+    int currentChapterCurrentPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -668,7 +668,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     if (diffX > 0) {
                         if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:previous()");
-//                            seekBar.setProgress((currentPage-1)*100 + ((int)((float)getCurrentChapterCurrentPage/(float)currentChapterPageCount)*100));
+                            currentChapterCurrentPage--;
+                            int base = (currentPage - 1) * 1000;
+                            float progressFactor = (float) (currentChapterCurrentPage-1) / (float) currentChapterPageCount;
+                            int progress = (int) (progressFactor * 1000);
+                            seekBar.setProgress(base + progress);
                         } else {
                             if (currentPage == 1) {
                                 Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
@@ -678,9 +682,16 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             }
                         }
                     } else {
-                        if (type.equalsIgnoreCase("PRATILIPI"))
+                        if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:next()");
-
+                            if(currentChapterCurrentPage < currentChapterPageCount) {
+                                currentChapterCurrentPage++;
+                                int base = (currentPage - 1) * 1000;
+                                float progressFactor = (float) (currentChapterCurrentPage-1) / (float) currentChapterPageCount;
+                                int progress = (int) (progressFactor * 1000);
+                                seekBar.setProgress(base + progress);
+                            }
+                        }
                         else {
                             if (pageCount == currentPage) {
                                 Toast toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
@@ -735,8 +746,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         @JavascriptInterface
         public void fetchPageCount(int pages) {
             Log.d("Pages in capter " + currentPage + " = ", pages + "");
-            currentChapterPageCount = pages;
-            getCurrentChapterCurrentPage = 1;
+            currentChapterPageCount = pages+1;
+            currentChapterCurrentPage = 1;
         }
     }
 }

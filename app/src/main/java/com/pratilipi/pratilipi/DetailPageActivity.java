@@ -47,6 +47,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     public static final String METADATA = "METADATA";
     private Metadata metadata;
     URI mUri;
+    TextView summaryTextView;
 private String pId;
     Toolbar toolbar;
 
@@ -54,6 +55,8 @@ private String pId;
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_page);
+
+        summaryTextView = (TextView) findViewById(R.id.summaryTextView);
 
         toolbar = (Toolbar)findViewById(R.id.tool_bar_detailpage_activity);
         setSupportActionBar(toolbar);
@@ -127,12 +130,15 @@ private String pId;
             if(null!= summaryString) {
                 Spanned summary = Html.fromHtml(summaryString);
                 if (null != summary) {
-                    TextView summaryTextView = (TextView) findViewById(R.id.summaryTextView);
                     summaryTextView.setText(summary);
                     summaryTextView.setTypeface(typeFace);
                 }
+            }else{
+
+                summaryTextView.setTypeface(typeFace);
+//                summaryTextView.setText(Html.fromHtml(metadata.get_title())+", "+metadata.get_authorFullName()+" "+R.string.custom_summary);
             }
-            
+
             TextView authorTextView = (TextView) findViewById(R.id.authorTextView);
 
             authorTextView.setText(metadata.get_authorFullName());
