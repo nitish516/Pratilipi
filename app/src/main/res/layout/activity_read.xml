@@ -35,7 +35,7 @@ tools:context=".MainActivity">
             android:paddingRight="100dp"
             android:layout_marginLeft="50dp"
             android:textColor="#FFFFFF"
-            android:background="@color/Black"
+            android:background="@drawable/page_indicator_button"
             android:visibility="gone"/>
         <SeekBar
             android:id="@+id/reader_seek_bar"
