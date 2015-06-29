@@ -7,6 +7,7 @@ public class Content {
 	int _ch_no;
 	String _content;
 	byte[] _img;
+	String _type;
 
 	// Empty constructor
 	public Content() {
@@ -44,5 +45,14 @@ public class Content {
 	public void set_img(byte[] _img) {
 		this._img = _img;
 	}
+
+	public String get_type() {
+		return _type;
+	}
+
+	public void set_type(String _type) {
+		this._type = _type;
+	}
+
 
 }

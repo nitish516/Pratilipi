@@ -193,8 +193,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         if(type.equalsIgnoreCase("IMAGE"))
             maxProgress = pageCount-1;
         else if(type.equalsIgnoreCase("PRATILIPI")){
-            if(pageCount <= 1)
-                maxProgress = 1000;
+            if(pageCount <= 1){
+
+            }
             else
                 maxProgress = (pageCount)*1000;
         }
@@ -203,7 +204,25 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                pageNoIndicator.setText(String.valueOf(progress)+"/"+pageCount );
+                int count;
+                if(type.equalsIgnoreCase("PRATILIPI")){
+                    if(pageCount >1) {
+                        count = progress/1000 +1;
+
+                        //For last page
+                        if(count >= pageCount)
+                            count = pageCount;
+
+                        pageNoIndicator.setText("Chapter " + count+ "/" + pageCount);
+                    }
+                    else{
+                        count = progress+1;
+                        pageNoIndicator.setText("Page " + count + "/"+currentChapterPageCount );
+                    }
+                }else {
+                    count = progress+1;
+                    pageNoIndicator.setText("Page " + count + "/" + pageCount);
+                }
             }
 
             @Override
@@ -216,16 +235,40 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                int currentProgress = seekBar.getProgress();
-                if(type.equalsIgnoreCase("IMAGE"))
-                    launchChapter(currentProgress+1);
-                else {
-                    int base  = currentProgress/1000;
-                    int factorVal = currentProgress-base*1000;
-                    int currentPageInChapter = factorVal/100;
+                int currentProgress = seekBar.getProgress() +1;
+                if (type.equalsIgnoreCase("IMAGE"))
+                    launchChapter(currentProgress + 1);
+                else if (pageCount <= 1) {
+                    if(currentProgress > currentChapterCurrentPage){
+                        while (currentProgress != currentChapterCurrentPage){
 
-                    launchChapter(base+1);
-                    webView.loadUrl("javascript:gotoPage(\""+currentPageInChapter+"\")");
+                            webView.loadUrl("javascript:next()");
+                            currentChapterCurrentPage++;
+                        }
+                    }
+                    else if(currentProgress < currentChapterCurrentPage){
+                        while (currentProgress != currentChapterCurrentPage){
+
+                            webView.loadUrl("javascript:previous()");
+                            currentChapterCurrentPage--;
+                        }
+                    }
+
+                } else {
+                    int base = currentProgress / 1000;
+                    int factorVal = currentProgress - base * 1000;
+
+                    launchChapter(base + 1);
+
+                    // pages start from 1
+                    int currentPageInChapter = ((factorVal*currentChapterPageCount) / 1000)+1;
+
+                    // go to page within chapter
+                    while (currentPageInChapter != currentChapterCurrentPage){
+
+                        webView.loadUrl("javascript:next()");
+                        currentChapterCurrentPage++;
+                    }
                 }
                 pageNoIndicator.setVisibility(View.GONE);
             }
@@ -300,8 +343,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         if(type.equalsIgnoreCase("IMAGE"))
         seekBar.setProgress(pageNo-1);
         else{
-            if(pageNo <=1)
-                seekBar.setProgress(0);
+            if(pageNo <=1) {
+//                seekBar.setProgress(0);
+            }
             else
                 seekBar.setProgress((pageNo-1)*1000);
 
@@ -664,10 +708,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:previous()");
                             currentChapterCurrentPage--;
-                            int base = (currentPage - 1) * 1000;
-                            float progressFactor = (float) (currentChapterCurrentPage-1) / (float) currentChapterPageCount;
-                            int progress = (int) (progressFactor * 1000);
-                            seekBar.setProgress(base + progress);
+                            if(pageCount >1) {
+                                int base = (currentPage - 1) * 1000;
+                                float progressFactor = (float) (currentChapterCurrentPage - 1) / (float) currentChapterPageCount;
+                                int progress = (int) (progressFactor * 1000);
+                                seekBar.setProgress(base + progress);
+                            }else {
+                                seekBar.setProgress(currentChapterCurrentPage-1);
+                            }
                         } else {
                             if (currentPage == 1) {
                                 Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
@@ -681,10 +729,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             webView.loadUrl("javascript:next()");
                             if(currentChapterCurrentPage < currentChapterPageCount) {
                                 currentChapterCurrentPage++;
-                                int base = (currentPage - 1) * 1000;
-                                float progressFactor = (float) (currentChapterCurrentPage-1) / (float) currentChapterPageCount;
-                                int progress = (int) (progressFactor * 1000);
-                                seekBar.setProgress(base + progress);
+                                if(pageCount >1) {
+                                    int base = (currentPage - 1) * 1000;
+                                    float progressFactor = (float) (currentChapterCurrentPage - 1) / (float) currentChapterPageCount;
+                                    int progress = (int) (progressFactor * 1000);
+                                    seekBar.setProgress(base + progress);
+                                }
+                                else
+                                    seekBar.setProgress(currentChapterCurrentPage-1);
                             }
                         }
                         else {
@@ -743,6 +795,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             Log.d("Pages in capter " + currentPage + " = ", pages + "");
             currentChapterPageCount = pages+1;
             currentChapterCurrentPage = 1;
+            if(pageCount <=1)
+                seekBar.setMax(pages);
         }
     }
 }

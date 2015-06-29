@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -51,6 +53,7 @@ import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.adapter.HomeAdapter;
 import com.pratilipi.pratilipi.adapter.ViewPagerAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
+import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +64,7 @@ import java.util.List;
 
 //import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements AsyncResponse{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -150,6 +153,50 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         tabs.setViewPager(mViewPager);
+
+//        fetchData();
+    }
+
+    private void fetchData() {
+        String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+        Uri pid = Uri.parse(URL);
+        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
+                new String[]{"Featured"}, PratilipiProvider.PID);
+
+
+        if (!c.moveToFirst() && isOnline()) {
+            makeJsonArryReq();
+        }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void processFinish(String output) {
+
+    }
+
+    /**
+     * Making json array request
+     * */
+    private void makeJsonArryReq() {
+        RequestTask task =  new RequestTask();
+        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+        Long lanId = null;
+        if(lan.equalsIgnoreCase("hi"))
+            lanId = 5130467284090880l;
+        else if(lan.equalsIgnoreCase("ta"))
+            lanId = 6319546696728576l;
+        else if(lan.equalsIgnoreCase("gu"))
+            lanId = 5965057007550464l;
+
+        task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
+        task.delegate = this;
     }
 
     public static class HomeFragment extends Fragment implements AsyncResponse{
