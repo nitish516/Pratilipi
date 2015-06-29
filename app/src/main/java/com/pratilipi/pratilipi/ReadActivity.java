@@ -72,6 +72,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private Metadata metadata;
     CustomWebView webView;
     SeekBar seekBar;
+    TextView pageNoIndicator;
     private int indexSize = 0;
     private int pageCount = 0;
     private int currentPage = 1;
@@ -188,6 +189,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         webView.addJavascriptInterface(jsInterface, "JSInterface");
 
         seekBar = (SeekBar)findViewById(R.id.reader_seek_bar);
+        pageNoIndicator = (TextView)findViewById(R.id.pageNo_indicator_textview);
         if(type.equalsIgnoreCase("IMAGE"))
             maxProgress = pageCount-1;
         else if(type.equalsIgnoreCase("PRATILIPI")){
@@ -201,10 +203,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pageNoIndicator.setText(String.valueOf(progress)+"/"+pageCount );
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+
+                pageNoIndicator.setVisibility(View.VISIBLE);
+//                pageNoIndicator.setBackgroundColor(R.color.Black);
+
             }
 
             @Override
@@ -220,6 +227,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     launchChapter(base+1);
                     webView.loadUrl("javascript:gotoPage(\""+currentPageInChapter+"\")");
                 }
+                pageNoIndicator.setVisibility(View.GONE);
             }
         });
         launchChapter(1);
@@ -464,6 +472,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
         seekBar.setVisibility(View.GONE);
+        pageNoIndicator.setVisibility(View.GONE);
     }
 
     private void showSystemUI() {
@@ -472,6 +481,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         seekBar.setVisibility(View.VISIBLE);
+//        pageNoIndicator.setVisibility(View.VISIBLE);
     }
 
     @Override

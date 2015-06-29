@@ -18,16 +18,34 @@ tools:context=".MainActivity">
     android:id="@+id/webView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scrollbars="none"
-    />
-    <SeekBar
-        android:id="@+id/reader_seek_bar"
-        android:layout_gravity="bottom"
+    android:scrollbars="none" />
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="30dp"
-        android:background="@color/White"/>
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/pageNo_indicator_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="100dp"
+            android:paddingRight="100dp"
+            android:layout_marginLeft="50dp"
+            android:textColor="#FFFFFF"
+            android:background="@color/Black"
+            android:visibility="gone"/>
+        <SeekBar
+            android:id="@+id/reader_seek_bar"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="25dp"
+            android:background="@color/White"/>
+    </LinearLayout>
 </FrameLayout>
 
 <ListView
