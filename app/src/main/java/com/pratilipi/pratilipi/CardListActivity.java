@@ -81,9 +81,9 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         adapter = new CardListAdapter(metadata);
         progressBar.setVisibility(View.GONE);
         mRecyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         //Recycler View END
-
 
         linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);
 
@@ -124,6 +124,12 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
             }
         }
     }
+
+
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {

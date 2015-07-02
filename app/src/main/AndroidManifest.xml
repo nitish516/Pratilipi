@@ -21,7 +21,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:configChanges="orientation|screenSize">
         <provider
             android:name=".helper.PratilipiProvider"
             android:authorities="com.pratilipi.pratilipi.helper.PratilipiData" >
@@ -79,7 +80,8 @@
         <activity
             android:name=".CardListActivity"
             android:logo="@drawable/pratilipi_logo_vector"
-            android:theme="@style/CustomToolBar" >
+            android:theme="@style/CustomToolBar"
+            android:screenOrientation="portrait">
         </activity>
 
         <meta-data
