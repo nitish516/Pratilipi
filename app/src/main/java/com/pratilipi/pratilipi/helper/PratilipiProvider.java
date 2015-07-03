@@ -32,17 +32,20 @@ public class PratilipiProvider extends ContentProvider {
     public static final String CH_NO = "_ch_no";
     public static final String CONTENT = "_content";
     public static final String TITLE = "_title";
-    public static final String CONTENT_TYPE = "_contentType";
-    public static final String AUTHOR_ID = "_authorId";
-    public static final String AUTHOR_NAME = "_authorFullName";
+    public static final String CONTENT_TYPE = "_content_type";
+    public static final String AUTHOR_ID = "_author_id";
+    public static final String AUTHOR_NAME = "_author_name";
     public static final String CH_COUNT = "_ch_count";
     public static final String INDEX = "_index";
-    public static final String IMG_URL = "_coverImageUrl";
-    public static final String PG_URL = "_pageUrl";
+    public static final String IMG_URL = "_img_url";
+    public static final String PG_URL = "_pg_url";
     public static final String IMAGE = "_img";
-    public static final String LIST_TYPE = "_listType";
+    public static final String LIST_TYPE = "_list_type";
+    public static final String RATING_COUNT = "_rating_count";
+    public static final String STAR_COUNT = "_star_count";
+    public static final String SUMMARY = "_summary";
 
-    // integer values used in content URI
+    // integer values used in content sURI
     static final int uriContent = 1;
     static final int uriMetadata = 2;
     static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -77,10 +80,13 @@ public class PratilipiProvider extends ContentProvider {
             + " _content_type TEXT , "
             + " _author_id TEXT , "
             + " _author_name TEXT , "
-            + " _ch_count TEXT , "
+            + " _ch_count INTEGER , "
             + " _index TEXT , "
             + " _img_url TEXT , "
             + " _list_type TEXT , "
+            + " _rating_count INTEGER , "
+            + " _star_count INTEGER , "
+            + " _summary TEXT , "
             + " _pg_url TEXT );";
 
     // class that creates and manages the provider's database

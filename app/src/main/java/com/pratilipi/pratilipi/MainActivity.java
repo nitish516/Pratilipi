@@ -4,6 +4,8 @@ package com.pratilipi.pratilipi;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +19,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -38,11 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -64,7 +61,7 @@ import java.util.List;
 
 //import android.support.v7.app.AppCompatActivity;
 
-public class MainActivity extends ActionBarActivity implements AsyncResponse{
+public class MainActivity extends ActionBarActivity{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -153,50 +150,6 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
             }
         });
         tabs.setViewPager(mViewPager);
-
-//        fetchData();
-    }
-
-    private void fetchData() {
-        String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
-        Uri pid = Uri.parse(URL);
-        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                new String[]{"Featured"}, PratilipiProvider.PID);
-
-
-        if (!c.moveToFirst() && isOnline()) {
-            makeJsonArryReq();
-        }
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    @Override
-    public void processFinish(String output) {
-
-    }
-
-    /**
-     * Making json array request
-     * */
-    private void makeJsonArryReq() {
-        RequestTask task =  new RequestTask();
-        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-        Long lanId = null;
-        if(lan.equalsIgnoreCase("hi"))
-            lanId = 5130467284090880l;
-        else if(lan.equalsIgnoreCase("ta"))
-            lanId = 6319546696728576l;
-        else if(lan.equalsIgnoreCase("gu"))
-            lanId = 5965057007550464l;
-
-        task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
-        task.delegate = this;
     }
 
     public static class HomeFragment extends Fragment implements AsyncResponse{
@@ -264,12 +217,14 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
             mHomeNewReleasesRecyclerView.setAdapter(mHomeNewReleasesAdapter);
             mHomeTopReadsRecyclerView.setAdapter(mHomeTopReadsAdapter);
 
-            if(isOnline())
-                makeJsonArryReq();
-            else
-            {
-                showNoConnectionDialog(getActivity());
-            }
+            fetchData();
+
+//            if(isOnline())
+//                makeJsonArryReq();
+//            else
+//            {
+//                showNoConnectionDialog(getActivity());
+//            }
 //            adapter = new CustomArrayAdapter(rootView.getContext(), mMetaData);
 //            LinearLayout lv = (LinearLayout) rootView.findViewById(R.id.linear_layout);
 //            lv.setAdapter(adapter);
@@ -307,12 +262,175 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
 
         }
 
+        private void fetchData() {
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+            Uri pid = Uri.parse(URL);
+            Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
+                    new String[]{"featured"}, PratilipiProvider.PID);
+
+
+            if (!c.moveToFirst()) {
+                if(isOnline())
+                    makeJsonArryReq();
+                else
+                    showNoConnectionDialog(getActivity());
+            }
+            else{
+                fetchDataFromDb();
+            }
+        }
+
+        @Override
+        public void processFinish(String output) {
+            if(!(null == output || output.isEmpty())) {
+                Log.d("Output", output);
+                try {
+                    parseJson(new JSONObject(output));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void parseJson(JSONObject jsonObject) {
+            JsonArray featuredPratilipiDataList = null;
+            JsonArray newReleasesPratilipiDataList = null;
+            JsonArray topReadsPratilipiDataList = null;
+            Gson gson = new GsonBuilder().create();
+
+            try {
+                String responseStr = jsonObject.getString("response");
+                Log.d("responseStr",responseStr);
+                JsonObject responseObj = gson.fromJson( responseStr, JsonElement.class ).getAsJsonObject();
+                JsonArray elementArr  = responseObj.get("elements").getAsJsonArray();
+                Log.d("element",""+elementArr);
+
+                for (int i=0; i<elementArr.size(); i++) {
+                    Log.d("parts at ", i + " " + elementArr.get(i));
+                    JsonObject elementObj = gson.fromJson(elementArr.get(i), JsonElement.class).getAsJsonObject();
+                    Log.d("elementObj", i + " " + elementObj);
+                    JsonArray contentArr = elementObj.get("content").getAsJsonArray();
+                    String type = elementObj.get("name").getAsString();
+                    if(type.equalsIgnoreCase("Featured")){
+                        featuredPratilipiDataList = contentArr;
+                    }
+                    else if(type.equalsIgnoreCase("New Releases")){
+                        newReleasesPratilipiDataList = contentArr;
+                    }
+                    else if(type.equalsIgnoreCase("Top Reads")){
+                        topReadsPratilipiDataList = contentArr;
+                    }
+                }
+                addToDb(featuredPratilipiDataList,"featured");
+                addToDb(newReleasesPratilipiDataList,"newReleases");
+                addToDb(topReadsPratilipiDataList,"topReads");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        private void addToDb(JsonArray list, String type) {
+
+            Gson gson = new GsonBuilder().create();
+            for (int i = 0; i < list.size(); i++) {
+                final JsonObject obj = gson.fromJson( list.get(i), JsonElement.class ).getAsJsonObject();
+                if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
+                    continue;
+
+                ContentValues values = new ContentValues();
+                try {
+                    values.put(PratilipiProvider.PID , obj.get("id").getAsLong()+"");
+                    values.put(PratilipiProvider.TITLE ,obj.get("title").getAsString());
+                    values.put(PratilipiProvider.CONTENT_TYPE ,obj.get("contentType").getAsString());
+                    values.put(PratilipiProvider.AUTHOR_ID , obj.get("authorId").getAsString());
+                    values.put(PratilipiProvider.AUTHOR_NAME , obj.get("author").getAsJsonObject().get("name").getAsString());
+                    values.put(PratilipiProvider.CH_COUNT , obj.get("pageCount").getAsInt());
+                    values.put(PratilipiProvider.IMG_URL , obj.get("coverImageUrl").getAsString());
+                    values.put(PratilipiProvider.PG_URL , obj.get("pageUrl").getAsString());
+                    if(obj.get("index")!=null)
+                        values.put(PratilipiProvider.INDEX , obj.get("index").getAsString());
+                    values.put(PratilipiProvider.RATING_COUNT , obj.get("ratingCount").getAsLong());
+                    values.put(PratilipiProvider.STAR_COUNT , obj.get("starCount").getAsLong());
+                    if(null!=obj.get("summary"))
+                        values.put(PratilipiProvider.SUMMARY , obj.get("summary").getAsString());
+                    values.put(PratilipiProvider.LIST_TYPE , type);
+
+
+                    ContentResolver cv = getActivity().getContentResolver();
+                    Uri uri = cv.insert(
+                            PratilipiProvider.METADATA_URI, values);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            fetchDataFromDb();
+        }
+
+        /**
+         * Making json array request
+         * */
+        private void makeJsonArryReq() {
+            RequestTask task =  new RequestTask();
+            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            Long lanId = null;
+            if(lan.equalsIgnoreCase("hi"))
+                lanId = 5130467284090880l;
+            else if(lan.equalsIgnoreCase("ta"))
+                lanId = 6319546696728576l;
+            else if(lan.equalsIgnoreCase("gu"))
+                lanId = 5965057007550464l;
+
+            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
+            task.delegate = this;
+        }
+
+        private void fetchDataFromDb() {
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+            Uri pid = Uri.parse(URL);
+            Cursor c = getActivity().getContentResolver().query(pid, null, null,
+                    null, PratilipiProvider.PID);
+
+
+            if (!c.moveToFirst()){
+                //makeRequest();
+            }else{
+                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                    Metadata m = new Metadata();
+                    m.set_title(c.getString(c.getColumnIndex(PratilipiProvider.TITLE)));
+                    m.set_authorFullName(c.getString(c.getColumnIndex(PratilipiProvider.AUTHOR_NAME)));
+                    m.set_coverImageUrl(c.getString(c.getColumnIndex(PratilipiProvider.IMG_URL)));
+                    m.set_ratingCount(c.getLong(c.getColumnIndex(PratilipiProvider.RATING_COUNT)));
+                    m.set_starCount(c.getLong(c.getColumnIndex(PratilipiProvider.STAR_COUNT)));
+                    m.set_authorId(c.getString(c.getColumnIndex(PratilipiProvider.AUTHOR_ID)));
+                    m.set_pageUrl(c.getString(c.getColumnIndex(PratilipiProvider.PG_URL)));
+                    m.set_summary(c.getString(c.getColumnIndex(PratilipiProvider.SUMMARY)));
+                    m.set_index(c.getString(c.getColumnIndex(PratilipiProvider.INDEX)));
+                    m.set_contentType(c.getString(c.getColumnIndex(PratilipiProvider.CONTENT_TYPE)));
+                    m.set_pid(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
+                    m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
+                    if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("featured")) {
+                        featured_metadata.add(m);
+                        mHomeFeaturedAdapter.notifyDataSetChanged();
+                    } else if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("newReleases")) {
+                        new_releases_metadata.add(m);
+                        mHomeNewReleasesAdapter.notifyDataSetChanged();
+                    } else if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("topReads")) {
+                        top_reads_metadata.add(m);
+                        mHomeTopReadsAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        }
+
         private void LaunchCardView(String input, View view){
 
             Intent mIntent = new Intent(getActivity(), CardListActivity.class);
             mIntent.putExtra("TITLE",input);
             mIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivityForResult(mIntent,0);
+            startActivityForResult(mIntent, 0);
 //            overridePendingTransition(0,0);
         }
 
@@ -353,148 +471,148 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
         /**
          * Making json array request
          * */
-        private void makeJsonArryReq() {
-            RequestTask task =  new RequestTask();
-            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-            Long lanId = null;
-            if(lan.equalsIgnoreCase("hi"))
-                lanId = 5130467284090880l;
-            else if(lan.equalsIgnoreCase("ta"))
-                lanId = 6319546696728576l;
-            else if(lan.equalsIgnoreCase("gu"))
-                lanId = 5965057007550464l;
+//        private void makeJsonArryReq() {
+//            RequestTask task =  new RequestTask();
+//            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+//            Long lanId = null;
+//            if(lan.equalsIgnoreCase("hi"))
+//                lanId = 5130467284090880l;
+//            else if(lan.equalsIgnoreCase("ta"))
+//                lanId = 6319546696728576l;
+//            else if(lan.equalsIgnoreCase("gu"))
+//                lanId = 5965057007550464l;
+//
+//            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
+//            task.delegate = this;
+//        }
 
-            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
-            task.delegate = this;
-        }
+//        void parseJson(JSONObject response)
+//        {
+//            JsonArray featuredPratilipiDataList = null;
+//            JsonArray newReleasesPratilipiDataList = null;
+//            JsonArray topReadsPratilipiDataList = null;
+//            Gson gson = new GsonBuilder().create();
+//
+//            try {
+//                String responseStr = response.getString("response");
+//                Log.d("responseStr",responseStr);
+//                JsonObject responseObj = gson.fromJson( responseStr, JsonElement.class ).getAsJsonObject();
+//                JsonArray elementArr  = responseObj.get("elements").getAsJsonArray();
+//                Log.d("element",""+elementArr);
+//
+//                for (int i=0; i<elementArr.size(); i++) {
+//                    Log.d("parts at ", i + " " + elementArr.get(i));
+//                    JsonObject elementObj = gson.fromJson(elementArr.get(i), JsonElement.class).getAsJsonObject();
+//                    Log.d("elementObj", i + " " + elementObj);
+//                    JsonArray contentArr = elementObj.get("content").getAsJsonArray();
+//                    String type = elementObj.get("name").getAsString();
+//                    if(type.equalsIgnoreCase("Featured")){
+//                        featuredPratilipiDataList = contentArr;
+//                    }
+//                    else if(type.equalsIgnoreCase("New Releases")){
+//                        newReleasesPratilipiDataList = contentArr;
+//                    }
+//                    else if(type.equalsIgnoreCase("Top Reads")){
+//                        topReadsPratilipiDataList = contentArr;
+//                    }
+//                }
+//
+//                for (int i = 0; i < featuredPratilipiDataList.size(); i++) {
+//                    final JsonObject obj = gson.fromJson( featuredPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
+//                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
+//                        continue;
+//
+//                    Metadata m = new Metadata();
+//                    m.set_title(obj.get("title").getAsString());
+//                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
+//                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
+//                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
+//                    m.set_starCount(obj.get("starCount").getAsLong());
+//                    m.set_authorId(obj.get("authorId").getAsString());
+//                    m.set_pageUrl(obj.get("pageUrl").getAsString());
+//                    if(null!=obj.get("summary"))
+//                        m.set_summary(obj.get("summary").getAsString());
+//                    if(null!=obj.get("index"))
+//                        m.set_index(obj.get("index").getAsString());
+//                    m.set_contentType(obj.get("contentType").getAsString());
+//                    m.set_pid(obj.get("id").getAsLong() + "");
+//                    m.set_page_count(obj.get("pageCount").getAsInt());
+//                    featured_metadata.add(m);
+//                    mHomeFeaturedAdapter.notifyDataSetChanged();
+//                }
+//
+//
+//                for (int i = 0; i < newReleasesPratilipiDataList.size(); i++) {
+//                    final JsonObject obj = gson.fromJson( newReleasesPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
+//                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
+//                        continue;
+//
+//                    Metadata m = new Metadata();
+//                    m.set_title(obj.get("title").getAsString());
+//                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
+//                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
+//                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
+//                    m.set_starCount(obj.get("starCount").getAsLong());
+//                    m.set_authorId(obj.get("authorId").getAsString());
+//                    m.set_pageUrl(obj.get("pageUrl").getAsString());
+//                    if(null != obj.get("summary"))
+//                        m.set_summary(obj.get("summary").getAsString());
+//                    if(null != obj.get("index"))
+//                        m.set_index(obj.get("index").getAsString());
+//                    m.set_contentType(obj.get("contentType").getAsString());
+//                    m.set_pid(obj.get("id").getAsLong() + "");
+//                    m.set_page_count(obj.get("pageCount").getAsInt());
+//
+//                    new_releases_metadata.add(m);
+//                    mHomeNewReleasesAdapter.notifyDataSetChanged();
+//                }
+//
+//                for (int i = 0; i < topReadsPratilipiDataList.size(); i++) {
+//                    final JsonObject obj = gson.fromJson( topReadsPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
+//                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
+//                        continue;
+//
+//                    Metadata m = new Metadata();
+//                    m.set_title(obj.get("title").getAsString());
+//                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
+//                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
+//                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
+//                    m.set_starCount(obj.get("starCount").getAsLong());
+//                    m.set_authorId(obj.get("authorId").getAsString());
+//                    m.set_pageUrl(obj.get("pageUrl").getAsString());
+//                    if(null != obj.get("summary"))
+//                        m.set_summary(obj.get("summary").getAsString());
+//                    if(null != obj.get("index"))
+//                        m.set_index(obj.get("index").getAsString());
+//                    m.set_contentType(obj.get("contentType").getAsString());
+//                    m.set_pid(obj.get("id").getAsLong()+"");
+//                    m.set_page_count(obj.get("pageCount").getAsInt());
+//
+//                    top_reads_metadata.add(m);
+//                    mHomeTopReadsAdapter.notifyDataSetChanged();
+//                }
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
 
-        void parseJson(JSONObject response)
-        {
-            JsonArray featuredPratilipiDataList = null;
-            JsonArray newReleasesPratilipiDataList = null;
-            JsonArray topReadsPratilipiDataList = null;
-            Gson gson = new GsonBuilder().create();
-
-            try {
-                String responseStr = response.getString("response");
-                Log.d("responseStr",responseStr);
-                JsonObject responseObj = gson.fromJson( responseStr, JsonElement.class ).getAsJsonObject();
-                JsonArray elementArr  = responseObj.get("elements").getAsJsonArray();
-                Log.d("element",""+elementArr);
-
-                for (int i=0; i<elementArr.size(); i++) {
-                    Log.d("parts at ", i + " " + elementArr.get(i));
-                    JsonObject elementObj = gson.fromJson(elementArr.get(i), JsonElement.class).getAsJsonObject();
-                    Log.d("elementObj", i + " " + elementObj);
-                    JsonArray contentArr = elementObj.get("content").getAsJsonArray();
-                    String type = elementObj.get("name").getAsString();
-                    if(type.equalsIgnoreCase("Featured")){
-                        featuredPratilipiDataList = contentArr;
-                    }
-                    else if(type.equalsIgnoreCase("New Releases")){
-                        newReleasesPratilipiDataList = contentArr;
-                    }
-                    else if(type.equalsIgnoreCase("Top Reads")){
-                        topReadsPratilipiDataList = contentArr;
-                    }
-                }
-
-                for (int i = 0; i < featuredPratilipiDataList.size(); i++) {
-                    final JsonObject obj = gson.fromJson( featuredPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
-                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
-                        continue;
-
-                    Metadata m = new Metadata();
-                    m.set_title(obj.get("title").getAsString());
-                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
-                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
-                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
-                    m.set_starCount(obj.get("starCount").getAsLong());
-                    m.set_authorId(obj.get("authorId").getAsString());
-                    m.set_pageUrl(obj.get("pageUrl").getAsString());
-                    if(null!=obj.get("summary"))
-                        m.set_summary(obj.get("summary").getAsString());
-                    if(null!=obj.get("index"))
-                        m.set_index(obj.get("index").getAsString());
-                    m.set_contentType(obj.get("contentType").getAsString());
-                    m.set_pid(obj.get("id").getAsLong() + "");
-                    m.set_page_count(obj.get("pageCount").getAsInt());
-                    featured_metadata.add(m);
-                    mHomeFeaturedAdapter.notifyDataSetChanged();
-                }
-
-
-                for (int i = 0; i < newReleasesPratilipiDataList.size(); i++) {
-                    final JsonObject obj = gson.fromJson( newReleasesPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
-                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
-                        continue;
-
-                    Metadata m = new Metadata();
-                    m.set_title(obj.get("title").getAsString());
-                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
-                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
-                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
-                    m.set_starCount(obj.get("starCount").getAsLong());
-                    m.set_authorId(obj.get("authorId").getAsString());
-                    m.set_pageUrl(obj.get("pageUrl").getAsString());
-                    if(null != obj.get("summary"))
-                        m.set_summary(obj.get("summary").getAsString());
-                    if(null != obj.get("index"))
-                        m.set_index(obj.get("index").getAsString());
-                    m.set_contentType(obj.get("contentType").getAsString());
-                    m.set_pid(obj.get("id").getAsLong() + "");
-                    m.set_page_count(obj.get("pageCount").getAsInt());
-
-                    new_releases_metadata.add(m);
-                    mHomeNewReleasesAdapter.notifyDataSetChanged();
-                }
-
-                for (int i = 0; i < topReadsPratilipiDataList.size(); i++) {
-                    final JsonObject obj = gson.fromJson( topReadsPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
-                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
-                        continue;
-
-                    Metadata m = new Metadata();
-                    m.set_title(obj.get("title").getAsString());
-                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
-                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
-                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
-                    m.set_starCount(obj.get("starCount").getAsLong());
-                    m.set_authorId(obj.get("authorId").getAsString());
-                    m.set_pageUrl(obj.get("pageUrl").getAsString());
-                    if(null != obj.get("summary"))
-                        m.set_summary(obj.get("summary").getAsString());
-                    if(null != obj.get("index"))
-                        m.set_index(obj.get("index").getAsString());
-                    m.set_contentType(obj.get("contentType").getAsString());
-                    m.set_pid(obj.get("id").getAsLong()+"");
-                    m.set_page_count(obj.get("pageCount").getAsInt());
-
-                    top_reads_metadata.add(m);
-                    mHomeTopReadsAdapter.notifyDataSetChanged();
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void processFinish(String output) {
-            if(!(null == output || output.isEmpty())) {
-                Log.d("Output", output);
-                try {
-                    parseJson(new JSONObject(output));
-                    pBar.setVisibility(View.GONE);
-                    pBar1.setVisibility(View.GONE);
-                    pBar2.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        @Override
+//        public void processFinish(String output) {
+//            if(!(null == output || output.isEmpty())) {
+//                Log.d("Output", output);
+//                try {
+//                    parseJson(new JSONObject(output));
+//                    pBar.setVisibility(View.GONE);
+//                    pBar1.setVisibility(View.GONE);
+//                    pBar2.setVisibility(View.GONE);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
     /**
