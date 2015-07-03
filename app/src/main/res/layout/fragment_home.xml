@@ -61,7 +61,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"
+                android:visibility="invisible"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/view_more_featured_layout"
                 android:layout_width="match_parent"
@@ -113,7 +114,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:visibility="invisible"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/view_more_newrelease_layout"
                 android:layout_width="match_parent"
@@ -165,7 +167,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"
+                android:visibility="invisible"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/view_more_top_layout"
                 android:layout_width="match_parent"

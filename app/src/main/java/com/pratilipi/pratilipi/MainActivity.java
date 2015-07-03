@@ -202,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
     public static class HomeFragment extends Fragment implements AsyncResponse{
 
         private ArrayList<Metadata> mMetaData ;
-        private ProgressBar pBar;
+        private ProgressBar pBar,pBar1,pBar2;
         private LinearLayout featuredList;
         private LinearLayout newReleasesList;
         private LinearLayout topReadsList;
@@ -223,6 +223,8 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
             rb.setChecked(true);
 
             pBar = (ProgressBar)rootView.findViewById(R.id.progress_bar);
+            pBar1 = (ProgressBar)rootView.findViewById(R.id.progress_bar1);
+            pBar2 = (ProgressBar)rootView.findViewById(R.id.progress_bar2);
 //            featuredList = (LinearLayout) rootView.findViewById(R.id.linear_layout_featured);
 //            newReleasesList = (LinearLayout)rootView.findViewById(R.id.linear_layout_new_releases);
 //            topReadsList = (LinearLayout)rootView.findViewById(R.id.linear_layout_top);
@@ -230,6 +232,8 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
             //Recycler View START
 
             pBar.setVisibility(View.VISIBLE);
+            pBar2.setVisibility(View.VISIBLE);
+            pBar1.setVisibility(View.VISIBLE);
 
             mHomeFeaturedRecyclerView = (RecyclerView)rootView.findViewById(R.id.featured_recycler_view);
             mHomeNewReleasesRecyclerView = (RecyclerView)rootView.findViewById(R.id.new_releases_recycler_view);
@@ -259,9 +263,6 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
             mHomeFeaturedRecyclerView.setAdapter(mHomeFeaturedAdapter);
             mHomeNewReleasesRecyclerView.setAdapter(mHomeNewReleasesAdapter);
             mHomeTopReadsRecyclerView.setAdapter(mHomeTopReadsAdapter);
-
-
-
 
             if(isOnline())
                 makeJsonArryReq();
@@ -302,7 +303,7 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
                 }
             });
 
-            return rootView;
+           return rootView;
 
         }
 
@@ -313,13 +314,6 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
             mIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivityForResult(mIntent,0);
 //            overridePendingTransition(0,0);
-        }
-
-//        private void showProgressDialog() {
-//            pBar.setVisibility(View.VISIBLE);
-//        }
-        private void hideProgressDialog() {
-            pBar.setVisibility(View.GONE);
         }
 
         public boolean isOnline() {
@@ -493,6 +487,9 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse{
                 Log.d("Output", output);
                 try {
                     parseJson(new JSONObject(output));
+                    pBar.setVisibility(View.GONE);
+                    pBar1.setVisibility(View.GONE);
+                    pBar2.setVisibility(View.GONE);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
