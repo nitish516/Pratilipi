@@ -93,6 +93,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     int maxProgress = 0;
     int currentChapterPageCount = 0;
     int currentChapterCurrentPage = 0;
+    String pratilipiId = "";
+    Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             title = metadata.get_title();
             String id = metadata.get_pid();
             pId = Long.parseLong(id);
+            pratilipiId = Long.toString(pId);
             type = metadata.get_contentType();
             pageCount = metadata.get_page_count();
 
@@ -228,26 +231,31 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
+                if (toast != null) {
+                    toast.cancel();
+                    toast = null;
+                }
                 pageNoIndicator.setVisibility(View.VISIBLE);
+
 //                pageNoIndicator.setBackgroundColor(R.color.Black);
 
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                int currentProgress = seekBar.getProgress() +1;
+                int currentProgress = seekBar.getProgress();
                 if (type.equalsIgnoreCase("IMAGE"))
                     launchChapter(currentProgress + 1);
                 else if (pageCount <= 1) {
-                    if(currentProgress > currentChapterCurrentPage){
-                        while (currentProgress != currentChapterCurrentPage){
+                    if(currentProgress+1 > currentChapterCurrentPage){
+                        while (currentProgress+1 != currentChapterCurrentPage){
 
                             webView.loadUrl("javascript:next()");
                             currentChapterCurrentPage++;
                         }
                     }
-                    else if(currentProgress < currentChapterCurrentPage){
-                        while (currentProgress != currentChapterCurrentPage){
+                    else if(currentProgress+1 < currentChapterCurrentPage){
+                        while (currentProgress+1 != currentChapterCurrentPage){
 
                             webView.loadUrl("javascript:previous()");
                             currentChapterCurrentPage--;
@@ -373,7 +381,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         Uri pid =  Uri.parse(URL);
 
         Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=? and " + PratilipiProvider.CH_NO + "=?",
-                new String[]{pId + "", pageNo + ""}, PratilipiProvider.PID);
+                new String[]{pratilipiId, pageNo + ""}, PratilipiProvider.PID);
 
 
         if (!c.moveToFirst()) {
@@ -400,19 +408,19 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             Uri pid = Uri.parse(URL);
 
             Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=? and " + PratilipiProvider.CH_NO + "=?",
-                    new String[]{pId + "", pageNo + ""}, PratilipiProvider.PID);
+                    new String[]{pratilipiId, pageNo + ""}, PratilipiProvider.PID);
 
             if (!c.moveToFirst()) {
                 if (type.equalsIgnoreCase("PRATILIPI")) {
 
                     task = new RequestTask();
-                    task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
+                    task.execute(url + pratilipiId + "&pageNo=" + pageNo); //5757183006343168l
                     task.delegate = this;
                 } else if (type.equalsIgnoreCase("IMAGE")) {
                     ContentValues values = new ContentValues();
                     try {
                         URL imageUrl = new URL("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
-                                + pId + "&pageNo=" + pageNo);
+                                + pratilipiId + "&pageNo=" + pageNo);
                         URLConnection ucon = imageUrl.openConnection();
 
                         InputStream is = ucon.getInputStream();
@@ -446,13 +454,13 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 isLoading = true;
 
                 task = new RequestTask();
-                task.execute(url + pId + "&pageNo=" + pageNo); //5757183006343168l
+                task.execute(url + pratilipiId + "&pageNo=" + pageNo); //5757183006343168l
                 task.delegate = this;
             } else if (type.equalsIgnoreCase("IMAGE")) {
                 webView.setInitialScale(30);
                 WebSettings webSettings = webView.getSettings();
                 webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
-                        + pId + "&pageNo=" + pageNo);
+                        + pratilipiId + "&pageNo=" + pageNo);
 //                webSettings.setBuiltInZoomControls(false);
 //                webSettings.setDisplayZoomControls(false);
                 webSettings.setUseWideViewPort(true);
@@ -610,25 +618,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         if(type.equalsIgnoreCase("PRATILIPI")) {
             if (isIncrease) {
                 settings.setTextZoom(settings.getTextZoom() + 5);
-
-                String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-                if (lan.equalsIgnoreCase("hi"))
-                    webView.loadUrl("file:///android_asset/htmlHi.html");
-                else if (lan.equalsIgnoreCase("ta"))
-                    webView.loadUrl("file:///android_asset/htmlTa.html");
-                else if (lan.equalsIgnoreCase("gu"))
-                    webView.loadUrl("file:///android_asset/htmlGu.html");
+                loadHtml();
 
             } else if (!isIncrease) {
                 settings.setTextZoom(settings.getTextZoom() - 5);
-
-                String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-                if (lan.equalsIgnoreCase("hi"))
-                    webView.loadUrl("file:///android_asset/htmlHi.html");
-                else if (lan.equalsIgnoreCase("ta"))
-                    webView.loadUrl("file:///android_asset/htmlTa.html");
-                else if (lan.equalsIgnoreCase("gu"))
-                    webView.loadUrl("file:///android_asset/htmlGu.html");
+                loadHtml();
             }
         }
         else {
@@ -641,6 +635,16 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 webView.setInitialScale(initialScale);
             }
         }
+    }
+
+    private void loadHtml() {
+        String lan = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+        if (lan.equalsIgnoreCase("hi"))
+            webView.loadUrl("file:///android_asset/htmlHi.html");
+        else if (lan.equalsIgnoreCase("ta"))
+            webView.loadUrl("file:///android_asset/htmlTa.html");
+        else if (lan.equalsIgnoreCase("gu"))
+            webView.loadUrl("file:///android_asset/htmlGu.html");
     }
 
     @Override
@@ -707,7 +711,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     if (diffX > 0) {
                         if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:previous()");
-                            currentChapterCurrentPage--;
+
+                            if(currentChapterCurrentPage >1)
+                                currentChapterCurrentPage--;
+
                             if(pageCount >1) {
                                 int base = (currentPage - 1) * 1000;
                                 float progressFactor = (float) (currentChapterCurrentPage - 1) / (float) currentChapterPageCount;
@@ -718,7 +725,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             }
                         } else {
                             if (currentPage == 1) {
-                                Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
+                                toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
                                 toast.show();
                             }else if(initialScale <= 30){
                                 launchChapter(false);
@@ -741,7 +748,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         }
                         else {
                             if (pageCount == currentPage) {
-                                Toast toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
+                                toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
                                 toast.show();
                             }else if(initialScale <= 30){
                                 launchChapter(true);
@@ -771,7 +778,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 makeRequest(++currentPage);
             }
             else {
-                Toast toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
+                toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
                 toast.show();
             }
         }
@@ -784,7 +791,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 makeRequest(--currentPage);
             }
             else if (initialScale <= 30) {
-                Toast toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
+                toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
                 toast.show();
             }
 

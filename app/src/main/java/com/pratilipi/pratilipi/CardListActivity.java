@@ -274,8 +274,9 @@ public void onCancel(DialogInterface dialog) {
                     if (!id.equals(lanId))
                         continue;
 
-                    values.put(PratilipiProvider.PID ,id+"");
-                    m.set_pid(id + "");
+                    long pid = obj.getLong("id");
+                    values.put(PratilipiProvider.PID ,pid+"");
+                    m.set_pid(pid + "");
 
 
                     String title = obj.getString("title");
