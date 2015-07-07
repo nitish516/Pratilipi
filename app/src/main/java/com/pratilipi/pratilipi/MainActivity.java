@@ -414,12 +414,15 @@ public class MainActivity extends ActionBarActivity{
                     if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("featured")) {
                         featured_metadata.add(m);
                         mHomeFeaturedAdapter.notifyDataSetChanged();
+                        pBar.setVisibility(View.GONE);
                     } else if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("newReleases")) {
                         new_releases_metadata.add(m);
                         mHomeNewReleasesAdapter.notifyDataSetChanged();
+                        pBar1.setVisibility(View.GONE);
                     } else if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("topReads")) {
                         top_reads_metadata.add(m);
                         mHomeTopReadsAdapter.notifyDataSetChanged();
+                        pBar2.setVisibility(View.GONE);
                     }
                 }
             }
