@@ -17,7 +17,7 @@
         android:fillViewport="true"
         android:scrollbars="none">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1">
@@ -120,10 +120,10 @@
                android:layout_width="0dp"
                android:layout_weight="0.5"
                android:text="ADD TO SHELF"
+               android:onClick="download"
                android:background="@color/Red"
                android:textColor="#ffffff"
-               android:layout_marginLeft="2dp"
-               android:visibility="gone"/>
+               android:layout_marginLeft="2dp"/>
             <!--<Button-->
                 <!--android:id="@+id/reviewButton"-->
                 <!--android:layout_height="40sp"-->

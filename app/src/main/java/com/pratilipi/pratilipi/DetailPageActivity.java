@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -46,9 +47,8 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     public static final String POSITION = "Position";
     public static final String METADATA = "METADATA";
     private Metadata metadata;
-    URI mUri;
     TextView summaryTextView;
-private String pId;
+    private String pId;
     Toolbar toolbar;
 
     @Override
@@ -63,18 +63,18 @@ private String pId;
 
         TextView toolbar_title = (TextView)toolbar.findViewById(R.id.title_toolbar);
 
-        Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
-        addToShelf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.addToShelfButton: {
-                        startActivity(new Intent(DetailPageActivity.this, LoginActivity.class));
-                        break;
-                    }
-                }
-            }
-        });
+//        Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
+//        addToShelf.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                switch (v.getId()) {
+//                    case R.id.addToShelfButton: {
+//                        startActivity(new Intent(DetailPageActivity.this, LoginActivity.class));
+//                        break;
+//                    }
+//                }
+//            }
+//        });
         try{
             metadata = (Metadata) getIntent().getSerializableExtra(METADATA);
 
@@ -96,7 +96,6 @@ private String pId;
 
             LayoutInflater layoutInflate = LayoutInflater.from(this);
             View v = layoutInflate.inflate(R.layout.actionbar_custom_title, null);
-            TextView actionBarTitleTextView = (TextView)v.findViewById(R.id.actionBarTitle);
             toolbar_title.setTypeface(typeFace);
             toolbar_title.setText(" ");
 
@@ -111,8 +110,8 @@ private String pId;
             imageView.setImageUrl("http:" +metadata.get_coverImageUrl(), imageLoader);
 
             RatingBar ratingBar  = (RatingBar) findViewById(R.id.averageRatingBar);
-            TextView averageRatingTextView = (TextView) findViewById(R.id.averageRatingTextView);
-            TextView detailPageRate = (TextView)findViewById(R.id.detailPageRatingNumber);
+//            TextView averageRatingTextView = (TextView) findViewById(R.id.averageRatingTextView);
+//            TextView detailPageRate = (TextView)findViewById(R.id.detailPageRatingNumber);
             if(metadata.get_ratingCount()> 0) {
                 float val = (float)metadata.get_starCount()/metadata.get_ratingCount();
                 ratingBar.setRating(val);
@@ -120,7 +119,7 @@ private String pId;
                 NumberFormat numberformatter = NumberFormat.getNumberInstance();
                 numberformatter.setMaximumFractionDigits(1);
                 numberformatter.setMinimumFractionDigits(1);
-                String rating = numberformatter.format(val);
+//                String rating = numberformatter.format(val);
 
 //                averageRatingTextView.setText("Average rating: " + String.valueOf(rating) + "/5");
 //                detailPageRate.setText(String.valueOf("("+metadata.get_ratingCount())+" rating)");
@@ -152,7 +151,7 @@ private String pId;
 
             if (!c.moveToFirst()) {
 
-                makeRequest( metadata.get_contentType(), pId);
+                makeRequest( metadata.get_contentType(), pId, 1);
             }
 
         }catch (Exception e){
@@ -183,31 +182,39 @@ private String pId;
         return true;
     }
 
-    public void launchReader(View view)
-    {
+    public void launchReader(View view) {
         Intent i = new Intent(this, ReadActivity.class);
         i.putExtra(DetailPageActivity.METADATA, (Serializable) metadata);
         startActivity(i);
     }
 
-    public void addMetaData(View view) {
-        ContentValues values = new ContentValues();
+    public void download(View view){
+        Toast toast = Toast.makeText(this,"Downloading ...",Toast.LENGTH_SHORT);
+        toast.show();
+        addMetaData();
+        for(int i =1; i <= metadata.get_page_count(); i++ ){
+            makeRequest(metadata.get_contentType(),metadata.get_pid(),i);
+        }
+    }
 
-        int pageCount = 0;
-        String contentType = "";
-        Long pId = 0l;
+    public void addMetaData() {
+        ContentValues values = new ContentValues();
         try {
-            contentType = metadata.get_contentType();
             values.put(PratilipiProvider.PID , metadata.get_pid());
             values.put(PratilipiProvider.TITLE , metadata.get_title());
-            values.put(PratilipiProvider.CONTENT_TYPE ,contentType);
+            values.put(PratilipiProvider.CONTENT_TYPE ,metadata.get_contentType());
             values.put(PratilipiProvider.AUTHOR_ID , String.valueOf(metadata.get_authorId()));
             values.put(PratilipiProvider.AUTHOR_NAME , metadata.get_authorFullName());
             values.put(PratilipiProvider.CH_COUNT , metadata.get_page_count());
             values.put(PratilipiProvider.IMG_URL , metadata.get_coverImageUrl());
             values.put(PratilipiProvider.PG_URL , metadata.get_pageUrl());
-            values.put(PratilipiProvider.INDEX , metadata.get_index());
-
+            if(metadata.get_index()!=null)
+                values.put(PratilipiProvider.INDEX , metadata.get_index());
+            values.put(PratilipiProvider.RATING_COUNT , metadata.get_ratingCount());
+            values.put(PratilipiProvider.STAR_COUNT , metadata.get_starCount());
+            if(null!=metadata.get_summary())
+                values.put(PratilipiProvider.SUMMARY , metadata.get_summary());
+            values.put(PratilipiProvider.LIST_TYPE , "download");
 
             ContentResolver cv = getContentResolver();
             Uri uri = cv.insert(
@@ -225,26 +232,26 @@ private String pId;
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void makeRequest(String type,String pId) {
+    private void makeRequest(String type,String pId,int chapter) {
         String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/content";
         Uri pid =  Uri.parse(URL);
         Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID +"=? and "+PratilipiProvider.CH_NO+"=?",
-                new String[] { pId+"", 1+"" }, PratilipiProvider.PID);
+                new String[] { pId+"", chapter+"" }, PratilipiProvider.PID);
 
 
         if (!c.moveToFirst() && isOnline()) {
             if (type.equalsIgnoreCase("PRATILIPI")) {
                 RequestTask task = new RequestTask();
                 String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/content?pratilipiId=";
-                task.execute(url + pId + "&pageNo=" + 1);
+                task.execute(url + pId + "&pageNo=" + chapter);
                 task.delegate = this;
             } else if (type.equalsIgnoreCase("IMAGE")) {
-                insertImageToDb(pId);
+                insertImageToDb(pId,chapter);
             }
         }
     }
 
-    private void insertImageToDb(String pId) {
+    private void insertImageToDb(String pId, int chapter) {
         ContentValues values = new ContentValues();
         try {
             URL imageUrl = new URL("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
@@ -261,7 +268,7 @@ private String pId;
             }
             values.put(PratilipiProvider.PID , pId);
             values.put(PratilipiProvider.IMAGE ,baf.toByteArray());
-            values.put(PratilipiProvider.CH_NO, 1);
+            values.put(PratilipiProvider.CH_NO, chapter);
         } catch (Exception e) {
             Log.d("ImageManager", "Error: " + e.toString());
         }
@@ -275,7 +282,7 @@ private String pId;
         try {
             values.put(PratilipiProvider.PID , String.valueOf(obj.getLong("pratilipiId")));
             values.put(PratilipiProvider.CONTENT , obj.getString("pageContent"));
-            values.put(PratilipiProvider.CH_NO, 1);
+            values.put(PratilipiProvider.CH_NO, obj.getInt("pageNo"));
 
         } catch (JSONException e) {
             e.printStackTrace();
