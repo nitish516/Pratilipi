@@ -167,8 +167,6 @@ public class MainActivity extends ActionBarActivity{
         List<Metadata> featured_metadata = new ArrayList<Metadata>();
         List<Metadata> new_releases_metadata = new ArrayList<Metadata>();
         List<Metadata> top_reads_metadata = new ArrayList<Metadata>();
-        LinearLayoutManager mFeaturedLayoutManager;
-        Long lanId = null;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -189,15 +187,6 @@ public class MainActivity extends ActionBarActivity{
             pBar.setVisibility(View.VISIBLE);
             pBar2.setVisibility(View.VISIBLE);
             pBar1.setVisibility(View.VISIBLE);
-
-            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-
-            if(lan.equalsIgnoreCase("hi"))
-                lanId = 5130467284090880l;
-            else if(lan.equalsIgnoreCase("ta"))
-                lanId = 6319546696728576l;
-            else if(lan.equalsIgnoreCase("gu"))
-                lanId = 5965057007550464l;
 
             mHomeFeaturedRecyclerView = (RecyclerView)rootView.findViewById(R.id.featured_recycler_view);
             mHomeNewReleasesRecyclerView = (RecyclerView)rootView.findViewById(R.id.new_releases_recycler_view);
@@ -228,17 +217,6 @@ public class MainActivity extends ActionBarActivity{
             mHomeNewReleasesRecyclerView.setAdapter(mHomeNewReleasesAdapter);
             mHomeTopReadsRecyclerView.setAdapter(mHomeTopReadsAdapter);
 
-            mFeaturedLayoutManager = new LinearLayoutManager(getActivity());
-            mHomeFeaturedRecyclerView.setLayoutManager(mFeaturedLayoutManager);
-            mHomeFeaturedRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    if(mFeaturedLayoutManager.findLastCompletelyVisibleItemPosition()==mFeaturedLayoutManager.getItemCount()-1){
-
-                    }
-                }
-            });
             fetchData();
 
 //            if(isOnline())
@@ -300,22 +278,6 @@ public class MainActivity extends ActionBarActivity{
             else{
                 fetchDataFromDb();
             }
-        }
-
-        private void fetchMoreData() {
-            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
-            Uri pid = Uri.parse(URL);
-            Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                    new String[]{"featuredMore"}, PratilipiProvider.PID);
-            if (!c.moveToFirst()) {
-                if (isOnline())
-                    makeMoreJsonArryReq();
-            } else {
-                fetchMoreDataFromDb();
-            }
-        }
-
-        private void fetchMoreDataFromDb() {
         }
 
         @Override
@@ -412,13 +374,17 @@ public class MainActivity extends ActionBarActivity{
          * */
         private void makeJsonArryReq() {
             RequestTask task =  new RequestTask();
+            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
+            Long lanId = null;
+            if(lan.equalsIgnoreCase("hi"))
+                lanId = 5130467284090880l;
+            else if(lan.equalsIgnoreCase("ta"))
+                lanId = 6319546696728576l;
+            else if(lan.equalsIgnoreCase("gu"))
+                lanId = 5965057007550464l;
 
             task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
             task.delegate = this;
-        }
-
-        private void makeMoreJsonArryReq() {
-
         }
 
         private void fetchDataFromDb() {

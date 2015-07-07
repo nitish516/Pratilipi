@@ -60,6 +60,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayout;
     String mTitle = "";
+    String selectionArgs = "";
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -131,7 +132,6 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     private void fetchData() {
         String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
         Uri pid = Uri.parse(URL);
-        String selectionArgs = "";
         url +=lanId+"&category=";
         switch(mTitle){
             case "Featured":
@@ -218,7 +218,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         builder.setMessage(R.string.no_connection);
         builder.setTitle(R.string.no_connection_title);
         builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
+        public void onClick(DialogInterface dialog, int which) {
 
         Intent dialogIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
         dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -271,7 +271,7 @@ public void onCancel(DialogInterface dialog) {
                     Metadata m = new Metadata();
 
                     Long id  = obj.getLong("languageId");
-                    if ( id!= lanId)
+                    if (!id.equals(lanId))
                         continue;
 
                     values.put(PratilipiProvider.PID ,id+"");
@@ -324,17 +324,14 @@ public void onCancel(DialogInterface dialog) {
                     m.set_page_count(pageCont);
                     values.put(PratilipiProvider.CH_COUNT, pageCont);
 
-                    values.put(PratilipiProvider.LIST_TYPE, type);
+                    values.put(PratilipiProvider.LIST_TYPE, selectionArgs);
 
                     metadata.add(m);
                     adapter.notifyDataSetChanged();
 
                    try {
-
-
-                        ContentResolver cv = getActivity().getContentResolver();
-                        Uri uri = cv.insert(
-                                PratilipiProvider.METADATA_URI, values);
+                        ContentResolver cv = getContentResolver();
+                        Uri uri = cv.insert(PratilipiProvider.METADATA_URI, values);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
