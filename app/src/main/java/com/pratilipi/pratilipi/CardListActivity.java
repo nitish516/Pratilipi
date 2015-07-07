@@ -1,12 +1,16 @@
 package com.pratilipi.pratilipi;
 
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +31,7 @@ import android.widget.TextView;
 
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.CardListAdapter;
+import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +59,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     CardListAdapter adapter;
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayout;
+    String mTitle = "";
 
     protected void onCreate(Bundle savedInstanceState){
 
@@ -87,10 +93,11 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
 
         linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);
 
-        String title = getIntent().getStringExtra("TITLE");
-        toolbar_title.setText(title);
-        if(!(title.equalsIgnoreCase("Featured")|| title.equalsIgnoreCase("New Releases")|| title.equalsIgnoreCase("Top Reads")
-            || title.equalsIgnoreCase("Books")|| title.equalsIgnoreCase("Poems")|| title.equalsIgnoreCase("Stories"))){
+        mTitle = getIntent().getStringExtra("TITLE");
+        toolbar_title.setText(mTitle);
+
+        if(!(mTitle.equalsIgnoreCase("Featured")|| mTitle.equalsIgnoreCase("New Releases")|| mTitle.equalsIgnoreCase("Top Reads")
+            || mTitle.equalsIgnoreCase("Books")|| mTitle.equalsIgnoreCase("Poems")|| mTitle.equalsIgnoreCase("Stories"))){
             isSearch = true;
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -116,15 +123,65 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
             }
 
             if (!isSearch) {
-                if (isOnline()) {
-                    makeJsonArryReq();
-                } else {
-                    showNoConnectionDialog(this);
-                }
+                    fetchData();
             }
         }
     }
+    
+    private void fetchData() {
+        String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+        Uri pid = Uri.parse(URL);
+        String selectionArgs = "";
+        url +=lanId+"&category=";
+        switch(mTitle){
+            case "Featured":
+                selectionArgs = "featuredMore";
+                url +="featuredPratilipiDataList";
+                break;
+            case "New Releases":
+                selectionArgs = "newReleasesMore";
+                url +="newReleasesPratilipiDataList";
+                break;
+            case "Top Reads":
+                selectionArgs = "topReadsMore";
+                url +="topReadsPratilipiDataList";
+                break;
+        }
 
+        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
+                new String[]{selectionArgs}, PratilipiProvider.PID);
+
+
+        if (!c.moveToFirst()) {
+            if(isOnline())
+                makeJsonArryReq();
+            else
+                showNoConnectionDialog(this);
+        }
+        else{
+            fetchDataFromDb(c);
+        }
+    }
+
+    private void fetchDataFromDb(Cursor c) {
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+            Metadata m = new Metadata();
+            m.set_title(c.getString(c.getColumnIndex(PratilipiProvider.TITLE)));
+            m.set_authorFullName(c.getString(c.getColumnIndex(PratilipiProvider.AUTHOR_NAME)));
+            m.set_coverImageUrl(c.getString(c.getColumnIndex(PratilipiProvider.IMG_URL)));
+            m.set_ratingCount(c.getLong(c.getColumnIndex(PratilipiProvider.RATING_COUNT)));
+            m.set_starCount(c.getLong(c.getColumnIndex(PratilipiProvider.STAR_COUNT)));
+            m.set_authorId(c.getString(c.getColumnIndex(PratilipiProvider.AUTHOR_ID)));
+            m.set_pageUrl(c.getString(c.getColumnIndex(PratilipiProvider.PG_URL)));
+            m.set_summary(c.getString(c.getColumnIndex(PratilipiProvider.SUMMARY)));
+            m.set_index(c.getString(c.getColumnIndex(PratilipiProvider.INDEX)));
+            m.set_contentType(c.getString(c.getColumnIndex(PratilipiProvider.CONTENT_TYPE)));
+            m.set_pid(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
+            m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
+            metadata.add(m);
+            adapter.notifyDataSetChanged();
+        }
+    }
 
 //    @Override
 //    public void onConfigurationChanged(Configuration newConfig) {
@@ -187,15 +244,14 @@ public void onCancel(DialogInterface dialog) {
     * */
     private void makeJsonArryReq() {
 
-    progressBar.setVisibility(View.VISIBLE);
-    RequestTask task =  new RequestTask();
+        progressBar.setVisibility(View.VISIBLE);
+        RequestTask task =  new RequestTask();
 
-    task.execute(url+lanId);
+        task.execute(url);
         task.delegate = this;
-        }
+    }
 
-        void parseJson(JSONObject response)
-        {
+    void parseJson(JSONObject response) {
         try {
             JSONArray pratilipiList;
             if(isSearch) {
@@ -210,26 +266,78 @@ public void onCancel(DialogInterface dialog) {
 
                 for (int i = 0; i < pratilipiList.length(); i++) {
                     final JSONObject obj = pratilipiList.getJSONObject(i);
-                    if (obj.getLong("languageId") != lanId)
-                        continue;
+
+                    ContentValues values = new ContentValues();
                     Metadata m = new Metadata();
-                    m.set_title(obj.getString("title"));
-                    m.set_authorFullName(obj.getJSONObject("author").getString("name"));
-                    m.set_coverImageUrl(obj.getString("coverImageUrl"));
-                    m.set_ratingCount(obj.getLong("ratingCount"));
-                    m.set_starCount(obj.getLong("starCount"));
-                    m.set_authorId(obj.getString("authorId"));
-                    m.set_pageUrl(obj.getString("pageUrl"));
-                    if(obj.has("summary"))
-                        m.set_summary(obj.getString("summary"));
-                    if(obj.has("index"))
-                        m.set_index(obj.getString("index"));
-                    m.set_contentType(obj.getString("contentType"));
-                    m.set_pid(obj.getLong("id") + "");
-                    m.set_page_count(obj.getInt("pageCount"));
+
+                    Long id  = obj.getLong("languageId");
+                    if ( id!= lanId)
+                        continue;
+
+                    values.put(PratilipiProvider.PID ,id+"");
+                    m.set_pid(id + "");
+
+
+                    String title = obj.getString("title");
+                    m.set_title(title);
+                    values.put(PratilipiProvider.TITLE, title);
+
+                    String authorName = obj.getJSONObject("author").getString("name");
+                    m.set_authorFullName(authorName);
+                    values.put(PratilipiProvider.AUTHOR_NAME, authorName);
+
+                    String coverImageUrl = obj.getString("coverImageUrl");
+                    m.set_coverImageUrl(coverImageUrl);
+                    values.put(PratilipiProvider.IMG_URL, coverImageUrl);
+
+                    long ratingCount = obj.getLong("ratingCount");
+                    m.set_ratingCount(ratingCount);
+                    values.put(PratilipiProvider.RATING_COUNT, ratingCount);
+
+                    long starCount = obj.getLong("starCount");
+                    m.set_starCount(starCount);
+                    values.put(PratilipiProvider.STAR_COUNT, starCount);
+
+                    String authorId = obj.getString("authorId");
+                    m.set_authorId(authorId);
+                    values.put(PratilipiProvider.AUTHOR_ID, authorId);
+
+                    String pageUrl = obj.getString("pageUrl");
+                    m.set_pageUrl(pageUrl);
+                    values.put(PratilipiProvider.PG_URL,pageUrl);
+                    if(obj.has("summary")) {
+                        String summary = obj.getString("summary");
+                        m.set_summary(summary);
+                        values.put(PratilipiProvider.SUMMARY,summary);
+                    }
+                    if(obj.has("index")){
+                        String index = obj.getString("index");
+                        m.set_index(index);
+                        values.put(PratilipiProvider.INDEX,index);
+                    }
+
+                    String contentType = obj.getString("contentType");
+                    m.set_contentType(contentType);
+                    values.put(PratilipiProvider.CONTENT_TYPE, contentType);
+
+                    int pageCont = obj.getInt("pageCount");
+                    m.set_page_count(pageCont);
+                    values.put(PratilipiProvider.CH_COUNT, pageCont);
+
+                    values.put(PratilipiProvider.LIST_TYPE, type);
 
                     metadata.add(m);
                     adapter.notifyDataSetChanged();
+
+                   try {
+
+
+                        ContentResolver cv = getActivity().getContentResolver();
+                        Uri uri = cv.insert(
+                                PratilipiProvider.METADATA_URI, values);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 if(linearLayout.getChildAt(0) == null){
                     TextView tv = new TextView(linearLayout.getContext());
