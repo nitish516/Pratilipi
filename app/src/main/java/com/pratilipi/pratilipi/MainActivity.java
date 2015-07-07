@@ -621,7 +621,7 @@ public class MainActivity extends ActionBarActivity{
     public static class ShelfFragment extends Fragment {
 
         private com.pratilipi.pratilipi.util.Utils utils;
-        private ArrayList<String> imagePaths = new ArrayList<String>();
+        private ArrayList<Metadata> imagePaths = new ArrayList<Metadata>();
         private GridViewImageAdapter adapter;
         private GridView gridView;
         private int columnWidth;
@@ -631,21 +631,42 @@ public class MainActivity extends ActionBarActivity{
                 Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_shelf, container, false);
-//            gridView = (GridView) rootView.findViewById(R.id.grid_view);
-//            utils = new com.pratilipi.pratilipi.util.Utils(getActivity());
-//
-//            // Initilizing Grid View
-//            InitilizeGridLayout();
-//
-//            // loading all image paths from SD card
-//            imagePaths = utils.getFilePaths();
-//
-//            // Gridview adapter
-//            adapter = new GridViewImageAdapter(getActivity(), imagePaths,
-//                    columnWidth);
-//
-//            // setting grid view adapter
-//            gridView.setAdapter(adapter);
+            gridView = (GridView) rootView.findViewById(R.id.grid_view);
+            utils = new com.pratilipi.pratilipi.util.Utils(getActivity());
+
+            // Initilizing Grid View
+            InitilizeGridLayout();
+
+            // loading all image paths from SD card
+//            imagePaths =
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+            Uri pid = Uri.parse(URL);
+            Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
+                 new String[]{"download"}, PratilipiProvider.PID);
+            if (c.moveToFirst()) {
+                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                    Metadata m = new Metadata();
+                    m.set_title(c.getString(c.getColumnIndex(PratilipiProvider.TITLE)));
+                    m.set_authorFullName(c.getString(c.getColumnIndex(PratilipiProvider.AUTHOR_NAME)));
+                    m.set_coverImageUrl(c.getString(c.getColumnIndex(PratilipiProvider.IMG_URL)));
+                    m.set_ratingCount(c.getLong(c.getColumnIndex(PratilipiProvider.RATING_COUNT)));
+                    m.set_starCount(c.getLong(c.getColumnIndex(PratilipiProvider.STAR_COUNT)));
+                    m.set_authorId(c.getString(c.getColumnIndex(PratilipiProvider.AUTHOR_ID)));
+                    m.set_pageUrl(c.getString(c.getColumnIndex(PratilipiProvider.PG_URL)));
+                    m.set_summary(c.getString(c.getColumnIndex(PratilipiProvider.SUMMARY)));
+                    m.set_index(c.getString(c.getColumnIndex(PratilipiProvider.INDEX)));
+                    m.set_contentType(c.getString(c.getColumnIndex(PratilipiProvider.CONTENT_TYPE)));
+                    m.set_pid(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
+                    m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
+                    imagePaths.add(m);
+                }
+            }
+
+            // Gridview adapter
+            adapter = new GridViewImageAdapter(getActivity(), imagePaths,columnWidth);
+
+            // setting grid view adapter
+            gridView.setAdapter(adapter);
 
             return rootView;
         }

@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DetailPageActivity;
 import com.pratilipi.pratilipi.R;
 
@@ -26,10 +27,10 @@ import java.util.ArrayList;
 public class GridViewImageAdapter extends BaseAdapter {
 
     private Activity _activity;
-    private ArrayList<String> _filePaths = new ArrayList<String>();
+    private ArrayList<Metadata> _filePaths = new ArrayList<Metadata>();
     private int imageWidth;
 
-    public GridViewImageAdapter(Activity activity, ArrayList<String> filePaths,
+    public GridViewImageAdapter(Activity activity, ArrayList<Metadata> filePaths,
                                 int imageWidth) {
         this._activity = activity;
         this._filePaths = filePaths;
@@ -38,8 +39,8 @@ public class GridViewImageAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-//        return this._filePaths.size();
-        return 12;
+       return this._filePaths.size();
+//        return 12;
     }
 
     @Override
