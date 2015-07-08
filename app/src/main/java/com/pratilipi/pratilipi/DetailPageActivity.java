@@ -5,10 +5,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +21,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
+import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -34,9 +37,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URI;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
@@ -192,9 +197,46 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         Toast toast = Toast.makeText(this,"Downloading ...",Toast.LENGTH_SHORT);
         toast.show();
         addMetaData();
+        downloadImage();
         for(int i =1; i <= metadata.get_page_count(); i++ ){
             makeRequest(metadata.get_contentType(),metadata.get_pid(),i);
         }
+    }
+
+    private class AsyncTaskEx extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            File directory = new File(
+                    android.os.Environment.getExternalStorageDirectory()
+                            + File.separator + AppConstant.PHOTO_ALBUM);
+
+            // make file if not exists
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            try {
+                File file = new File(directory,  metadata.get_pid() + ".jpg");
+                FileOutputStream out = new FileOutputStream(file);
+                URL url = new URL("http:"+metadata.get_coverImageUrl());
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private void downloadImage() {
+        new AsyncTaskEx().execute();
     }
 
     public void addMetaData() {

@@ -70,11 +70,10 @@ public class Utils {
                 }
             } else {
                 // image directory is empty
-//                Toast.makeText(
-//                        _context,
-//                        AppConstant.PHOTO_ALBUM
-//                                + " is empty. Please load some images in it !",
-//                        Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        _context,
+                        " Please add some contents to shelf!",
+                        Toast.LENGTH_SHORT).show();
             }
 
         } else {

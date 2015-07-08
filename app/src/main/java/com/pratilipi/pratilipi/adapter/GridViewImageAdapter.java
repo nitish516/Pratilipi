@@ -18,10 +18,12 @@ import android.widget.ImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DetailPageActivity;
 import com.pratilipi.pratilipi.R;
+import com.pratilipi.pratilipi.helper.AppConstant;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class GridViewImageAdapter extends BaseAdapter {
@@ -51,8 +53,6 @@ public class GridViewImageAdapter extends BaseAdapter {
     @Override
     public long getItemId(int position) { return position; }
 
-
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
@@ -62,59 +62,17 @@ public class GridViewImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
+        String filePath = android.os.Environment.getExternalStorageDirectory()
+                + File.separator + AppConstant.PHOTO_ALBUM;
         // get screen dimensions
-//        Bitmap image = decodeFile(_filePaths.get(position), imageWidth, imageWidth+50);
+        Bitmap image = decodeFile(android.os.Environment.getExternalStorageDirectory()
+        + File.separator + AppConstant.PHOTO_ALBUM+ File.separator +_filePaths.get(position).get_pid()+".jpg", imageWidth, imageWidth+50);
 
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(new GridView.LayoutParams(imageWidth,
                 imageWidth));
-//        imageView.setImageBitmap(image);
+        imageView.setImageBitmap(image);
 
-
-        // image view click listener
-        switch (position)
-        {
-//            case 0:
-//                imageView.setImageResource(R.drawable.betal);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 1:
-//                imageView.setImageResource(R.drawable.hindi1);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 2:
-//                imageView.setImageResource(R.drawable.hindi2);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 3:
-//                imageView.setImageResource(R.drawable.g1);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 4:
-//                imageView.setImageResource(R.drawable.g2);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 5:
-//                imageView.setImageResource(R.drawable.t1);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 6:
-//                imageView.setImageResource(R.drawable.t2);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 7:
-//                imageView.setImageResource(R.drawable.r);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 8:
-//                imageView.setImageResource(R.drawable.r2);
-//                imageView.setTag("4843865324388352");
-//                break;
-//            case 9:
-//                imageView.setImageResource(R.drawable.r3);
-//                imageView.setTag("4843865324388352");
-//                break;
-        }
         imageView.setOnClickListener(new OnImageClickListener(position,String.valueOf(imageView.getTag())));
 
         return imageView;
@@ -137,8 +95,7 @@ public class GridViewImageAdapter extends BaseAdapter {
             // on selecting grid view image
             // launch full screen activity
             Intent i = new Intent(_activity, DetailPageActivity.class);
-            i.putExtra(DetailPageActivity.POSITION, _postion);
-            i.putExtra(DetailPageActivity.PID, _pId);
+            i.putExtra(DetailPageActivity.METADATA, (Serializable) _filePaths.get(_postion));
             _activity.startActivity(i);
         }
 

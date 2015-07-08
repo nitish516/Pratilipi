@@ -11,11 +11,11 @@
         android:background="#ffffff"
         android:configChanges="locale">
     </GridView>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Your downloaded content will appear here"/>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:gravity="center"-->
+        <!--android:text="Your downloaded content will appear here"/>-->
 
 </FrameLayout>
