@@ -448,6 +448,7 @@ public void onCancel(DialogInterface dialog) {
                     }
                 }
             });
+            searchView.onActionViewExpanded();
         }
         return true;
     }
