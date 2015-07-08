@@ -2,6 +2,8 @@ package com.pratilipi.pratilipi.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +32,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
 
     List<Metadata> metadata;
     ViewGroup mViewGroup;
+    boolean random = true;
 
     public HomeAdapter(List<Metadata> metadata){
         this.metadata = metadata;
@@ -73,15 +76,26 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
         final Metadata metadataObj = metadata.get(position);
 
         holder.bookTitle.setText(metadataObj.get_title());
-        holder.authorName.setText("- "+metadataObj.get_authorFullName());
+//        holder.authorName.setText("- "+metadataObj.get_authorFullName());
         holder.bookCover.setImageUrl("http:" + metadataObj.get_coverImageUrl(), imageLoader);
-        holder.freeButton.setText("  FREE!");
+
+        if(random) {
+            holder.freeButton.setText("FREE!");
+        }
+        else {
+            holder.freeButton.setText("\u20B9"+ "100");
+            holder.freeButton.setTextColor(Color.GRAY);
+            holder.freeButton.setPaintFlags(holder.freeButton.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.priceText.setText(" \u20B9" + "20");
+        }
+        random =!random;
+
 
         if (metadataObj.get_ratingCount() > 0) {
 
             float val = (float) metadataObj.get_starCount() / metadataObj.get_ratingCount();
             if (val != 0.0) {
-                holder.mRatingBar.setRating(val);
+//                holder.mRatingBar.setRating(val);
 
                 NumberFormat numberformatter = NumberFormat.getNumberInstance();
                 numberformatter.setMaximumFractionDigits(1);
@@ -123,19 +137,19 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
         TextView ratingCount;
         TextView avgeragerating;
         TextView freeButton;
-
+        TextView priceText;
         public DataViewHolder(View itemView) {
             super(itemView);
 
             mHomeCardView = (CardView)itemView.findViewById(R.id.home_card_view);
             bookCover = (NetworkImageView)itemView.findViewById(R.id.image);
-            mRatingBar = (RatingBar)itemView.findViewById(R.id.averageRatingRatingBar);
+//            mRatingBar = (RatingBar)itemView.findViewById(R.id.averageRatingRatingBar);
             bookTitle = (TextView)itemView.findViewById(R.id.overlay_book_Title);
-            authorName = (TextView)itemView.findViewById(R.id.overlay_author_name);
+//            authorName = (TextView)itemView.findViewById(R.id.overlay_author_name);
             ratingCount = (TextView)itemView.findViewById(R.id.featuredPageRatingNumber);
             avgeragerating = (TextView)itemView.findViewById(R.id.averageRatingTextView);
             freeButton = (TextView)itemView.findViewById(R.id.freeBtn);
-
+            priceText= (TextView)itemView.findViewById(R.id.priceText);
             bookTitle.setSelected(true);
 
         }
