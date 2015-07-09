@@ -266,7 +266,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                    new String[]{"featured"}, PratilipiProvider.PID);
+                    new String[]{"featured"}, PratilipiProvider.ID);
 
 
             if (!c.moveToFirst()) {
@@ -391,7 +391,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, null,
-                    null, PratilipiProvider.PID);
+                    null, PratilipiProvider.ID);
 
 
             if (!c.moveToFirst()){
@@ -500,7 +500,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                    new String[]{"download"}, PratilipiProvider.PID);
+                    new String[]{"download"}, PratilipiProvider.ID);
             if (c.moveToFirst()) {
                 for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                     Metadata m = new Metadata();
@@ -585,7 +585,7 @@ public class MainActivity extends ActionBarActivity{
         private void fetchData() {
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/categories";
             Uri pid = Uri.parse(URL);
-            Cursor c = getActivity().getContentResolver().query(pid, null, null, null, PratilipiProvider.PID);
+            Cursor c = getActivity().getContentResolver().query(pid, null, null, null, PratilipiProvider.ID);
 
             if (!c.moveToFirst()) {
                 if (isOnline())
@@ -601,7 +601,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/categories";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, null,
-                    null, PratilipiProvider.PID);
+                    null, PratilipiProvider.ID);
 
 
             if (!c.moveToFirst()) {

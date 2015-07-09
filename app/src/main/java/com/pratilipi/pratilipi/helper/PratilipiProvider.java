@@ -29,7 +29,7 @@ public class PratilipiProvider extends ContentProvider {
     public static final Uri CATEGORIES_URI = Uri.parse(CATEGORIES_URL);
 
     // fields for the database
-    static final String ID = "id";
+    public static final String ID = "id";
     public static final String PID = "_pid";
     public static final String CH_NO = "_ch_no";
     public static final String CONTENT = "_content";
