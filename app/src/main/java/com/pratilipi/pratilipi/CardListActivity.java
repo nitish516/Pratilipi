@@ -349,7 +349,7 @@ public void onCancel(DialogInterface dialog) {
                         e.printStackTrace();
                     }
                 }
-                if(linearLayout.getChildAt(0) == null){
+                if(linearLayout.getChildAt(0) == null || pratilipiList.length()<=0){
                    noResultTextView.setVisibility(View.VISIBLE);
                 }
 
