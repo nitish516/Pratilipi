@@ -45,6 +45,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.pratilipi.pratilipi.DataFiles.Categories;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.adapter.HomeAdapter;
@@ -470,152 +471,6 @@ public class MainActivity extends ActionBarActivity{
 
             builder.show();
         }
-
-        /**
-         * Making json array request
-         * */
-//        private void makeJsonArryReq() {
-//            RequestTask task =  new RequestTask();
-//            String lan = getActivity().getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE).getString("selectedLanguage", "");
-//            Long lanId = null;
-//            if(lan.equalsIgnoreCase("hi"))
-//                lanId = 5130467284090880l;
-//            else if(lan.equalsIgnoreCase("ta"))
-//                lanId = 6319546696728576l;
-//            else if(lan.equalsIgnoreCase("gu"))
-//                lanId = 5965057007550464l;
-//
-//            task.execute("http://www.pratilipi.com/api.pratilipi/mobileinit?languageId="+lanId);
-//            task.delegate = this;
-//        }
-
-//        void parseJson(JSONObject response)
-//        {
-//            JsonArray featuredPratilipiDataList = null;
-//            JsonArray newReleasesPratilipiDataList = null;
-//            JsonArray topReadsPratilipiDataList = null;
-//            Gson gson = new GsonBuilder().create();
-//
-//            try {
-//                String responseStr = response.getString("response");
-//                Log.d("responseStr",responseStr);
-//                JsonObject responseObj = gson.fromJson( responseStr, JsonElement.class ).getAsJsonObject();
-//                JsonArray elementArr  = responseObj.get("elements").getAsJsonArray();
-//                Log.d("element",""+elementArr);
-//
-//                for (int i=0; i<elementArr.size(); i++) {
-//                    Log.d("parts at ", i + " " + elementArr.get(i));
-//                    JsonObject elementObj = gson.fromJson(elementArr.get(i), JsonElement.class).getAsJsonObject();
-//                    Log.d("elementObj", i + " " + elementObj);
-//                    JsonArray contentArr = elementObj.get("content").getAsJsonArray();
-//                    String type = elementObj.get("name").getAsString();
-//                    if(type.equalsIgnoreCase("Featured")){
-//                        featuredPratilipiDataList = contentArr;
-//                    }
-//                    else if(type.equalsIgnoreCase("New Releases")){
-//                        newReleasesPratilipiDataList = contentArr;
-//                    }
-//                    else if(type.equalsIgnoreCase("Top Reads")){
-//                        topReadsPratilipiDataList = contentArr;
-//                    }
-//                }
-//
-//                for (int i = 0; i < featuredPratilipiDataList.size(); i++) {
-//                    final JsonObject obj = gson.fromJson( featuredPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
-//                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
-//                        continue;
-//
-//                    Metadata m = new Metadata();
-//                    m.set_title(obj.get("title").getAsString());
-//                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
-//                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
-//                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
-//                    m.set_starCount(obj.get("starCount").getAsLong());
-//                    m.set_authorId(obj.get("authorId").getAsString());
-//                    m.set_pageUrl(obj.get("pageUrl").getAsString());
-//                    if(null!=obj.get("summary"))
-//                        m.set_summary(obj.get("summary").getAsString());
-//                    if(null!=obj.get("index"))
-//                        m.set_index(obj.get("index").getAsString());
-//                    m.set_contentType(obj.get("contentType").getAsString());
-//                    m.set_pid(obj.get("id").getAsLong() + "");
-//                    m.set_page_count(obj.get("pageCount").getAsInt());
-//                    featured_metadata.add(m);
-//                    mHomeFeaturedAdapter.notifyDataSetChanged();
-//                }
-//
-//
-//                for (int i = 0; i < newReleasesPratilipiDataList.size(); i++) {
-//                    final JsonObject obj = gson.fromJson( newReleasesPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
-//                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
-//                        continue;
-//
-//                    Metadata m = new Metadata();
-//                    m.set_title(obj.get("title").getAsString());
-//                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
-//                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
-//                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
-//                    m.set_starCount(obj.get("starCount").getAsLong());
-//                    m.set_authorId(obj.get("authorId").getAsString());
-//                    m.set_pageUrl(obj.get("pageUrl").getAsString());
-//                    if(null != obj.get("summary"))
-//                        m.set_summary(obj.get("summary").getAsString());
-//                    if(null != obj.get("index"))
-//                        m.set_index(obj.get("index").getAsString());
-//                    m.set_contentType(obj.get("contentType").getAsString());
-//                    m.set_pid(obj.get("id").getAsLong() + "");
-//                    m.set_page_count(obj.get("pageCount").getAsInt());
-//
-//                    new_releases_metadata.add(m);
-//                    mHomeNewReleasesAdapter.notifyDataSetChanged();
-//                }
-//
-//                for (int i = 0; i < topReadsPratilipiDataList.size(); i++) {
-//                    final JsonObject obj = gson.fromJson( topReadsPratilipiDataList.get(i), JsonElement.class ).getAsJsonObject();
-//                    if (!obj.get("state").getAsString().equalsIgnoreCase("PUBLISHED"))
-//                        continue;
-//
-//                    Metadata m = new Metadata();
-//                    m.set_title(obj.get("title").getAsString());
-//                    m.set_authorFullName(obj.get("author").getAsJsonObject().get("name").getAsString());
-//                    m.set_coverImageUrl(obj.get("coverImageUrl").getAsString());
-//                    m.set_ratingCount(obj.get("ratingCount").getAsLong());
-//                    m.set_starCount(obj.get("starCount").getAsLong());
-//                    m.set_authorId(obj.get("authorId").getAsString());
-//                    m.set_pageUrl(obj.get("pageUrl").getAsString());
-//                    if(null != obj.get("summary"))
-//                        m.set_summary(obj.get("summary").getAsString());
-//                    if(null != obj.get("index"))
-//                        m.set_index(obj.get("index").getAsString());
-//                    m.set_contentType(obj.get("contentType").getAsString());
-//                    m.set_pid(obj.get("id").getAsLong()+"");
-//                    m.set_page_count(obj.get("pageCount").getAsInt());
-//
-//                    top_reads_metadata.add(m);
-//                    mHomeTopReadsAdapter.notifyDataSetChanged();
-//                }
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
-
-//        @Override
-//        public void processFinish(String output) {
-//            if(!(null == output || output.isEmpty())) {
-//                Log.d("Output", output);
-//                try {
-//                    parseJson(new JSONObject(output));
-//                    pBar.setVisibility(View.GONE);
-//                    pBar1.setVisibility(View.GONE);
-//                    pBar2.setVisibility(View.GONE);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 
     /**
@@ -631,7 +486,7 @@ public class MainActivity extends ActionBarActivity{
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_shelf, container, false);
             gridView = (GridView) rootView.findViewById(R.id.grid_view);
@@ -645,7 +500,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                 new String[]{"download"}, PratilipiProvider.PID);
+                    new String[]{"download"}, PratilipiProvider.PID);
             if (c.moveToFirst()) {
                 for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                     Metadata m = new Metadata();
@@ -666,7 +521,7 @@ public class MainActivity extends ActionBarActivity{
             }
 
             // Gridview adapter
-            adapter = new GridViewImageAdapter(getActivity(), imagePaths,columnWidth);
+            adapter = new GridViewImageAdapter(getActivity(), imagePaths, columnWidth);
 
             // setting grid view adapter
             gridView.setAdapter(adapter);
@@ -691,21 +546,14 @@ public class MainActivity extends ActionBarActivity{
         }
     }
 
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class CategoriesFragment extends Fragment {
+    public static class CategoriesFragment extends Fragment implements AsyncResponse{
 
         public static final String ARG_SECTION_NUMBER = "section_number";
-
+        List<String> listCategories;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            final String[] categoriesArray = {
-                    "Books","Poems","Stories"
-            };
-            List<String> listCategories = new ArrayList<String>(
-                    Arrays.asList(categoriesArray));
+            listCategories = new ArrayList<String>();
 
             ArrayAdapter<String> mCategoriesAdapter = new ArrayAdapter<String>(
                     getActivity(),
@@ -720,13 +568,127 @@ public class MainActivity extends ActionBarActivity{
             linearLayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String input = categoriesArray[position];
+                    String input = listCategories.get(position);
                     Intent NewReleaseIntent = new Intent(getActivity(), CardListActivity.class);
-                    NewReleaseIntent.putExtra("TITLE",input);
+                    NewReleaseIntent.putExtra("TITLE", input);
                     startActivity(NewReleaseIntent);
                 }
             });
+            fetchData();
             return rootView;
+        }
+
+        private void fetchData() {
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/categories";
+            Uri pid = Uri.parse(URL);
+            Cursor c = getActivity().getContentResolver().query(pid, null, null, null, PratilipiProvider.PID);
+
+            if (!c.moveToFirst()) {
+                if (isOnline())
+                    makeJsonReq();
+                else
+                    showNoConnectionDialog(getActivity());
+            } else {
+                fetchDataFromDb();
+            }
+        }
+
+        private void fetchDataFromDb() {
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/categories";
+            Uri pid = Uri.parse(URL);
+            Cursor c = getActivity().getContentResolver().query(pid, null, null,
+                    null, PratilipiProvider.PID);
+
+
+            if (!c.moveToFirst()) {
+                //makeRequest();
+            } else {
+                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                    listCategories.add(c.getString(c.getColumnIndex(PratilipiProvider.TITLE)));
+                    }
+                }
+            }
+
+        @Override
+        public void processFinish(String output) {
+            if (!(null == output || output.isEmpty())) {
+                Log.d("Output", output);
+                try {
+                    parseJson(new JSONObject(output));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void makeJsonReq() {
+            RequestTask task = new RequestTask();
+            task.execute("http://www.pratilipi.com/api.pratilipi/category");
+            task.delegate = (AsyncResponse) this;
+        }
+
+        public boolean isOnline() {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnectedOrConnecting();
+        }
+
+        public static void showNoConnectionDialog(Context ctx1) {
+            final Context ctx = ctx1;
+            AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+            builder.setCancelable(true);
+            builder.setMessage(R.string.no_connection);
+            builder.setTitle(R.string.no_connection_title);
+            builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    Intent dialogIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ctx.startActivity(dialogIntent);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    return;
+                }
+            });
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                    return;
+                }
+            });
+
+            builder.show();
+        }
+
+        private void parseJson(JSONObject jsonObject) {
+            Gson gson = new GsonBuilder().create();
+
+            try {
+                String responseStr = jsonObject.getString("categoryDataList");
+                Log.d("responseStr", responseStr);
+                JsonArray elementArr = gson.fromJson(responseStr, JsonElement.class).getAsJsonArray();
+                Log.d("element", "" + elementArr);
+
+                for (int i = 0; i < elementArr.size(); i++) {
+                    Log.d("parts at ", i + " " + elementArr.get(i));
+                    JsonObject elementObj = gson.fromJson(elementArr.get(i), JsonElement.class).getAsJsonObject();
+                    Log.d("elementObj", i + " " + elementObj);
+
+                    ContentValues values = new ContentValues();
+                    values.put(PratilipiProvider.PID, elementObj.get("id").getAsLong() + "");
+                    values.put(PratilipiProvider.TITLE, elementObj.get("name").getAsString());
+                    ContentResolver cv = getActivity().getContentResolver();
+                    Uri uri = cv.insert(
+                            PratilipiProvider.CATEGORIES_URI, values);
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            fetchDataFromDb();
         }
     }
 }

@@ -23,8 +23,10 @@ public class PratilipiProvider extends ContentProvider {
     public static final String PROVIDER_NAME = "com.pratilipi.pratilipi.helper.PratilipiData";
     public static final String CONTENT_URL = "content://" + PROVIDER_NAME + "/content";
     public static final String METADATA_URL = "content://" + PROVIDER_NAME + "/metadata";
+    public static final String CATEGORIES_URL = "content://" + PROVIDER_NAME + "/categories";
     public static final Uri CONTENT_URI = Uri.parse(CONTENT_URL);
     public static final Uri METADATA_URI = Uri.parse(METADATA_URL);
+    public static final Uri CATEGORIES_URI = Uri.parse(CATEGORIES_URL);
 
     // fields for the database
     static final String ID = "id";
@@ -48,6 +50,7 @@ public class PratilipiProvider extends ContentProvider {
     // integer values used in content sURI
     static final int uriContent = 1;
     static final int uriMetadata = 2;
+    static final int uriCategories = 3;
     static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     // projection map for a query
@@ -57,6 +60,7 @@ public class PratilipiProvider extends ContentProvider {
     static {
         uriMatcher.addURI(PROVIDER_NAME, "content", uriContent);
         uriMatcher.addURI(PROVIDER_NAME, "metadata", uriMetadata);
+        uriMatcher.addURI(PROVIDER_NAME, "categories", uriCategories);
     }
 
     // database declarations
@@ -64,6 +68,7 @@ public class PratilipiProvider extends ContentProvider {
     public static final String DATABASE_NAME = "PratilipiDb";
     public static final String TABLE_CONTENT = "contentTable";
     public static final String TABLE_METADATA = "metadaTable";
+    public static final String TABLE_CATEGORIES = "categoriesTable";
     static final int DATABASE_VERSION = 1;
     static final String CREATE_CONTENT_TABLE =
             " CREATE TABLE IF NOT EXISTS " + TABLE_CONTENT +
@@ -89,6 +94,12 @@ public class PratilipiProvider extends ContentProvider {
             + " _summary TEXT , "
             + " _pg_url TEXT );";
 
+    static final String CREATE_CATEGORIES_TABLE =
+            " CREATE TABLE IF NOT EXISTS " + TABLE_CATEGORIES +
+                    " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    " _pid TEXT NOT NULL, " +
+                    " _title TEXT );";
+
     // class that creates and manages the provider's database
     private static class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseHelper(Context context) {
@@ -100,12 +111,14 @@ public class PratilipiProvider extends ContentProvider {
 
             db.execSQL(CREATE_CONTENT_TABLE);
             db.execSQL(CREATE_METADATA_TABLE);
+            db.execSQL(CREATE_CATEGORIES_TABLE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTENT);
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_METADATA);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
             onCreate(db);
         }
     }
@@ -120,6 +133,9 @@ public class PratilipiProvider extends ContentProvider {
             case uriMetadata:
                 count = db.delete(TABLE_METADATA, selection, selectionArgs);
                 break;
+            case uriCategories:
+                count = db.delete(TABLE_CATEGORIES, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -133,17 +149,30 @@ public class PratilipiProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case uriContent:
                  rowID = db.insert(TABLE_CONTENT, "", values);
+                if (rowID > 0) {
+                    Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
+                    getContext().getContentResolver().notifyChange(_uri, null);
+                    return _uri;
+                }
                 break;
             case uriMetadata:
                 rowID = db.insert(TABLE_METADATA, "", values);
+                if (rowID > 0) {
+                    Uri _uri = ContentUris.withAppendedId(METADATA_URI, rowID);
+                    getContext().getContentResolver().notifyChange(_uri, null);
+                    return _uri;
+                }
+                break;
+            case uriCategories:
+                rowID = db.insert(TABLE_CATEGORIES, "", values);
+                if (rowID > 0) {
+                    Uri _uri = ContentUris.withAppendedId(CATEGORIES_URI, rowID);
+                    getContext().getContentResolver().notifyChange(_uri, null);
+                    return _uri;
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
-        }
-        if (rowID > 0) {
-              Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
-              getContext().getContentResolver().notifyChange(_uri, null);
-              return _uri;
         }
         throw new SQLException("Failed to add a record into " + uri);
     }
@@ -170,7 +199,11 @@ public class PratilipiProvider extends ContentProvider {
                 qb.setTables(TABLE_METADATA);
                 qb.setProjectionMap(values);
                 break;
-           default:
+            case uriCategories:
+                qb.setTables(TABLE_CATEGORIES);
+                qb.setProjectionMap(values);
+                break;
+            default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
         if (sortOrder == null || sortOrder.equals("")) sortOrder = PID;
@@ -195,6 +228,9 @@ public class PratilipiProvider extends ContentProvider {
                 break;
             case uriMetadata:
                 count = db.update(TABLE_METADATA, values, selection, selectionArgs);
+                break;
+            case uriCategories:
+                count = db.update(TABLE_CATEGORIES, values, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
