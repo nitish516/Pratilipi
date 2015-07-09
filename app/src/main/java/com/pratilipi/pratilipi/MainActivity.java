@@ -45,7 +45,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.pratilipi.pratilipi.DataFiles.Categories;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.adapter.HomeAdapter;
@@ -57,7 +56,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //import android.support.v7.app.AppCompatActivity;
@@ -94,6 +92,7 @@ public class MainActivity extends ActionBarActivity{
             case R.id.action_search_item:
                 Intent searchIntent = new Intent(MainActivity.this, CardListActivity.class);
                 searchIntent.putExtra("TITLE","Search");
+                searchIntent.putExtra("LAUNCHER", "search");
                 searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivityForResult(searchIntent,0);
                 overridePendingTransition(0,0);
@@ -433,6 +432,7 @@ public class MainActivity extends ActionBarActivity{
 
             Intent mIntent = new Intent(getActivity(), CardListActivity.class);
             mIntent.putExtra("TITLE",input);
+            mIntent.putExtra("LAUNCHER","more");
             mIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivityForResult(mIntent, 0);
 //            overridePendingTransition(0,0);
@@ -550,12 +550,14 @@ public class MainActivity extends ActionBarActivity{
 
         public static final String ARG_SECTION_NUMBER = "section_number";
         List<String> listCategories;
+        List<String> listId;
+        ArrayAdapter<String> mCategoriesAdapter;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             listCategories = new ArrayList<String>();
-
-            ArrayAdapter<String> mCategoriesAdapter = new ArrayAdapter<String>(
+            listId = new ArrayList<String>();
+            mCategoriesAdapter = new ArrayAdapter<String>(
                     getActivity(),
                     R.layout.listitem_categories_textview,
                     R.id.textview_categories,
@@ -569,9 +571,11 @@ public class MainActivity extends ActionBarActivity{
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String input = listCategories.get(position);
-                    Intent NewReleaseIntent = new Intent(getActivity(), CardListActivity.class);
-                    NewReleaseIntent.putExtra("TITLE", input);
-                    startActivity(NewReleaseIntent);
+                    Intent CategoriesIntent = new Intent(getActivity(), CardListActivity.class);
+                    CategoriesIntent.putExtra("TITLE", input);
+                    CategoriesIntent.putExtra("LAUNCHER", "categories");
+                    CategoriesIntent.putExtra("ID", listId.get(position));
+                    startActivity(CategoriesIntent);
                 }
             });
             fetchData();
@@ -605,6 +609,8 @@ public class MainActivity extends ActionBarActivity{
             } else {
                 for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                     listCategories.add(c.getString(c.getColumnIndex(PratilipiProvider.TITLE)));
+                    listId.add(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
+                    mCategoriesAdapter.notifyDataSetChanged();
                     }
                 }
             }

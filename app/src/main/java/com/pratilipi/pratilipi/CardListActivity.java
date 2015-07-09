@@ -47,11 +47,13 @@ import java.util.List;
  */
 public class CardListActivity extends ActionBarActivity implements AsyncResponse{
     LinearLayout linearLayout;
+    TextView noResultTextView;
     ProgressBar progressBar;
     Long lanId = null;
     Typeface typeFace = null;
     String url = "http://www.pratilipi.com/api.pratilipi/pratilipi/list?state=PUBLISHED&languageId=";
     boolean isSearch = false;
+    boolean isCategories = false;
     SearchView searchView;
     String output ="";
     Toolbar toolbar;
@@ -60,6 +62,8 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayout;
     String mTitle = "";
+    String mLauncher = "";
+    String mCategoryId = "";
     String selectionArgs = "";
 
     protected void onCreate(Bundle savedInstanceState){
@@ -93,13 +97,17 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         //Recycler View END
 
         linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);
-
+        noResultTextView = (TextView)findViewById(R.id.noResultTextView);
         mTitle = getIntent().getStringExtra("TITLE");
+        mLauncher = getIntent().getStringExtra("LAUNCHER");
         toolbar_title.setText(mTitle);
 
-        if(!(mTitle.equalsIgnoreCase("Featured")|| mTitle.equalsIgnoreCase("New Releases")|| mTitle.equalsIgnoreCase("Top Reads")
-            || mTitle.equalsIgnoreCase("Books")|| mTitle.equalsIgnoreCase("Poems")|| mTitle.equalsIgnoreCase("Stories"))){
+        if(mLauncher.equalsIgnoreCase("search")){
             isSearch = true;
+        }
+        else if(mLauncher.equalsIgnoreCase("categories")){
+            isCategories = true;
+            mCategoryId = getIntent().getStringExtra("ID");
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -147,10 +155,14 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
                 url +="topReadsPratilipiDataList";
                 break;
         }
+        if(isCategories){
+            selectionArgs = mTitle.substring(0,3);
+            url = "http://www.pratilipi.com/api.pratilipi/category/pratilipilist?languageId="+lanId
+                    +"&categoryId="+mCategoryId;
+        }
 
         Cursor c = getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
                 new String[]{selectionArgs}, PratilipiProvider.PID);
-
 
         if (!c.moveToFirst()) {
             if(isOnline())
@@ -254,7 +266,7 @@ public void onCancel(DialogInterface dialog) {
     void parseJson(JSONObject response) {
         try {
             JSONArray pratilipiList;
-            if(isSearch) {
+            if(isSearch ||  isCategories) {
                  pratilipiList = response.getJSONArray("pratilipiDataList");
             }
             else {
@@ -338,21 +350,11 @@ public void onCancel(DialogInterface dialog) {
                     }
                 }
                 if(linearLayout.getChildAt(0) == null){
-                    TextView tv = new TextView(linearLayout.getContext());
-                    tv.setText("No results");
-                    tv.setGravity(Gravity.CENTER);
-                    tv.setTextSize(32);
-                    linearLayout.setGravity(Gravity.CENTER);
-                    linearLayout.addView(tv);
+                   noResultTextView.setVisibility(View.VISIBLE);
                 }
 
             }else {
-                TextView tv = new TextView(linearLayout.getContext());
-                tv.setText("No results");
-                tv.setGravity(Gravity.CENTER);
-                tv.setTextSize(32);
-                linearLayout.setGravity(Gravity.CENTER);
-                linearLayout.addView(tv);
+                noResultTextView.setVisibility(View.VISIBLE);
 
             }
             } catch (JSONException e1) {
@@ -366,12 +368,7 @@ public void onCancel(DialogInterface dialog) {
         if(null == output || output.isEmpty()){
             Log.d("Output", output);
 
-            TextView tv = new TextView(linearLayout.getContext());
-            tv.setText("No results");
-            tv.setTextSize(32);
-            tv.setGravity(Gravity.CENTER);
-            linearLayout.setGravity(Gravity.CENTER);
-            linearLayout.addView(tv);
+            noResultTextView.setVisibility(View.VISIBLE);
 
         }
         else {

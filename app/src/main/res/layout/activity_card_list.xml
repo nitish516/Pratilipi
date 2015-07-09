@@ -21,6 +21,15 @@
         android:layout_centerVertical="true"
         android:visibility="invisible"
         android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/noResultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="32dp"
+        android:visibility="gone"
+        android:text="No results!"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
