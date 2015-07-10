@@ -9,7 +9,6 @@
     android:paddingLeft="25dp"
     android:paddingRight="16dp"
     android:textColor="#444"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall"
-    android:onClick="launchDetail">
+    android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
 </TextView>
