@@ -9,7 +9,8 @@
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
     android:id="@+id/home_card_view"
-    card_view:cardBackgroundColor="#FFFFFF">
+    card_view:cardBackgroundColor="#FFFFFF"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
     android:id="@+id/view_item_layout"
