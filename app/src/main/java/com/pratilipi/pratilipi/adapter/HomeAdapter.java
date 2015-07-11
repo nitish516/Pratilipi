@@ -79,16 +79,16 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
 //        holder.authorName.setText("- "+metadataObj.get_authorFullName());
         holder.bookCover.setImageUrl("http:" + metadataObj.get_coverImageUrl(), imageLoader);
 
-        if(random) {
+//        if(random) {
             holder.freeButton.setText("FREE!");
-        }
-        else {
-            holder.freeButton.setText("\u20B9"+ "100");
-            holder.freeButton.setTextColor(Color.GRAY);
-            holder.freeButton.setPaintFlags(holder.freeButton.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.priceText.setText(" \u20B9" + "20");
-        }
-        random =!random;
+//        }
+//        else {
+//            holder.freeButton.setText("\u20B9"+ "100");
+//            holder.freeButton.setTextColor(Color.GRAY);
+//            holder.freeButton.setPaintFlags(holder.freeButton.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//            holder.priceText.setText(" \u20B9" + "20");
+//        }
+//        random =!random;
 
 
         if (metadataObj.get_ratingCount() > 0) {
