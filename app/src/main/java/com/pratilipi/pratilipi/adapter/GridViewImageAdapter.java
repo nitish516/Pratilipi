@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DetailPageActivity;
 import com.pratilipi.pratilipi.R;
+import com.pratilipi.pratilipi.ReadActivity;
 import com.pratilipi.pratilipi.helper.AppConstant;
 
 import java.io.File;
@@ -94,7 +95,7 @@ public class GridViewImageAdapter extends BaseAdapter {
         public void onClick(View v) {
             // on selecting grid view image
             // launch full screen activity
-            Intent i = new Intent(_activity, DetailPageActivity.class);
+            Intent i = new Intent(_activity, ReadActivity.class);
             i.putExtra(DetailPageActivity.METADATA, (Serializable) _filePaths.get(_postion));
             _activity.startActivity(i);
         }
