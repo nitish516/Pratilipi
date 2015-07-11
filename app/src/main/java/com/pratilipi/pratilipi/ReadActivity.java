@@ -725,6 +725,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             }
                         } else {
                             if (currentPage == 1) {
+                                if (toast != null) {
+                                    toast.cancel();
+                                    toast = null;
+                                }
                                 toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
                                 toast.show();
                             }else if(initialScale <= 30){
@@ -748,12 +752,33 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         }
                         else {
                             if (pageCount == currentPage) {
+                                if (toast != null) {
+                                    toast.cancel();
+                                    toast = null;
+                                }
                                 toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
                                 toast.show();
                             }else if(initialScale <= 30){
                                 launchChapter(true);
                             }
                         }
+                    }
+                }
+                else {
+                    if (diffY > 0) {
+                        if (toast != null) {
+                            toast.cancel();
+                            toast = null;
+                        }
+                        toast = Toast.makeText(getApplicationContext(), "Scroll right to go to next page", Toast.LENGTH_SHORT);
+                        toast.show();
+                    } else {
+                        if (toast != null) {
+                            toast.cancel();
+                            toast = null;
+                        }
+                        toast = Toast.makeText(getApplicationContext(), "Scroll left to go to previous page", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }
             } catch (Exception e) {
