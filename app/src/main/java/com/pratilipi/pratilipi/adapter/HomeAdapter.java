@@ -144,7 +144,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.DataViewHolder
             mHomeCardView = (CardView)itemView.findViewById(R.id.home_card_view);
             bookCover = (NetworkImageView)itemView.findViewById(R.id.image);
 //            mRatingBar = (RatingBar)itemView.findViewById(R.id.averageRatingRatingBar);
-            bookTitle = (TextView)itemView.findViewById(R.id.overlay_book_Title);
+            bookTitle = (TextView)itemView.findViewById(R.id.overlay_book_title);
 //            authorName = (TextView)itemView.findViewById(R.id.overlay_author_name);
             ratingCount = (TextView)itemView.findViewById(R.id.featuredPageRatingNumber);
             avgeragerating = (TextView)itemView.findViewById(R.id.averageRatingTextView);

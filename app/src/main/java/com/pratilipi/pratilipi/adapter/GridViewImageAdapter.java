@@ -8,12 +8,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.widget.CardView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DetailPageActivity;
@@ -57,12 +60,18 @@ public class GridViewImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
+//        CardView cardView;
         if (convertView == null) {
             imageView = new ImageView(_activity);
         } else {
             imageView = (ImageView) convertView;
         }
+//        cardView = (CardView) LayoutInflater.from(_activity).inflate(R.layout.cardview_shelf, parent, false);
+//
+//        TextView tv=(TextView)cardView.findViewById(R.id.shelf_book_title);
+//        tv.setText(_filePaths.get(position).get_title());
 
+//        imageView = (ImageView) cardView.findViewById(R.id.shelf_image);
         String filePath = android.os.Environment.getExternalStorageDirectory()
                 + File.separator + AppConstant.PHOTO_ALBUM;
         // get screen dimensions
