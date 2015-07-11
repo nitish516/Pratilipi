@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -21,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -68,20 +72,33 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
         TextView toolbar_title = (TextView)toolbar.findViewById(R.id.title_toolbar);
 
-//        Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
-//        addToShelf.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                switch (v.getId()) {
-//                    case R.id.addToShelfButton: {
-//                        startActivity(new Intent(DetailPageActivity.this, LoginActivity.class));
-//                        break;
-//                    }
-//                }
-//            }
-//        });
         try{
             metadata = (Metadata) getIntent().getSerializableExtra(METADATA);
+
+            Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
+            if(metadata.get_is_downloaded()!= null && metadata.get_is_downloaded().equalsIgnoreCase("yes")){
+                addToShelf.setBackgroundColor(Color.GRAY);
+                addToShelf.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                addToShelf.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) { new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast toast = Toast.makeText(getApplicationContext(), "Already in shelf", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    });
+                    }
+                });
+            }
+            else{
+                addToShelf.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        download(v);
+                    }
+                });
+            }
 
             TextView title = (TextView) findViewById(R.id.titleTextView);
 
@@ -194,8 +211,14 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     }
 
     public void download(View view){
-        Toast toast = Toast.makeText(this,"Downloading ...",Toast.LENGTH_SHORT);
-        toast.show();
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(getApplicationContext(), "Downloading ...", Toast.LENGTH_SHORT);
+                toast.show();
+
+            }
+        });
         addMetaData();
         downloadImage();
         for(int i =1; i <= metadata.get_page_count(); i++ ){
@@ -257,10 +280,19 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             if(null!=metadata.get_summary())
                 values.put(PratilipiProvider.SUMMARY , metadata.get_summary());
             values.put(PratilipiProvider.LIST_TYPE , "download");
+            values.put(PratilipiProvider.IS_DOWNLOADED , "yes");
 
             ContentResolver cv = getContentResolver();
             Uri uri = cv.insert(
                     PratilipiProvider.METADATA_URI, values);
+
+            if(null!= uri) {
+                ContentValues value = new ContentValues();
+                value.put(PratilipiProvider.IS_DOWNLOADED , "yes");
+
+                cv.update(PratilipiProvider.METADATA_URI,value, PratilipiProvider.PID + "=?",
+                            new String[]{metadata.get_pid()});
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

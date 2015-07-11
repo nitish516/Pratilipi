@@ -15,6 +15,7 @@ public class Metadata implements Serializable{
 	String _coverImageUrl;
 	String _pageUrl;
     String _index;
+	String _is_downloaded;
 	String _summary;
 	long _ratingCount;
 	long _starCount;
@@ -102,6 +103,14 @@ public class Metadata implements Serializable{
 
 	public void set_summary(String _summary) {
 		this._summary = _summary;
+	}
+
+	public String get_is_downloaded() {
+		return _is_downloaded;
+	}
+
+	public void set_is_downloaded(String _is_downloaded) {
+		this._is_downloaded = _is_downloaded;
 	}
 
 	public long get_ratingCount() {

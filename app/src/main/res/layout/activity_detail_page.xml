@@ -120,7 +120,6 @@
                android:layout_width="0dp"
                android:layout_weight="0.5"
                android:text="ADD TO SHELF"
-               android:onClick="download"
                android:background="@color/Red"
                android:textColor="#ffffff"
                android:layout_marginLeft="2dp"/>

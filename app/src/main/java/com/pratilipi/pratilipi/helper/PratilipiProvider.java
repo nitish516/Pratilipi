@@ -46,6 +46,7 @@ public class PratilipiProvider extends ContentProvider {
     public static final String RATING_COUNT = "_rating_count";
     public static final String STAR_COUNT = "_star_count";
     public static final String SUMMARY = "_summary";
+    public static final String IS_DOWNLOADED = "_is_downloaded";
 
     // integer values used in content sURI
     static final int uriContent = 1;
@@ -92,6 +93,7 @@ public class PratilipiProvider extends ContentProvider {
             + " _rating_count INTEGER , "
             + " _star_count INTEGER , "
             + " _summary TEXT , "
+            + " _is_downloaded TEXT , "
             + " _pg_url TEXT );";
 
     static final String CREATE_CATEGORIES_TABLE =
