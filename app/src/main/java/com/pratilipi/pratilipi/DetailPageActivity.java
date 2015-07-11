@@ -75,7 +75,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         try{
             metadata = (Metadata) getIntent().getSerializableExtra(METADATA);
 
-            Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
+            final Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
             if(metadata.get_is_downloaded()!= null && metadata.get_is_downloaded().equalsIgnoreCase("yes")){
                 addToShelf.setBackgroundColor(Color.GRAY);
                 addToShelf.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
@@ -96,6 +96,20 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                     @Override
                     public void onClick(View v) {
                         download(v);
+                        addToShelf.setBackgroundColor(Color.GRAY);
+                        addToShelf.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                        addToShelf.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new Handler().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast toast = Toast.makeText(getApplicationContext(), "Already in shelf", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
