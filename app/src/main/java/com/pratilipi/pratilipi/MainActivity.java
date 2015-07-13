@@ -411,7 +411,10 @@ public class MainActivity extends ActionBarActivity{
                     m.set_contentType(c.getString(c.getColumnIndex(PratilipiProvider.CONTENT_TYPE)));
                     m.set_pid(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
                     m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
-                    m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
+
+                    if((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED)))!= null)
+                        m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
+
                     if (c.getString(c.getColumnIndex(PratilipiProvider.LIST_TYPE)).equalsIgnoreCase("featured")) {
                         featured_metadata.add(m);
                         mHomeFeaturedAdapter.notifyDataSetChanged();
@@ -517,7 +520,8 @@ public class MainActivity extends ActionBarActivity{
                     m.set_contentType(c.getString(c.getColumnIndex(PratilipiProvider.CONTENT_TYPE)));
                     m.set_pid(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
                     m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
-                    m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
+                    if((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED)))!= null)
+                        m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
                     imagePaths.add(m);
                 }
             }

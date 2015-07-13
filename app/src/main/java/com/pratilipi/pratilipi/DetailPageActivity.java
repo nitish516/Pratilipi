@@ -357,12 +357,13 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             values.put(PratilipiProvider.PID , pId);
             values.put(PratilipiProvider.IMAGE ,baf.toByteArray());
             values.put(PratilipiProvider.CH_NO, chapter);
+
+            ContentResolver cv = getContentResolver();
+            Uri uri = cv.insert(
+                    PratilipiProvider.CONTENT_URI, values);
         } catch (Exception e) {
             Log.d("ImageManager", "Error: " + e.toString());
         }
-        ContentResolver cv = getContentResolver();
-        Uri uri = cv.insert(
-                PratilipiProvider.CONTENT_URI, values);
     }
 
     void parseJson(JSONObject obj) {
