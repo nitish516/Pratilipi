@@ -19,8 +19,11 @@ public class Metadata implements Serializable{
 	String _summary;
 	long _ratingCount;
 	long _starCount;
+	int _current_chapter;
+	int _current_page;
+	int _read_order;
 
-    public Metadata()
+	public Metadata()
     {
 
     }
@@ -126,4 +129,28 @@ public class Metadata implements Serializable{
 	}
 
 	public void set_starCount(long starCount) { this._starCount = starCount; }
+
+	public int get_current_chapter() {
+		return _current_chapter;
+	}
+
+	public void set_current_chapter(int _current_chapter) {
+		this._current_chapter = _current_chapter;
+	}
+
+	public int get_current_page() {
+		return _current_page;
+	}
+
+	public void set_current_page(int _current_page) {
+		this._current_page = _current_page;
+	}
+
+	public int get__read_order() {
+		return _read_order;
+	}
+
+	public void set__read_order(int _read_order) {
+		this._read_order = _read_order;
+	}
 }

@@ -47,6 +47,9 @@ public class PratilipiProvider extends ContentProvider {
     public static final String STAR_COUNT = "_star_count";
     public static final String SUMMARY = "_summary";
     public static final String IS_DOWNLOADED = "_is_downloaded";
+    public static final String CURRENT_CHAPTER = "_current_chapter";
+    public static final String CURRENT_PAGE = "_current_page";
+    public static final String READ_ORDER = "_read_order";
 
     // integer values used in content sURI
     static final int uriContent = 1;
@@ -94,6 +97,9 @@ public class PratilipiProvider extends ContentProvider {
             + " _star_count INTEGER , "
             + " _summary TEXT , "
             + " _is_downloaded TEXT , "
+            + " _current_chapter INT , "
+            + " _current_page INT , "
+            + " _read_order INT , "
             + " _pg_url TEXT );";
 
     static final String CREATE_CATEGORIES_TABLE =

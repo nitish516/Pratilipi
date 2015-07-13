@@ -46,6 +46,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
+import com.pratilipi.pratilipi.adapter.CardListAdapter;
 import com.pratilipi.pratilipi.adapter.GridViewImageAdapter;
 import com.pratilipi.pratilipi.adapter.HomeAdapter;
 import com.pratilipi.pratilipi.adapter.ViewPagerAdapter;
@@ -484,20 +485,31 @@ public class MainActivity extends ActionBarActivity{
 
         private com.pratilipi.pratilipi.util.Utils utils;
         private ArrayList<Metadata> imagePaths = new ArrayList<Metadata>();
-        private GridViewImageAdapter adapter;
+//        private GridViewImageAdapter adapter;
         private GridView gridView;
         private int columnWidth;
+        private RecyclerView mRecyclerView;
+        private List<Metadata> metadata = new ArrayList<Metadata>();
+        private CardListAdapter adapter;
+        private LinearLayoutManager mShelfLayout;
+
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_shelf, container, false);
-            gridView = (GridView) rootView.findViewById(R.id.grid_view);
+//            gridView = (GridView) rootView.findViewById(R.id.grid_view);
             utils = new com.pratilipi.pratilipi.util.Utils(getActivity());
 
             // Initilizing Grid View
-            InitilizeGridLayout();
+//            InitilizeGridLayout();
+            mRecyclerView = (RecyclerView)rootView.findViewById(R.id.recycler_view_shelf);
+            mRecyclerView.setHasFixedSize(true);
+
+            mShelfLayout = new LinearLayoutManager(this.getActivity());
+            mRecyclerView.setLayoutManager(mShelfLayout);
+
 
             // loading all image paths from SD card
 //            imagePaths =
@@ -505,6 +517,11 @@ public class MainActivity extends ActionBarActivity{
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
                     new String[]{"download"}, PratilipiProvider.ID);
+            adapter = new CardListAdapter(metadata);
+
+            // setting grid view adapter
+            mRecyclerView.setAdapter(adapter);
+
             if (c.moveToFirst()) {
                 for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                     Metadata m = new Metadata();
@@ -522,34 +539,31 @@ public class MainActivity extends ActionBarActivity{
                     m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
                     if((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED)))!= null)
                         m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
-                    imagePaths.add(m);
+//                    imagePaths.add(m);
+                    metadata.add(m);
+                    adapter.notifyDataSetChanged();
                 }
             }
 
             // Gridview adapter
-            adapter = new GridViewImageAdapter(getActivity(), imagePaths, columnWidth);
-
-            // setting grid view adapter
-            gridView.setAdapter(adapter);
-
             return rootView;
         }
 
-        private void InitilizeGridLayout() {
-            Resources r = getResources();
-            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    AppConstant.GRID_PADDING, r.getDisplayMetrics());
-
-            columnWidth = (int) ((utils.getScreenWidth() - ((AppConstant.NUM_OF_COLUMNS + 1) * padding)) / AppConstant.NUM_OF_COLUMNS);
-
-            gridView.setNumColumns(AppConstant.NUM_OF_COLUMNS);
-            gridView.setColumnWidth(columnWidth);
-            gridView.setStretchMode(GridView.NO_STRETCH);
-            gridView.setPadding((int) padding, (int) padding, (int) padding,
-                    (int) padding);
-            gridView.setHorizontalSpacing((int) padding);
-            gridView.setVerticalSpacing((int) padding);
-        }
+//        private void InitilizeGridLayout() {
+//            Resources r = getResources();
+//            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+//                    AppConstant.GRID_PADDING, r.getDisplayMetrics());
+//
+//            columnWidth = (int) ((utils.getScreenWidth() - ((AppConstant.NUM_OF_COLUMNS + 1) * padding)) / AppConstant.NUM_OF_COLUMNS);
+//
+//            gridView.setNumColumns(AppConstant.NUM_OF_COLUMNS);
+//            gridView.setColumnWidth(columnWidth);
+//            gridView.setStretchMode(GridView.NO_STRETCH);
+//            gridView.setPadding((int) padding, (int) padding, (int) padding,
+//                    (int) padding);
+//            gridView.setHorizontalSpacing((int) padding);
+//            gridView.setVerticalSpacing((int) padding);
+//        }
     }
 
     public static class CategoriesFragment extends Fragment implements AsyncResponse{
