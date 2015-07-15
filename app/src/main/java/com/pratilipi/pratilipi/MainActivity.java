@@ -361,6 +361,7 @@ public class MainActivity extends ActionBarActivity{
                     values.put(PratilipiProvider.CURRENT_CHAPTER,1);
                     values.put(PratilipiProvider.CURRENT_PAGE,1);
                     values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
+                    values.put(PratilipiProvider.FONT_SIZE,30);
 
                     ContentResolver cv = getActivity().getContentResolver();
                     Uri uri = cv.insert(

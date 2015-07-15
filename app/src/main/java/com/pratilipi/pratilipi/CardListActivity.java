@@ -345,6 +345,7 @@ public void onCancel(DialogInterface dialog) {
                     values.put(PratilipiProvider.CURRENT_PAGE,1);
                     values.put(PratilipiProvider.CURRENT_CHAPTER,1);
                     values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
+                    values.put(PratilipiProvider.FONT_SIZE,30);
 
                     metadata.add(m);
                     adapter.notifyDataSetChanged();
