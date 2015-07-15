@@ -162,7 +162,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         }
 
         Cursor c = getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                new String[]{selectionArgs}, PratilipiProvider.PID);
+                new String[]{selectionArgs}, PratilipiProvider.PID + " DESC");
 
         if (!c.moveToFirst()) {
             if(isOnline())

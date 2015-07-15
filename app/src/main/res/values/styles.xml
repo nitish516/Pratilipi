@@ -84,7 +84,7 @@
         <item name="actionModeBackground">@drawable/cab_background_top_mycustomstyle</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_mycustomstyle</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Mycustomstyle</item>
-        <item name="android:logo">@drawable/pratilipi_logo_vector</item>        
+        <item name="android:logo">@drawable/pratilipi_logo_vector</item>
 
         <!-- Light.DarkActionBar specific -->
         <item name="actionBarWidgetTheme">@style/Theme.Mycustomstyle.Widget</item>
@@ -134,14 +134,14 @@
         <item name="popupMenuStyle">@style/PopupMenu.Mycustomstyle</item>
         <item name="dropDownListViewStyle">@style/DropDownListView.Mycustomstyle</item>
     </style>
-    
+
     <!-- Rating Bar Style-->
     <style name="CustomRatingBar" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/custom_rating_bar_full</item>
         <item name="android:minHeight">23dip</item>
         <item name="android:maxHeight">23dip</item>
     </style>
-    
+
     <!-- ToolBar Style Theme-->
     <style name="CustomToolBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/ColorPrimary</item>
@@ -149,7 +149,7 @@
         <item name="android:windowActionBar">true</item>
         <item name="android:windowActionBarOverlay">true</item>
     </style>
-    
+
     <style name="noAnimTheme" parent="android:Theme">
         <item name="android:windowAnimationStyle">@null</item>
     </style>

@@ -77,10 +77,10 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
     TextView summaryTextView;
     private String pId;
     //private String pId;
-    List<ReviewInfo> reviewList = new ArrayList<ReviewInfo>();
-    //CardListAdapter adapter;
-    ReviewAdapter adapter;
-    RecyclerView recList;
+//    List<ReviewInfo> reviewList = new ArrayList<ReviewInfo>();
+//    //CardListAdapter adapter;
+//    ReviewAdapter adapter;
+//    RecyclerView recList;
 
     Toolbar toolbar;
 
@@ -101,15 +101,15 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
             final Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
             if(metadata.get_is_downloaded()!= null && metadata.get_is_downloaded().equalsIgnoreCase("yes")){
-                addToShelf.setBackgroundColor(Color.GRAY);
-                addToShelf.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                addToShelf.setText("GO TO SHELF");
                 addToShelf.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) { new Handler().post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast toast = Toast.makeText(getApplicationContext(), "Already in shelf", Toast.LENGTH_SHORT);
-                            toast.show();
+                            Intent i = new Intent(getApplication(),MainActivity.class);
+                            i.setFlags(2);
+                            startActivity(i);
                         }
                     });
                     }
@@ -120,16 +120,16 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                     @Override
                     public void onClick(View v) {
                         download(v);
-                        addToShelf.setBackgroundColor(Color.GRAY);
-                        addToShelf.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                        addToShelf.setText("GO TO SHELF");
                         addToShelf.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 new Handler().post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast toast = Toast.makeText(getApplicationContext(), "Already in shelf", Toast.LENGTH_SHORT);
-                                        toast.show();
+                                        Intent i = new Intent(getApplication(),MainActivity.class);
+                                        i.setFlags(2);
+                                        startActivity(i);
                                     }
                                 });
                             }
@@ -221,15 +221,15 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
         //setContentView(R.layout.activity_detail_page);
 
-        FetchReviewTask reviewTask = new FetchReviewTask();
-        reviewTask.execute();
-        recList = (RecyclerView) findViewById(R.id.review_recyclerview);
-        recList.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
-        adapter = new ReviewAdapter(reviewList);
-        recList.setAdapter(adapter);
+//        FetchReviewTask reviewTask = new FetchReviewTask();
+//        reviewTask.execute();
+//        recList = (RecyclerView) findViewById(R.id.review_recyclerview);
+//        recList.setHasFixedSize(true);
+//        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+//        llm.setOrientation(LinearLayoutManager.VERTICAL);
+//        recList.setLayoutManager(llm);
+//        adapter = new ReviewAdapter(reviewList);
+//        recList.setAdapter(adapter);
 
         ImageView home_direct = (ImageView)findViewById(R.id.home_img_button);
 
@@ -240,9 +240,6 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                 startActivity(direct);
             }
         });
-
-
-
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
@@ -267,7 +264,6 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             public void run() {
                 Toast toast = Toast.makeText(getApplicationContext(), "Downloading ...", Toast.LENGTH_SHORT);
                 toast.show();
-
             }
         });
         addMetaData();
@@ -288,7 +284,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             // make file if not exists
             if (!directory.exists()) {
                 directory.mkdirs();
-            }
+             }
 
             try {
                 File file = new File(directory,  metadata.get_pid() + ".jpg");
@@ -434,104 +430,104 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         }
     }
 
-    public class FetchReviewTask extends AsyncTask<Void, Void, Void> {
-
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-
-        // Will contain the raw JSON response as a string.
-        String reviewJsonStr = null;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            try {
-                final String PratId = "pratilipiId";
-                final String REVIEW_BASE_URL = "http://www.pratilipi.com/api.pratilipi/userpratilipi/review?";
-                pId = metadata.get_pid();
-                Uri pratUri = Uri.parse(REVIEW_BASE_URL).buildUpon()
-                        .appendQueryParameter(PratId,pId)
-                        .build();
-
-                URL url = new URL(pratUri.toString());
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                reviewJsonStr = buffer.toString();
-
-            }catch (IOException e){
-
-            return null;
-            }
-
-            finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("ReviewError", "Error closing stream", e);
-                    }
-                }
-            }
-            try {
-                getReviewDataFromJson(reviewJsonStr);
-            }catch(JSONException e)
-            {
-                Log.e("REVIEW ERROR",e.toString());
-                return null;
-            }
-                return null;
-        }
-
-        public void getReviewDataFromJson(String reviewJsonStr) throws JSONException {
-
-            // These are the names of the JSON objects that need to be extracted.
-            final String REV_LIST = "reviewDataList";
-            final String REV_USERNAME = "userName";
-            final String REV_REVIEW = "review";
-
-            Gson gson = new GsonBuilder().create();
-            JsonObject reviewDataList = gson.fromJson(reviewJsonStr, JsonElement.class).getAsJsonObject();
-            JsonArray reviewArray  = reviewDataList.get("reviewDataList").getAsJsonArray();
-
-
-            String userNameStr,reviewStr;
-            if(reviewArray.size()!=0) {
-                for (int i = 0; i < reviewArray.size(); i++) {
-                    JsonObject reviewObj = gson.fromJson(reviewArray.get(i), JsonElement.class).getAsJsonObject();
-                    userNameStr = reviewObj.get(REV_USERNAME).toString();
-                    reviewStr = reviewObj.get(REV_REVIEW).toString();
-                    ReviewInfo ri = new ReviewInfo(userNameStr + " user says...", Html.fromHtml(reviewStr).toString());
-                    reviewList.add(ri);
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        }
-    }
+//    public class FetchReviewTask extends AsyncTask<Void, Void, Void> {
+//
+//        HttpURLConnection urlConnection = null;
+//        BufferedReader reader = null;
+//
+//        // Will contain the raw JSON response as a string.
+//        String reviewJsonStr = null;
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//
+//            try {
+//                final String PratId = "pratilipiId";
+//                final String REVIEW_BASE_URL = "http://www.pratilipi.com/api.pratilipi/userpratilipi/review?";
+//                pId = metadata.get_pid();
+//                Uri pratUri = Uri.parse(REVIEW_BASE_URL).buildUpon()
+//                        .appendQueryParameter(PratId,pId)
+//                        .build();
+//
+//                URL url = new URL(pratUri.toString());
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                urlConnection.setRequestMethod("GET");
+//                urlConnection.connect();
+//
+//                // Read the input stream into a String
+//                InputStream inputStream = urlConnection.getInputStream();
+//                StringBuffer buffer = new StringBuffer();
+//                if (inputStream == null) {
+//                    // Nothing to do.
+//                    return null;
+//                }
+//                reader = new BufferedReader(new InputStreamReader(inputStream));
+//
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+//                    // But it does make debugging a *lot* easier if you print out the completed
+//                    // buffer for debugging.
+//                    buffer.append(line + "\n");
+//                }
+//
+//                if (buffer.length() == 0) {
+//                    // Stream was empty.  No point in parsing.
+//                    return null;
+//                }
+//                reviewJsonStr = buffer.toString();
+//
+//            }catch (IOException e){
+//
+//            return null;
+//            }
+//
+//            finally {
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (final IOException e) {
+//                        Log.e("ReviewError", "Error closing stream", e);
+//                    }
+//                }
+//            }
+//            try {
+//                getReviewDataFromJson(reviewJsonStr);
+//            }catch(JSONException e)
+//            {
+//                Log.e("REVIEW ERROR",e.toString());
+//                return null;
+//            }
+//                return null;
+//        }
+//
+//        public void getReviewDataFromJson(String reviewJsonStr) throws JSONException {
+//
+//            // These are the names of the JSON objects that need to be extracted.
+//            final String REV_LIST = "reviewDataList";
+//            final String REV_USERNAME = "userName";
+//            final String REV_REVIEW = "review";
+//
+//            Gson gson = new GsonBuilder().create();
+//            JsonObject reviewDataList = gson.fromJson(reviewJsonStr, JsonElement.class).getAsJsonObject();
+//            JsonArray reviewArray  = reviewDataList.get("reviewDataList").getAsJsonArray();
+//
+//
+//            String userNameStr,reviewStr;
+//            if(reviewArray.size()!=0) {
+//                for (int i = 0; i < reviewArray.size(); i++) {
+//                    JsonObject reviewObj = gson.fromJson(reviewArray.get(i), JsonElement.class).getAsJsonObject();
+//                    userNameStr = reviewObj.get(REV_USERNAME).toString();
+//                    reviewStr = reviewObj.get(REV_REVIEW).toString();
+//                    ReviewInfo ri = new ReviewInfo(userNameStr + " user says...", Html.fromHtml(reviewStr).toString());
+//                    reviewList.add(ri);
+//                    adapter.notifyDataSetChanged();
+//                }
+//            }
+//        }
+//    }
 }
 

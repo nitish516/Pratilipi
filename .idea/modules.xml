@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Pratilipi-master.iml" filepath="$PROJECT_DIR$/Pratilipi-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/libs/libs.iml" filepath="$PROJECT_DIR$/app/libs/libs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pratilipi.iml" filepath="$PROJECT_DIR$/pratilipi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pratilipi.iml" filepath="$PROJECT_DIR$/pratilipi.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/libs/volley/volley.iml" filepath="$PROJECT_DIR$/app/libs/volley/volley.iml" />
     </modules>
   </component>

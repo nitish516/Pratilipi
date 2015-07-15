@@ -123,6 +123,7 @@ public class MainActivity extends ActionBarActivity{
     SlidingTabLayout tabs;
     CharSequence Titles[] = {"Home","Categories","Shelf","Profile"};
     int NumbOfTabs = 4;
+    int tabPosition;
 
     public void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
@@ -151,6 +152,23 @@ public class MainActivity extends ActionBarActivity{
             }
         });
         tabs.setViewPager(mViewPager);
+        Intent i = getIntent();
+        tabPosition = i.getFlags();
+        switch(tabPosition){
+            case 0:
+            mViewPager.setCurrentItem(tabPosition);
+            break;
+            case 1:
+                mViewPager.setCurrentItem(tabPosition);
+                break;
+            case 2:
+                mViewPager.setCurrentItem(tabPosition);
+                break;
+            case 3:
+                mViewPager.setCurrentItem(tabPosition);
+                break;
+        }
+
     }
 
     public static class HomeFragment extends Fragment implements AsyncResponse{
