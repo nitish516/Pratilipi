@@ -295,6 +295,9 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                 values.put(PratilipiProvider.SUMMARY , metadata.get_summary());
             values.put(PratilipiProvider.LIST_TYPE , "download");
             values.put(PratilipiProvider.IS_DOWNLOADED , "yes");
+            values.put(PratilipiProvider.CURRENT_CHAPTER,1);
+            values.put(PratilipiProvider.CURRENT_PAGE,1);
+            values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
 
             ContentResolver cv = getContentResolver();
             Uri uri = cv.insert(
@@ -310,7 +313,6 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
     public boolean isOnline() {

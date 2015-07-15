@@ -21,8 +21,8 @@ public class Metadata implements Serializable{
 	long _starCount;
 	int _current_chapter;
 	int _current_page;
-	int _read_order;
-
+	long _time_stamp;
+	int _font_size;
 	public Metadata()
     {
 
@@ -146,11 +146,20 @@ public class Metadata implements Serializable{
 		this._current_page = _current_page;
 	}
 
-	public int get__read_order() {
-		return _read_order;
+	public long get_time_stamp() {
+		return _time_stamp;
 	}
 
-	public void set__read_order(int _read_order) {
-		this._read_order = _read_order;
+	public void set_time_stamp(long _time_stamp) {
+		this._time_stamp = _time_stamp;
 	}
+
+	public int get_font_size() {
+		return _font_size;
+	}
+
+	public void set_font_size(int _font_size) {
+		this._font_size = _font_size;
+	}
+
 }

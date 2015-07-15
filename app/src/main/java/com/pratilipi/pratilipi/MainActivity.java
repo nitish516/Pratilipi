@@ -358,7 +358,9 @@ public class MainActivity extends ActionBarActivity{
                     if(null!=obj.get("summary"))
                         values.put(PratilipiProvider.SUMMARY , obj.get("summary").getAsString());
                     values.put(PratilipiProvider.LIST_TYPE , type);
-
+                    values.put(PratilipiProvider.CURRENT_CHAPTER,1);
+                    values.put(PratilipiProvider.CURRENT_PAGE,1);
+                    values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
 
                     ContentResolver cv = getActivity().getContentResolver();
                     Uri uri = cv.insert(
@@ -412,6 +414,9 @@ public class MainActivity extends ActionBarActivity{
                     m.set_contentType(c.getString(c.getColumnIndex(PratilipiProvider.CONTENT_TYPE)));
                     m.set_pid(c.getString(c.getColumnIndex(PratilipiProvider.PID)));
                     m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
+                    m.set_time_stamp(c.getLong(c.getColumnIndex(PratilipiProvider.TIME_STAMP)));
+                    m.set_current_chapter(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
+                    m.set_current_page(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
 
                     if((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED)))!= null)
                         m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
@@ -516,7 +521,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                    new String[]{"download"}, PratilipiProvider.ID);
+                    new String[]{"download"}, PratilipiProvider.TIME_STAMP);
             adapter = new CardListAdapter(metadata);
 
             // setting grid view adapter
@@ -539,6 +544,9 @@ public class MainActivity extends ActionBarActivity{
                     m.set_page_count(c.getInt(c.getColumnIndex(PratilipiProvider.CH_COUNT)));
                     if((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED)))!= null)
                         m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
+                    m.set_current_chapter(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
+                    m.set_current_page(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
+                    m.set_time_stamp(System.currentTimeMillis()/1000);
 //                    imagePaths.add(m);
                     metadata.add(m);
                     adapter.notifyDataSetChanged();
