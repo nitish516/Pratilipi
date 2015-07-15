@@ -522,7 +522,7 @@ public class MainActivity extends ActionBarActivity{
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
             Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                    new String[]{"download"}, PratilipiProvider.TIME_STAMP);
+                    new String[]{"download"}, PratilipiProvider.TIME_STAMP + " DESC");
             adapter = new CardListAdapter(metadata);
 
             // setting grid view adapter
