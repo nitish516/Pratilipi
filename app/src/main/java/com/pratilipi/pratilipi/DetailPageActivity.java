@@ -41,7 +41,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DataFiles.ReviewInfo;
-import com.pratilipi.pratilipi.adapter.ReviewAdapter;
+//import com.pratilipi.pratilipi.adapter.ReviewAdapter;
 import com.pratilipi.pratilipi.helper.AppConstant;
 import com.pratilipi.pratilipi.helper.PratilipiProvider;
 
@@ -331,7 +331,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
             values.put(PratilipiProvider.CURRENT_CHAPTER,1);
             values.put(PratilipiProvider.CURRENT_PAGE,1);
             values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
-            values.put(PratilipiProvider.FONT_SIZE,30);
+            values.put(PratilipiProvider.FONT_SIZE,100);
 
             ContentResolver cv = getContentResolver();
             Uri uri = cv.insert(

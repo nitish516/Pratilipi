@@ -193,6 +193,7 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
             m.set_time_stamp(c.getLong(c.getColumnIndex(PratilipiProvider.TIME_STAMP)));
             m.set_current_chapter(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
             m.set_current_page(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
+            m.set_font_size(c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
 
             metadata.add(m);
             adapter.notifyDataSetChanged();
@@ -345,7 +346,7 @@ public void onCancel(DialogInterface dialog) {
                     values.put(PratilipiProvider.CURRENT_PAGE,1);
                     values.put(PratilipiProvider.CURRENT_CHAPTER,1);
                     values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
-                    values.put(PratilipiProvider.FONT_SIZE,30);
+                    values.put(PratilipiProvider.FONT_SIZE,100);
 
                     metadata.add(m);
                     adapter.notifyDataSetChanged();

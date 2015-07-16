@@ -379,7 +379,7 @@ public class MainActivity extends ActionBarActivity{
                     values.put(PratilipiProvider.CURRENT_CHAPTER,1);
                     values.put(PratilipiProvider.CURRENT_PAGE,1);
                     values.put(PratilipiProvider.TIME_STAMP,System.currentTimeMillis()/1000);
-                    values.put(PratilipiProvider.FONT_SIZE,30);
+                    values.put(PratilipiProvider.FONT_SIZE,100);
 
                     ContentResolver cv = getActivity().getContentResolver();
                     Uri uri = cv.insert(
@@ -436,6 +436,7 @@ public class MainActivity extends ActionBarActivity{
                     m.set_time_stamp(c.getLong(c.getColumnIndex(PratilipiProvider.TIME_STAMP)));
                     m.set_current_chapter(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
                     m.set_current_page(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
+                    m.set_font_size(c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
 
                     if((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED)))!= null)
                         m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
@@ -565,7 +566,9 @@ public class MainActivity extends ActionBarActivity{
                         m.set_is_downloaded((c.getString(c.getColumnIndex(PratilipiProvider.IS_DOWNLOADED))));
                     m.set_current_chapter(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
                     m.set_current_page(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
-                    m.set_time_stamp(System.currentTimeMillis()/1000);
+                    m.set_time_stamp(System.currentTimeMillis() / 1000);
+                    m.set_font_size(c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
+
 //                    imagePaths.add(m);
                     metadata.add(m);
                     adapter.notifyDataSetChanged();
