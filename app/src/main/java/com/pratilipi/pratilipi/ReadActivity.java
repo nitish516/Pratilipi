@@ -129,6 +129,18 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 }
             }
 
+            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+            Uri pid = Uri.parse(URL);
+
+            Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=?",
+                    new String[]{pratilipiId}, PratilipiProvider.PID);
+
+            if (c.moveToFirst()){
+                currentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
+                currentChapterCurrentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
+                initialScale = (c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
