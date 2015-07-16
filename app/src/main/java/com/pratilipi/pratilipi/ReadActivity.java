@@ -366,6 +366,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private void launchChapter(boolean isNext) {
         if (isNext && currentPage < pageCount) {
             scrollToLast = false;
+            currentChapterCurrentPage =1;
             makeRequest(++currentPage);
         } else if (!isNext && currentPage > 1) {
             scrollToLast = true;
@@ -526,6 +527,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                 webView.loadUrl("javascript:init('" + pageContent + "')");
                                 if (scrollToLast) {
                                     webView.loadUrl("javascript:last()");
+                                    currentChapterCurrentPage = currentChapterPageCount;
+                                }
+                                else {
+                                    //go to page
+                                    int i = 1;
+                                    while (i++ < currentChapterCurrentPage) {
+                                        webView.loadUrl("javascript:next()");
+                                    }
                                 }
                                 if (null != progressDialog)
                                     progressDialog.dismiss();
@@ -712,6 +721,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            currentChapterCurrentPage =1;
             launchChapter(mTitleChapters.get(position));
             hideSystemUI();
 //        setTitle(mTitles[position]);
@@ -852,7 +862,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         public void fetchPageCount(int pages) {
             Log.d("Pages in capter " + currentPage + " = ", pages + "");
             currentChapterPageCount = pages + 1;
-            currentChapterCurrentPage = 1;
+//            currentChapterCurrentPage = 1;
             if (pageCount <= 1)
                 seekBar.setMax(pages);
         }
