@@ -129,18 +129,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 }
             }
 
-            String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
-            Uri pid = Uri.parse(URL);
-
-            Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=?",
-                    new String[]{pratilipiId}, PratilipiProvider.PID);
-
-            if (c.moveToFirst()){
-                currentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
-                currentChapterCurrentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
-                initialScale = (c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -296,12 +284,32 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 pageNoIndicator.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
+        Uri pid = Uri.parse(URL);
+
+        Cursor c = getContentResolver().query(pid, null, PratilipiProvider.PID + "=?",
+                new String[]{pratilipiId}, PratilipiProvider.PID);
+
+        if (c.moveToFirst()){
+            currentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
+            currentChapterCurrentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
+            initialScale = (c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
+        }
+
         launchChapter(currentPage);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
+        if (null != task)
+            task.cancel(true);
+
         try {
 
             ContentResolver cv = getContentResolver();
@@ -708,13 +716,6 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (null != task)
-            task.cancel(true);
     }
 
     /* The click listner for ListView in the navigation drawer */
