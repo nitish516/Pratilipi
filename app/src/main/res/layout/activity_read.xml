@@ -45,6 +45,10 @@ tools:context=".MainActivity">
             android:paddingTop="15dp"
             android:paddingBottom="25dp"
             android:background="@color/White"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fixed_page_indicator_text_view"/>
     </LinearLayout>
 </FrameLayout>
 

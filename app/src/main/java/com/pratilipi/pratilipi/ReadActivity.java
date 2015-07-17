@@ -95,7 +95,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     int currentChapterCurrentPage = 0;
     String pratilipiId = "";
     long _time_stamp;
-
+    TextView fixedPageIndicator;
     Toast toast;
 
     @Override
@@ -197,15 +197,18 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(jsInterface, "JSInterface");
 
-        seekBar = (SeekBar) findViewById(R.id.reader_seek_bar);
-        pageNoIndicator = (TextView) findViewById(R.id.pageNo_indicator_textview);
-        if (type.equalsIgnoreCase("IMAGE"))
-            maxProgress = pageCount - 1;
-        else if (type.equalsIgnoreCase("PRATILIPI")) {
-            if (pageCount <= 1) {
+        fixedPageIndicator = (TextView)findViewById(R.id.fixed_page_indicator_text_view);
 
-            } else
-                maxProgress = (pageCount) * 1000;
+        seekBar = (SeekBar)findViewById(R.id.reader_seek_bar);
+        pageNoIndicator = (TextView)findViewById(R.id.pageNo_indicator_textview);
+        if(type.equalsIgnoreCase("IMAGE"))
+            maxProgress = pageCount-1;
+        else if(type.equalsIgnoreCase("PRATILIPI")){
+            if(pageCount <= 1){
+
+            }
+            else
+                maxProgress = (pageCount)*1000;
         }
         seekBar.setMax(maxProgress);
 
@@ -221,14 +224,18 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         if (count >= pageCount)
                             count = pageCount;
 
-                        pageNoIndicator.setText("Chapter " + count + "/" + pageCount);
-                    } else {
-                        count = progress + 1;
-                        pageNoIndicator.setText("Page " + count + "/" + currentChapterPageCount);
+                        pageNoIndicator.setText("Chapter " + count+ "/" + pageCount);
+                        fixedPageIndicator.setText("Chapter " + count+ "/" + pageCount);
                     }
-                } else {
-                    count = progress + 1;
+                    else{
+                        count = progress+1;
+                        pageNoIndicator.setText("Page " + count + "/"+currentChapterPageCount );
+                        fixedPageIndicator.setText("Page " + count + "/"+currentChapterPageCount );
+                    }
+                }else {
+                    count = progress+1;
                     pageNoIndicator.setText("Page " + count + "/" + pageCount);
+                    fixedPageIndicator.setText("Page " + count + "/" + pageCount);
                 }
             }
 
@@ -575,6 +582,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
         seekBar.setVisibility(View.GONE);
         pageNoIndicator.setVisibility(View.GONE);
+   //     fixedPageIndicator.setVisibility(View.GONE);
     }
 
     private void showSystemUI() {
