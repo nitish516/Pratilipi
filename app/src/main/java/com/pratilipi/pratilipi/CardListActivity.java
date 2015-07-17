@@ -13,7 +13,9 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -25,9 +27,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.adapter.CardListAdapter;
@@ -39,6 +43,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 //import android.support.v7.app.ActionBarActivity;
 
@@ -94,6 +99,8 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+        ImageView imgOverflowButton = (ImageView) findViewById(R.id.overflow_cardlist);
+        imgOverflowButton.setVisibility(View.GONE);
         //Recycler View END
 
         linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);
@@ -135,8 +142,11 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
                     fetchData();
             }
         }
+
+
+
     }
-    
+
     private void fetchData() {
         String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
         Uri pid = Uri.parse(URL);
@@ -194,7 +204,6 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
             m.set_current_chapter(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
             m.set_current_page(c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
             m.set_font_size(c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
-
             metadata.add(m);
             adapter.notifyDataSetChanged();
         }
@@ -243,14 +252,14 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-        return;
-        }
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
         });
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-public void onCancel(DialogInterface dialog) {
-        return;
-        }
+            public void onCancel(DialogInterface dialog) {
+                return;
+            }
         });
 
         builder.show();
@@ -457,5 +466,7 @@ public void onCancel(DialogInterface dialog) {
             searchView.onActionViewExpanded();
         }
         return true;
+
+
     }
 }

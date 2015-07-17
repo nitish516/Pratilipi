@@ -1,16 +1,22 @@
 package com.pratilipi.pratilipi.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -101,6 +107,41 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.DataVi
                 context.startActivity(i);
             }
         });
+        holder.imgOverflowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu menu = new PopupMenu(context,v);
+                menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setCancelable(true);
+                        builder.setMessage(R.string.remove_from_shelf_dialog);
+                        builder.setTitle(R.string.remove_from_shelf_title);
+                        builder.setPositiveButton(R.string.remove_from_shelf_positive, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(context,"Removed from Shelf !",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                return;
+                            }
+                        });
+                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            public void onCancel(DialogInterface dialog) {
+                                return;
+                            }
+                        });
+
+                        builder.show();
+                        return true;
+                    }
+                });
+                menu.show();
+            }
+        });
 
     }
 
@@ -118,6 +159,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.DataVi
         RatingBar mRatingBar;
         TextView ratingCount;
         TextView avgeragerating;
+        ImageView imgOverflowButton ;
 
         public DataViewHolder(View itemView) {
             super(itemView);
@@ -129,6 +171,7 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.DataVi
             mRatingBar = (RatingBar)itemView.findViewById(R.id.averageRatingBarFeatured);
             ratingCount = (TextView)itemView.findViewById(R.id.featuredPageRatingNumber);
             avgeragerating = (TextView)itemView.findViewById(R.id.averageRatingTextView);
+            imgOverflowButton = (ImageView) itemView.findViewById(R.id.overflow_cardlist);
         }
     }
 

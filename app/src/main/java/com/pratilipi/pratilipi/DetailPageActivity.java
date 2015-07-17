@@ -101,39 +101,14 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
 
             final Button addToShelf = (Button) findViewById(R.id.addToShelfButton);
             if(metadata.get_is_downloaded()!= null && metadata.get_is_downloaded().equalsIgnoreCase("yes")){
-                addToShelf.setText("GO TO SHELF");
-                addToShelf.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) { new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent i = new Intent(getApplication(),MainActivity.class);
-                            i.setFlags(2);
-                            startActivity(i);
-                        }
-                    });
-                    }
-                });
+                addToShelf.setVisibility(View.INVISIBLE);
             }
             else{
                 addToShelf.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         download(v);
-                        addToShelf.setText("GO TO SHELF");
-                        addToShelf.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                new Handler().post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent i = new Intent(getApplication(),MainActivity.class);
-                                        i.setFlags(2);
-                                        startActivity(i);
-                                    }
-                                });
-                            }
-                        });
+                        addToShelf.setVisibility(View.GONE);
                     }
                 });
             }

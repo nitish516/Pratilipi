@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -35,11 +36,14 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -58,6 +62,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 //import android.support.v7.app.AppCompatActivity;
 
@@ -535,7 +540,6 @@ public class MainActivity extends ActionBarActivity{
             mShelfLayout = new LinearLayoutManager(this.getActivity());
             mRecyclerView.setLayoutManager(mShelfLayout);
 
-
             // loading all image paths from SD card
 //            imagePaths =
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
@@ -574,8 +578,7 @@ public class MainActivity extends ActionBarActivity{
                     adapter.notifyDataSetChanged();
                 }
             }
-
-            // Gridview adapter
+                        // Gridview adapter
             return rootView;
         }
 
