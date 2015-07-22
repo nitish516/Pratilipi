@@ -66,7 +66,6 @@ public class ProfileFragment extends Fragment {
     }
 
     public ProfileFragment()  {
-        // Required empty public constructor
     }
 
     @Override
@@ -86,12 +85,7 @@ public class ProfileFragment extends Fragment {
         TextView t1 = (TextView) v.findViewById(R.id.textView_profile);
         TextView t2 = (TextView) v.findViewById(R.id.textView2_profile);
         TextView t3 = (TextView) v.findViewById(R.id.textView3_profile);
-        //TextView t4 = (TextView) v.findViewById(R.id.textView4_profile);
-        //TextView t5 = (TextView) v.findViewById(R.id.textView5_profile);
-        //TextView t6 = (TextView) v.findViewById(R.id.textView6_profile);
-        //TextView t7 = (TextView) v.findViewById(R.id.textView7_profile);
         ImageView i = (ImageView) v.findViewById(R.id.imageView_profile);
-        //i.setBackground(R.drawable.profile_picture);
         Bitmap bImage = BitmapFactory.decodeResource(this.getResources(), R.drawable.profile_picture);
         bImage=getRoundedCornerBitmap(bImage,90);
         i.setImageBitmap(bImage);

@@ -99,8 +99,6 @@ public class CardListActivity extends ActionBarActivity implements AsyncResponse
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        ImageView imgOverflowButton = (ImageView) findViewById(R.id.overflow_cardlist);
-        imgOverflowButton.setVisibility(View.GONE);
         //Recycler View END
 
         linearLayout = (LinearLayout)findViewById(R.id.card_activity_linear_layout);

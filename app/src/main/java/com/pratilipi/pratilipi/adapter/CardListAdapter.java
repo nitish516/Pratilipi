@@ -24,8 +24,11 @@ import com.pratilipi.pratilipi.AppController;
 import com.pratilipi.pratilipi.DataFiles.Metadata;
 import com.pratilipi.pratilipi.DetailPageActivity;
 import com.pratilipi.pratilipi.R;
+import com.pratilipi.pratilipi.ReadActivity;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -75,7 +78,6 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.DataVi
 
         holder.bookTitle.setTypeface(typeFace);
         holder.authorName.setTypeface(typeFace);
-
         final Metadata metadataObj = metadata.get(position);
         holder.bookTitle.setText(metadataObj.get_title());
         holder.authorName.setText(metadataObj.get_authorFullName());
@@ -111,31 +113,62 @@ public class CardListAdapter extends RecyclerView.Adapter<CardListAdapter.DataVi
             @Override
             public void onClick(View v) {
                 PopupMenu menu = new PopupMenu(context,v);
+                try {
+                    Field[] fields = menu.getClass().getDeclaredFields();
+                    for (Field field : fields) {
+                        if ("mPopup".equals(field.getName())) {
+                            field.setAccessible(true);
+                            Object menuPopupHelper = field.get(menu);
+                            Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                            Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                            setForceIcons.invoke(menuPopupHelper, true);
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 menu.getMenuInflater().inflate(R.menu.popup_menu, menu.getMenu());
                 menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setCancelable(true);
-                        builder.setMessage(R.string.remove_from_shelf_dialog);
-                        builder.setTitle(R.string.remove_from_shelf_title);
-                        builder.setPositiveButton(R.string.remove_from_shelf_positive, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(context,"Removed from Shelf !",Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                return;
-                            }
-                        });
-                        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            public void onCancel(DialogInterface dialog) {
-                                return;
-                            }
-                        });
+                        switch (item.getItemId()) {
+                            case R.id.popupaction1:
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setCancelable(true);
+                                builder.setMessage(R.string.remove_from_shelf_dialog);
+                                builder.setTitle(R.string.remove_from_shelf_title);
+                                builder.setPositiveButton(R.string.remove_from_shelf_positive, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(context, "Removed from Shelf !", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        return;
+                                    }
+                                });
+                                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    public void onCancel(DialogInterface dialog) {
+                                        return;
+                                    }
+                                });
 
-                        builder.show();
+                                builder.show();
+                                break;
+                            case R.id.addasShortcut:
+                                Intent shortcutIntent = new Intent(context, ReadActivity.class);
+                                shortcutIntent.setAction(Intent.ACTION_MAIN);
+                                Intent intent = new Intent();
+                                intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                                intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Pratilipi"); //Add Book Name here
+                                intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.drawable.logo)); //Add Book Image Here
+                                intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                                context.sendBroadcast(intent);
+                                break;
+                            default:
+                                return false;
+                        }
                         return true;
                     }
                 });

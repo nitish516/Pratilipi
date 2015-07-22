@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/addasShortcut"
+        android:title="@string/addasShortcutTitle"
+        android:icon="@drawable/addasshortcut"
+        app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/popupaction1"
         android:title="@string/popupaction1"
+        android:icon="@drawable/remove_from_shelf_icon"
+        app:showAsAction="ifRoom|withText"
         />
 </menu>

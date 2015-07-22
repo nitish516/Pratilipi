@@ -522,7 +522,18 @@ public class MainActivity extends ActionBarActivity{
         private List<Metadata> metadata = new ArrayList<Metadata>();
         private CardListAdapter adapter;
         private LinearLayoutManager mShelfLayout;
+        Cursor c;
 
+        @Override
+        public void onPause() {
+            super.onPause();
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -544,9 +555,10 @@ public class MainActivity extends ActionBarActivity{
 //            imagePaths =
             String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
             Uri pid = Uri.parse(URL);
-            Cursor c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
-                    new String[]{"download"}, PratilipiProvider.TIME_STAMP + " DESC");
-            adapter = new CardListAdapter(metadata);
+
+                    c = getActivity().getContentResolver().query(pid, null, PratilipiProvider.LIST_TYPE + "=?",
+                            new String[]{"download"}, PratilipiProvider.TIME_STAMP + " DESC");
+                    adapter = new CardListAdapter(metadata);
 
             // setting grid view adapter
             mRecyclerView.setAdapter(adapter);

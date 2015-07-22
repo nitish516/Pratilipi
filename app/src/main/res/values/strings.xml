@@ -53,7 +53,7 @@
     <string name="e_mail_id_log">E-mail ID</string>
     <string name="add_to_shelf"> ADD TO SHELF </string>
 
-    <string name="popupaction1">Remove from Shelf</string>
+    <string name="popupaction1">Remove</string>
     <string name="remove_from_shelf_dialog">Are you sure you want to remove this book from your shelf ?</string>
     <string name="remove_from_shelf_title">Remove from Shelf ?</string>
     <string name="remove_from_shelf_positive">Yes</string>
@@ -62,5 +62,6 @@
     <string name="slideshowtext3">3</string>
     <string name="slideshowtext4">4</string>
     <string name="title_activity_introductory_slide_show">IntroductorySlideShow</string>
+    <string name="addasShortcutTitle">Add Shortcut</string>
 
 </resources>

@@ -108,7 +108,7 @@ public class DetailPageActivity extends ActionBarActivity implements AsyncRespon
                     @Override
                     public void onClick(View v) {
                         download(v);
-                        addToShelf.setVisibility(View.GONE);
+                        addToShelf.setVisibility(View.INVISIBLE);
                     }
                 });
             }
