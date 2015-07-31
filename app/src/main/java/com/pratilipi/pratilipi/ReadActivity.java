@@ -72,7 +72,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private Metadata metadata;
     CustomWebView webView;
     SeekBar seekBar;
-    TextView pageNoIndicator;
+//    TextView pageNoIndicator;
     private int indexSize = 0;
     private int pageCount = 0;
     private int currentPage = 1;
@@ -115,6 +115,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             currentChapterCurrentPage = metadata.get_current_page();
             _time_stamp = metadata.get_time_stamp();
             initialScale = metadata.get_font_size();
+            // for image content scale is 30
+            if(type.equalsIgnoreCase("image")){
+                initialScale = 30;
+            }
 
             Gson gson = new GsonBuilder().create();
             JsonArray indexArr = gson.fromJson(metadata.get_index(), JsonElement.class).getAsJsonArray();
@@ -199,8 +203,11 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
         fixedPageIndicator = (TextView)findViewById(R.id.fixed_page_indicator_text_view);
 
+        // Donnot show untill good text
+        fixedPageIndicator.setVisibility(View.GONE);
+
         seekBar = (SeekBar)findViewById(R.id.reader_seek_bar);
-        pageNoIndicator = (TextView)findViewById(R.id.pageNo_indicator_textview);
+//        pageNoIndicator = (TextView)findViewById(R.id.pageNo_indicator_textview);
         if(type.equalsIgnoreCase("IMAGE"))
             maxProgress = pageCount-1;
         else if(type.equalsIgnoreCase("PRATILIPI")){
@@ -210,6 +217,17 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             else
                 maxProgress = (pageCount)*1000;
         }
+
+        if (type.equalsIgnoreCase("PRATILIPI")) {
+            if (pageCount > 1) {
+                fixedPageIndicator.setText("Page " + currentChapterCurrentPage + "/" + currentChapterPageCount);
+            } else {
+
+//              pageNoIndicator.setText("Chapter " + count+ "/" + pageCount);
+                fixedPageIndicator.setText("Chapter " + currentPage + "/" + pageCount);
+            }
+        }
+
         seekBar.setMax(maxProgress);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -224,17 +242,17 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         if (count >= pageCount)
                             count = pageCount;
 
-                        pageNoIndicator.setText("Chapter " + count+ "/" + pageCount);
+//                        pageNoIndicator.setText("Chapter " + count+ "/" + pageCount);
                         fixedPageIndicator.setText("Chapter " + count+ "/" + pageCount);
                     }
                     else{
                         count = progress+1;
-                        pageNoIndicator.setText("Page " + count + "/"+currentChapterPageCount );
+//                        pageNoIndicator.setText("Page " + count + "/"+currentChapterPageCount );
                         fixedPageIndicator.setText("Page " + count + "/"+currentChapterPageCount );
                     }
                 }else {
                     count = progress+1;
-                    pageNoIndicator.setText("Page " + count + "/" + pageCount);
+//                    pageNoIndicator.setText("Page " + count + "/" + pageCount);
                     fixedPageIndicator.setText("Page " + count + "/" + pageCount);
                 }
             }
@@ -246,7 +264,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                     toast.cancel();
                     toast = null;
                 }
-                pageNoIndicator.setVisibility(View.VISIBLE);
+//                pageNoIndicator.setVisibility(View.VISIBLE);
 
 //                pageNoIndicator.setBackgroundColor(R.color.Black);
 
@@ -288,7 +306,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         currentChapterCurrentPage++;
                     }
                 }
-                pageNoIndicator.setVisibility(View.GONE);
+//                pageNoIndicator.setVisibility(View.GONE);
             }
         });
     }
@@ -296,6 +314,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     @Override
     protected void onResume() {
         super.onResume();
+        if(fixedPageIndicator!=null){
+            fixedPageIndicator.setVisibility(View.GONE);
+        }
         String URL = "content://com.pratilipi.pratilipi.helper.PratilipiData/metadata";
         Uri pid = Uri.parse(URL);
 
@@ -306,6 +327,10 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             currentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_CHAPTER)));
             currentChapterCurrentPage = (c.getInt(c.getColumnIndex(PratilipiProvider.CURRENT_PAGE)));
             initialScale = (c.getInt(c.getColumnIndex(PratilipiProvider.FONT_SIZE)));
+            // for image content scale is 30
+            if(type.equalsIgnoreCase("image")){
+                initialScale = 30;
+            }
         }
 
         launchChapter(currentPage);
@@ -398,15 +423,20 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
     private void makeRequest(final int pageNo) {
 
         //Set seek bar
-        if (type.equalsIgnoreCase("IMAGE"))
+        if (type.equalsIgnoreCase("IMAGE")) {
             seekBar.setProgress(pageNo - 1);
+            fixedPageIndicator.setText("Page " + currentPage + "/" + pageCount);
+        }
         else {
             if (pageNo <= 1) {
 //                seekBar.setProgress(0);
+                fixedPageIndicator.setText("Page " + currentChapterCurrentPage + "/" + currentChapterPageCount);
+
             } else
                 seekBar.setProgress((pageNo - 1) * 1000);
-
+                fixedPageIndicator.setText("Chapter " + currentPage + "/" + pageCount);
         }
+
         // Set index
         try {
             runOnUiThread(new Runnable() {
@@ -449,6 +479,8 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
             makeNetworkRequestWithCheck(pageNo + 1);
             makeNetworkRequestWithCheck(pageNo - 1);
         }
+
+        fixedPageIndicator.setVisibility(View.VISIBLE);
     }
 
     private void makeNetworkRequestWithCheck(int pageNo) {
@@ -507,6 +539,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                 task.delegate = this;
             } else if (type.equalsIgnoreCase("IMAGE")) {
                 webView.setInitialScale(30);
+                initialScale = 30;
                 WebSettings webSettings = webView.getSettings();
                 webView.loadUrl("http://www.pratilipi.com/api.pratilipi/pratilipi/content/image?pratilipiId="
                         + pratilipiId + "&pageNo=" + pageNo);
@@ -581,7 +614,7 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
         seekBar.setVisibility(View.GONE);
-        pageNoIndicator.setVisibility(View.GONE);
+//        pageNoIndicator.setVisibility(View.GONE);
    //     fixedPageIndicator.setVisibility(View.GONE);
     }
 
@@ -764,6 +797,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
 
                             if (currentChapterCurrentPage > 1)
                                 currentChapterCurrentPage--;
+                            else if(currentPage ==1){
+                                if (toast != null) {
+                                    toast.cancel();
+                                    toast = null;
+                                }
+                                toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
 
                             if (pageCount > 1) {
                                 int base = (currentPage - 1) * 1000;
@@ -773,7 +814,9 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                             } else {
                                 seekBar.setProgress(currentChapterCurrentPage - 1);
                             }
-                        } else {
+                        }
+                        // case: content Type: Image
+                        else {
                             if (currentPage == 1) {
                                 if (toast != null) {
                                     toast.cancel();
@@ -781,11 +824,15 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                 }
                                 toast = Toast.makeText(getApplicationContext(), "First Page!", Toast.LENGTH_SHORT);
                                 toast.show();
-                            } else if (initialScale <= 30) {
+                            }
+                            // go to previous only if not zoom
+                            else if (initialScale <= 30) {
                                 launchChapter(false);
                             }
                         }
-                    } else {
+                    }
+                    // case: swipe right
+                    else {
                         if (type.equalsIgnoreCase("PRATILIPI")) {
                             webView.loadUrl("javascript:next()");
                             if (currentChapterCurrentPage < currentChapterPageCount) {
@@ -798,8 +845,20 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                 } else
                                     seekBar.setProgress(currentChapterCurrentPage - 1);
                             }
-                        } else {
-                            if (pageCount == currentPage) {
+                            // case: last page, type: pratilipi
+                            else  if (pageCount == currentPage) {
+                                if (toast != null) {
+                                    toast.cancel();
+                                    toast = null;
+                                }
+                                toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
+                                toast.show();
+
+                            }
+                        }
+                        // type: image
+                        else {
+                            if (pageCount == currentPage && currentChapterCurrentPage == currentChapterPageCount) {
                                 if (toast != null) {
                                     toast.cancel();
                                     toast = null;
@@ -810,16 +869,18 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
                                 launchChapter(true);
                             }
                         }
-                    }
+                        // end: swipe right
+                        }
+                    // end: fling horizontal
                 } else {
-                    if (diffY > 0) {
+                    if (diffY > 5) {
                         if (toast != null) {
                             toast.cancel();
                             toast = null;
                         }
                         toast = Toast.makeText(getApplicationContext(), "Scroll right to go to next page", Toast.LENGTH_SHORT);
                         toast.show();
-                    } else {
+                    } else if (diffY < -5){
                         if (toast != null) {
                             toast.cancel();
                             toast = null;
@@ -845,13 +906,14 @@ public class ReadActivity extends ActionBarActivity implements AsyncResponse {
         @JavascriptInterface
         public void launchNextChapter() {
             Log.d("launchNextChapter", " launchNextChapter");
-            if (currentPage < pageCount) {
+            if (currentPage < pageCount ) {
                 scrollToLast = false;
                 makeRequest(++currentPage);
-            } else {
-                toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
-                toast.show();
             }
+//             else if(currentChapterCurrentPage >= currentChapterPageCount){
+//                toast = Toast.makeText(getApplicationContext(), "Last Page!", Toast.LENGTH_SHORT);
+//                toast.show();
+//            }
         }
 
         @JavascriptInterface
